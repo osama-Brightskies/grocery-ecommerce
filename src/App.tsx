@@ -1,7 +1,10 @@
 import { Typography } from "./components/common/Typography";
+import { Button } from "./components/UI/Button";
+
 
 export default function App() {
   return (
+    
     <div className="min-h-screen bg-surface-soft p-8 font-sans antialiased">
       <div className="mx-auto max-w-3xl space-y-8">
         {/* Header */}
@@ -12,6 +15,11 @@ export default function App() {
           <Typography variant="muted" className="mt-1">
             Testing all variants and verifying that passing custom `className`
             overrides default styles.
+            <div className="p-6 bg-white rounded-xl border border-border-input flex items-center gap-3">
+             <Button variant="danger" size="figma_green">Save changes</Button>
+                <Button variant="primary" size="figma_white">Outline</Button>
+                <Button variant="outline" size="default">TestTestTestTestTestTest</Button>
+</div>
           </Typography>
         </div>
 
