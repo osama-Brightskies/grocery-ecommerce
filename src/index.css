@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -6,25 +6,25 @@
    Shadcn UI LIGHT THEME (Connected to Freshly Brand Palette)
    ========================================================================== */
 :root {
-  --background: #FAFCF7;
-  --foreground: #1A241F;
-  --card: #FFFFFF;
-  --card-foreground: #1A241F;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A241F;
-  --primary: #1F7D47;
-  --primary-foreground: #FFFFFF;
-  --secondary: #E8F7EB;
-  --secondary-foreground: #1F7D47;
-  --muted: #E8F7EB;
+  --background: #fafcf7;
+  --foreground: #1a241f;
+  --card: #ffffff;
+  --card-foreground: #1a241f;
+  --popover: #ffffff;
+  --popover-foreground: #1a241f;
+  --primary: #1f7d47;
+  --primary-foreground: #ffffff;
+  --secondary: #e8f7eb;
+  --secondary-foreground: #1f7d47;
+  --muted: #e8f7eb;
   --muted-foreground: #637369;
-  --accent: #E8F7EB;
-  --accent-foreground: #1F7D47;
-  --destructive: #C7332E;
-  --destructive-foreground: #FFFFFF;
-  --border: #E0E8E0;
-  --input: #E0E8E0;
-  --ring: #1F7D47;
+  --accent: #e8f7eb;
+  --accent-foreground: #1f7d47;
+  --destructive: #c7332e;
+  --destructive-foreground: #ffffff;
+  --border: #e0e8e0;
+  --input: #e0e8e0;
+  --ring: #1f7d47;
   --radius: 0.5rem;
 }
 
@@ -65,47 +65,47 @@
    CUSTOM FIGMA DESIGN TOKENS
    ========================================================================== */
 @theme {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: "Inter", sans-serif;
 
   /* ==========================================================================
      1. BRAND & PRIMARY GREENS (Main CTAs, Sidebar Active State, Banners)
      ========================================================================== */
-  --color-brand-primary:      #1F7D47; /* Primary buttons, active sidebar pill, auth left banner */
-  --color-brand-accent:       #34A853; /* Bright green hover/accent */
-  --color-brand-medium:       #33A35C; /* Medium green icon/badge accent */
-  --color-brand-muted:        #8CB294; /* Green text variant */
-  --color-brand-subtle-text:  #94A89C; /* Muted green subtext */
+  --color-brand-primary: #1f7d47; /* Primary buttons, active sidebar pill, auth left banner */
+  --color-brand-accent: #34a853; /* Bright green hover/accent */
+  --color-brand-medium: #33a35c; /* Medium green icon/badge accent */
+  --color-brand-muted: #8cb294; /* Green text variant */
+  --color-brand-subtle-text: #94a89c; /* Muted green subtext */
 
   /* ==========================================================================
      2. LIGHT SURFACES & BACKGROUNDS
      ========================================================================== */
-  --color-surface-mint:       #E8F7EB; /* "In stock" badge bg, image upload area, auth quote card */
-  --color-surface-soft:       #FAFCF7; /* Alternating table row background */
-  --color-white:              #FFFFFF; /* Pure white background / card container */
+  --color-surface-mint: #e8f7eb; /* "In stock" badge bg, image upload area, auth quote card */
+  --color-surface-soft: #fafcf7; /* Alternating table row background */
+  --color-white: #ffffff; /* Pure white background / card container */
 
   /* ==========================================================================
      3. DARK NEUTRALS & SIDEBAR
      ========================================================================== */
-  --color-sidebar-bg:         #1A241F; /* Main dark sidebar background & primary headings */
-  --color-sidebar-button:     #26332B; /* Logout button background inside sidebar */
-  --color-text-secondary:     #637369; /* Body secondary text / muted subheadings */
-  --color-text-subtle:        #BDC7BF; /* Light gray-green subtext in dark sidebar */
+  --color-sidebar-bg: #1a241f; /* Main dark sidebar background & primary headings */
+  --color-sidebar-button: #26332b; /* Logout button background inside sidebar */
+  --color-text-secondary: #637369; /* Body secondary text / muted subheadings */
+  --color-text-subtle: #bdc7bf; /* Light gray-green subtext in dark sidebar */
 
   /* ==========================================================================
      4. BORDERS & INPUTS
      ========================================================================== */
-  --color-border-input:       #E0E8E0; /* Input field borders & card outlines */
+  --color-border-input: #e0e8e0; /* Input field borders & card outlines */
 
   /* ==========================================================================
      5. STATUS BADGES: WARNING (Low Stock)
      ========================================================================== */
-  --color-status-warning-bg:   #FFF0D4; /* "Low stock" status badge background */
-  --color-status-warning-text: #E57A1F; /* "Low stock" status badge text */
+  --color-status-warning-bg: #fff0d4; /* "Low stock" status badge background */
+  --color-status-warning-text: #e57a1f; /* "Low stock" status badge text */
 
   /* ==========================================================================
      6. STATUS BADGES: DANGER (Out of Stock / Delete)
      ========================================================================== */
-  --color-status-danger-bg:    #FFE5E5; /* "Out of stock" status badge background */
-  --color-status-danger-text:  #C7332E; /* "Out of stock" status badge text */
-  --color-status-danger-icon:  #C8332F; /* Trash/Delete icon color */
+  --color-status-danger-bg: #ffe5e5; /* "Out of stock" status badge background */
+  --color-status-danger-text: #c7332e; /* "Out of stock" status badge text */
+  --color-status-danger-icon: #c8332f; /* Trash/Delete icon color */
 }

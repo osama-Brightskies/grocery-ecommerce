@@ -1,13 +1,13 @@
 import React from "react";
 import { cn } from "@/lib/utils"; /* Shadcn class merger helper */
 
-export type TypographyVariant = 
-  | "h1"       /* Page Titles (e.g., "Products", "Create product") */
-  | "h2"       /* Section Headers (e.g., "Inventory overview", "Basic information") */
-  | "h3"       /* Card Subheadings / Table Section Titles */
-  | "body"     /* Default Body Text / Table Row Cells */
-  | "muted"    /* Subtext / Muted Descriptions */
-  | "label"    /* Input Field Labels */
+export type TypographyVariant =
+  | "h1" /* Page Titles (e.g., "Products", "Create product") */
+  | "h2" /* Section Headers (e.g., "Inventory overview", "Basic information") */
+  | "h3" /* Card Subheadings / Table Section Titles */
+  | "body" /* Default Body Text / Table Row Cells */
+  | "muted" /* Subtext / Muted Descriptions */
+  | "label" /* Input Field Labels */
   | "caption"; /* Table Column Headers (UPPERCASE small text) */
 
 export type TypographyProps = React.HTMLAttributes<HTMLElement> & {
@@ -49,10 +49,7 @@ export function Typography({
   const Component = as || defaultElements[variant];
 
   return (
-    <Component 
-      className={cn(variantStyles[variant], className)} 
-      {...props}
-    >
+    <Component className={cn(variantStyles[variant], className)} {...props}>
       {children}
     </Component>
   );
