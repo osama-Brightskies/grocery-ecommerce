@@ -1,5 +1,5 @@
 import { Typography } from "./components/common/Typography";
-import { Button } from "./components/UI/Button";
+import Button from "./components/ui/button";
 
 export default function App() {
   return (
@@ -13,15 +13,15 @@ export default function App() {
           <Typography variant="muted" className="mt-1">
             Testing all variants and verifying that passing custom `className`
             overrides default styles.
-            <div className="p-6 bg-white rounded-xl border border-border-input flex items-center gap-3">
-              <Button variant="danger" size="figma_green">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="primary" size="figma">
                 Save changes
               </Button>
-              <Button variant="primary" size="figma_white">
-                Outline
+              <Button variant="outline" size="figma_white">
+                Cancel
               </Button>
-              <Button variant="outline" size="default">
-                TestTestTestTestTestTest
+              <Button variant="danger" size="default">
+                Delete item
               </Button>
             </div>
           </Typography>
