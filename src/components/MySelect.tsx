@@ -5,8 +5,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { cn } from "../../lib/utils";
+} from "./ui/select";
+import { cn } from "../lib/utils";
 
 // 1. Type definition for data options
 type SelectOption = {

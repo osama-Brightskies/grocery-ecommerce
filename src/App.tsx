@@ -1,5 +1,5 @@
-import { LabeledSelect } from "./components/common/LabeledSelect";
-import { Typography } from "./components/common/Typography";
+import { LabeledSelect } from "./components/MySelect";
+import { Typography } from "./components/Typography";
 
 export default function App() {
   // --- MOCK DATA ---
