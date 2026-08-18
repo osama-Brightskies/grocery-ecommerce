@@ -13,18 +13,18 @@ export default function App() {
           <Typography variant="muted" className="mt-1">
             Testing all variants and verifying that passing custom `className`
             overrides default styles.
-            <div className="flex flex-wrap items-center gap-3">
-              <Button variant="primary" size="figma">
-                Save changes
-              </Button>
-              <Button variant="outline" size="figma_white">
-                Cancel
-              </Button>
-              <Button variant="danger" size="default">
-                Delete item
-              </Button>
-            </div>
           </Typography>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="primary" size="figma">
+              Save changes
+            </Button>
+            <Button variant="outline" size="figma_white">
+              Cancel
+            </Button>
+            <Button variant="danger" size="default">
+              Delete item
+            </Button>
+          </div>
         </div>
 
         {/* SECTION 1: Standard Variants (Default Colors) */}
