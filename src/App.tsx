@@ -1,5 +1,5 @@
 import { Typography } from "./components/Typography";
-import { MyInput } from "./components/MyInput";
+import FormEx from "./features/products/add/FormEx";
 
 export default function App() {
   return (
@@ -27,28 +27,28 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* 1. Normal State */}
-            <MyInput label="Product Name" placeholder="e.g. Organic Bananas" />
+            {/* <MyInput label="Product Name" placeholder="e.g. Organic Bananas" /> */}
 
             {/* 2. Error State (Simulating Zod validation error) */}
-            <MyInput
+            {/* <MyInput
               label="SKU Code"
               placeholder="FRU-BAN-001"
               error="This SKU is already assigned to another product"
-            />
+            /> */}
 
             {/* 3. Password Type */}
-            <MyInput
+            {/* <MyInput
               label="Admin Password"
               type="password"
               placeholder="••••••••"
-            />
+            /> */}
 
             {/* 4. Missing Label Case (The "Nothing" Case) */}
             {/* 
                 Since we added the guard clause 'if (!label) return null',
                 the following component will NOT render anything to the screen.
             */}
-            <MyInput label={""} placeholder="You should not see me" />
+            {/* <MyInput label={""} placeholder="You should not see me" /> */}
           </div>
 
           <div className="bg-surface-soft p-4 rounded-lg border border-dashed border-border-input">
@@ -62,6 +62,8 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      <FormEx />
     </div>
   );
 }
