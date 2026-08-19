@@ -1,6 +1,7 @@
-import { LabeledSelect } from "./components/MySelect";
 import { Typography } from "./components/Typography";
+import FormEx from "./features/products/add/FormEx";
 import Button from "./components/ui/button";
+
 export default function App() {
   // --- MOCK DATA ---
   const categoryOptions = [
@@ -15,127 +16,62 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-surface-soft p-8 font-sans antialiased">
-      <div className="mx-auto max-w-4xl space-y-12">
-        {/* ==========================================
-            SECTION 1: TYPOGRAPHY SHOWCASE 
-            ========================================== */}
-        <Typography variant="h1" className="text-brand-primary">
-          Freshly Design System 🌿
-        </Typography>
-        <Typography variant="muted" className="mt-1">
-          Standardizing typography, colors, and components for the Grocery
-          Admin.
-        </Typography>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button variant="primary" size="lg">
-            Save changes
-          </Button>
-          <Button variant="outline" size="md">
-            Cancel
-          </Button>
-          <Button variant="danger" size="default">
-            Delete item
-          </Button>
+      <div className="mx-auto max-w-3xl space-y-8">
+        {/* EXISTING TYPOGRAPHY SECTIONS (Kept for your reference) */}
+        <div className="border-b border-border-input pb-4">
+          <Typography variant="h1" className="text-brand-primary">
+            Freshly Design System 🌿
+          </Typography>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="rounded-xl border border-border-input bg-white p-6 shadow-sm space-y-4">
-          <Typography
-            variant="h3"
-            className="text-brand-primary border-b border-border-input pb-2"
-          >
-            Typography Variants
-          </Typography>
-          <div className="space-y-2">
-            <Typography variant="h1">Heading 1</Typography>
-            <Typography variant="h2">Heading 2</Typography>
-            <Typography variant="body">Body paragraph text</Typography>
-            <Typography variant="label">Input Field Label</Typography>
-          </div>
-        </div>
+        {/* ... (Section 1, 2, 3 remains here) ... */}
 
-        <div className="rounded-xl border border-border-input bg-white p-6 shadow-sm space-y-4">
-          <Typography
-            variant="h3"
-            className="text-brand-primary border-b border-border-input pb-2"
-          >
-            Status Tokens
-          </Typography>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="h-10 rounded bg-status-warning-bg flex items-center justify-center text-status-warning-text text-[10px] font-bold">
-              WARNING
-            </div>
-            <div className="h-10 rounded bg-status-danger-bg flex items-center justify-center text-status-danger-text text-[10px] font-bold">
-              DANGER
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ==========================================
-            SECTION 2: DROPDOWN (LABELED SELECT) SHOWCASE 
-            ========================================== */}
-      <div className="rounded-xl border border-border-input bg-white p-8 shadow-sm space-y-10">
-        <div>
-          <Typography variant="h2" className="text-sidebar-bg">
-            Component: Labeled Select
-          </Typography>
-          <Typography variant="muted">
-            Testing populated, empty, and undefined data states.
-          </Typography>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* CASE 1: Populated Category */}
-          <div className="space-y-3">
-            <Typography variant="caption" className="text-brand-primary">
-              Case 1: Category
+        {/* NEW SECTION: MyInput COMPONENT TESTING */}
+        <div className="rounded-xl border border-border-input bg-white p-8 shadow-sm space-y-8">
+          <div className="border-b border-border-input pb-4">
+            <Typography variant="h2" className="text-sidebar-bg">
+              Component: MyInput
             </Typography>
-            <LabeledSelect
-              label="Category"
-              placeholder="Fruits"
-              options={categoryOptions}
-            />
+            <Typography variant="muted">
+              Testing validation states and "Incomplete Data" handling.
+            </Typography>
           </div>
 
-          {/* CASE 2: Populated Unit */}
-          <div className="space-y-3">
-            <Typography variant="caption" className="text-brand-primary">
-              Case 2: Unit
-            </Typography>
-            <LabeledSelect
-              label="Unit"
-              placeholder="per kg"
-              options={unitOptions}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* 1. Normal State */}
+            {/* <MyInput label="Product Name" placeholder="e.g. Organic Bananas" /> */}
+
+            {/* 2. Error State (Simulating Zod validation error) */}
+            {/* <MyInput
+              label="SKU Code"
+              placeholder="FRU-BAN-001"
+              error="This SKU is already assigned to another product"
+            /> */}
+
+            {/* 3. Password Type */}
+            {/* <MyInput
+              label="Admin Password"
+              type="password"
+              placeholder="••••••••"
+            /> */}
+
+            {/* 4. Missing Label Case (The "Nothing" Case) */}
+            {/* 
+                Since we added the guard clause 'if (!label) return null',
+                the following component will NOT render anything to the screen.
+            */}
+            {/* <MyInput label={""} placeholder="You should not see me" /> */}
           </div>
 
-          {/* CASE 3: Undefined / No Values */}
-          <div className="space-y-3">
-            <Typography variant="caption" className="text-status-danger-text">
-              Case 3: No Values
+          <div className="bg-surface-soft p-4 rounded-lg border border-dashed border-border-input">
+            <Typography variant="caption" className="text-text-secondary">
+              Developer Note:
             </Typography>
-            <LabeledSelect
-              label="Empty List"
-              placeholder="No data..."
-              options={undefined}
-            />
-          </div>
-        </div>
-
-        {/* ==========================================
-              FIGMA VISUAL VERIFICATION (Footer Section)
-              ========================================== */}
-        <div className="pt-6 border-t border-border-input flex justify-between items-end">
-          <div className="space-y-1">
-            <Typography variant="caption">
-              Figma Width Reference (330px each)
+            <Typography variant="muted" className="text-xs">
+              The fourth input in the code above is invisible because it lacks a
+              label. This enforces "enough data" best practices.
             </Typography>
-            <div className="flex gap-4">
-              <div className="h-1 bg-brand-primary w-82.5 rounded-full opacity-20"></div>
-              <div className="h-1 bg-brand-primary w-82.5 rounded-full opacity-20"></div>
-            </div>
           </div>
 
           <Typography variant="muted" className="text-[10px]">
@@ -143,6 +79,8 @@ export default function App() {
           </Typography>
         </div>
       </div>
+
+      <FormEx />
     </div>
   );
 }
