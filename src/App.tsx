@@ -1,4 +1,5 @@
-import { Typography } from "./components/common/Typography";
+import { Typography } from "./components/Typography";
+import Button from "./components/ui/button";
 
 export default function App() {
   return (
@@ -13,6 +14,17 @@ export default function App() {
             Testing all variants and verifying that passing custom `className`
             overrides default styles.
           </Typography>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="primary" size="lg">
+              Save changes
+            </Button>
+            <Button variant="outline" size="md">
+              Cancel
+            </Button>
+            <Button variant="danger" size="default">
+              Delete item
+            </Button>
+          </div>
         </div>
 
         {/* SECTION 1: Standard Variants (Default Colors) */}
