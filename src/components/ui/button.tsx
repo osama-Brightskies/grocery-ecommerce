@@ -14,14 +14,14 @@ const buttonVariants = cva(
           "bg-status-danger-bg text-status-danger-text border border-status-danger-text/20 hover:bg-status-danger-bg/80",
       },
       size: {
-        figma: "w-[160px] h-[42px] px-4",
+        lg: "w-[160px] h-[42px] px-4",
         default: "h-[42px] px-5 py-2",
-        figma_white: "h-[42px] w-[105px] p-0",
+        md: "h-[42px] w-[105px] p-0",
       },
     },
     defaultVariants: {
       variant: "primary",
-      size: "figma",
+      size: "lg",
     },
   },
 );
@@ -36,7 +36,7 @@ interface ButtonProps
 
 export function Button({
   variant = "primary",
-  size = "figma",
+  size = "lg",
   children,
   className,
   ...props
