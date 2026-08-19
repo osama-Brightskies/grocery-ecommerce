@@ -1,8 +1,11 @@
-import { Typography } from "./components/common/Typography";
+import { Typography } from "./components/Typography";
 import Button from "./components/ui/button";
 
 export default function App() {
+
+  
   return (
+    
     <div className="min-h-screen bg-surface-soft p-8 font-sans antialiased">
       <div className="mx-auto max-w-3xl space-y-8">
         {/* Header */}
@@ -15,10 +18,11 @@ export default function App() {
             overrides default styles.
           </Typography>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="primary" size="figma">
+            
+            <Button variant="primary" size="lg">
               Save changes
             </Button>
-            <Button variant="outline" size="figma_white">
+            <Button variant="outline" size="md">
               Cancel
             </Button>
             <Button variant="danger" size="default">
@@ -26,6 +30,7 @@ export default function App() {
             </Button>
           </div>
         </div>
+        
 
         {/* SECTION 1: Standard Variants (Default Colors) */}
         <div className="rounded-xl border border-border-input bg-white p-6 shadow-sm space-y-4">
