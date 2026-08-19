@@ -1,7 +1,19 @@
 import { Typography } from "./components/Typography";
 import FormEx from "./features/products/add/FormEx";
+import Button from "./components/ui/button";
 
 export default function App() {
+  // --- MOCK DATA ---
+  const categoryOptions = [
+    { label: "Fruits", value: "1" },
+    { label: "Vegetables", value: "2" },
+  ];
+
+  const unitOptions = [
+    { label: "per kg", value: "kg" },
+    { label: "per pc", value: "pc" },
+  ];
+
   return (
     <div className="min-h-screen bg-surface-soft p-8 font-sans antialiased">
       <div className="mx-auto max-w-3xl space-y-8">
@@ -11,6 +23,7 @@ export default function App() {
             Freshly Design System 🌿
           </Typography>
         </div>
+      </div>
 
         {/* ... (Section 1, 2, 3 remains here) ... */}
 
@@ -60,6 +73,10 @@ export default function App() {
               label. This enforces "enough data" best practices.
             </Typography>
           </div>
+
+          <Typography variant="muted" className="text-[10px]">
+            Styles: 44px height | 7px radius | #E0E8E0 border
+          </Typography>
         </div>
       </div>
 
