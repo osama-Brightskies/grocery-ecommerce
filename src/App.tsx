@@ -1,20 +1,8 @@
 import { Typography } from "./components/Typography";
-import FormEx from "./features/products/add/FormEx";
 import Button from "./components/ui/button";
 import { Sidebar } from "./components/ui/sidebar";
 
 export default function App() {
-  // --- MOCK DATA ---
-  const categoryOptions = [
-    { label: "Fruits", value: "1" },
-    { label: "Vegetables", value: "2" },
-  ];
-
-  const unitOptions = [
-    { label: "per kg", value: "kg" },
-    { label: "per pc", value: "pc" },
-  ];
-
   return (
     <div className="flex min-h-screen bg-surface-soft font-sans antialiased">
       {/* Sidebar Component */}
@@ -78,80 +66,6 @@ export default function App() {
                   DANGER
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* ==========================================
-              SECTION 2: DROPDOWN (LABELED SELECT) SHOWCASE 
-              ========================================== */}
-          <div className="rounded-xl border border-border-input bg-white p-8 shadow-sm space-y-10">
-            <div>
-              <Typography variant="h2" className="text-sidebar-bg">
-                Component: Labeled Select
-              </Typography>
-              <Typography variant="muted">
-                Testing populated, empty, and undefined data states.
-              </Typography>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* CASE 1: Populated Category */}
-              <div className="space-y-3">
-                <Typography variant="caption" className="text-brand-primary">
-                  Case 1: Category
-                </Typography>
-                <LabeledSelect
-                  label="Category"
-                  placeholder="Fruits"
-                  options={categoryOptions}
-                />
-              </div>
-
-              {/* CASE 2: Populated Unit */}
-              <div className="space-y-3">
-                <Typography variant="caption" className="text-brand-primary">
-                  Case 2: Unit
-                </Typography>
-                <LabeledSelect
-                  label="Unit"
-                  placeholder="per kg"
-                  options={unitOptions}
-                />
-              </div>
-
-              {/* CASE 3: Undefined / No Values */}
-              <div className="space-y-3">
-                <Typography
-                  variant="caption"
-                  className="text-status-danger-text"
-                >
-                  Case 3: No Values
-                </Typography>
-                <LabeledSelect
-                  label="Empty List"
-                  placeholder="No data..."
-                  options={undefined}
-                />
-              </div>
-            </div>
-
-            {/* ==========================================
-                FIGMA VISUAL VERIFICATION (Footer Section)
-                ========================================== */}
-            <div className="pt-6 border-t border-border-input flex justify-between items-end">
-              <div className="space-y-1">
-                <Typography variant="caption">
-                  Figma Width Reference (330px each)
-                </Typography>
-                <div className="flex gap-4">
-                  <div className="h-1 bg-brand-primary w-82.5 rounded-full opacity-20"></div>
-                  <div className="h-1 bg-brand-primary w-82.5 rounded-full opacity-20"></div>
-                </div>
-              </div>
-
-              <Typography variant="muted" className="text-[10px]">
-                Styles: 44px height | 7px radius | #E0E8E0 border
-              </Typography>
             </div>
           </div>
         </div>
