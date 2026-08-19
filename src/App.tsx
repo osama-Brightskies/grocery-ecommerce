@@ -1,5 +1,5 @@
-import { LabeledSelect } from "./components/MySelect";
 import { Typography } from "./components/Typography";
+import FormEx from "./features/products/add/FormEx";
 import Button from "./components/ui/button";
 import { Sidebar } from "./components/ui/sidebar";
 
