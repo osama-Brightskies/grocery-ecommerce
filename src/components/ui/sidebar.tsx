@@ -58,7 +58,11 @@ export function Sidebar() {
 
       {/* User Info & Actions */}
       <div className="space-y-4 pt-4 border-t border-sidebar-button/40">
-        <SidebarUserCard name="Ahmed Tamim" role="Administrator" initials="AT" />
+        <SidebarUserCard
+          name="Ahmed Tamim"
+          role="Administrator"
+          initials="AT"
+        />
         <SidebarLogoutButton onLogout={handleLogout} />
       </div>
     </aside>
