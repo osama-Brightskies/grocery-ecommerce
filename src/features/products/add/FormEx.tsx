@@ -2,6 +2,8 @@ import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { schema, type FormTypes } from "./schema";
+import { useQuery } from "@tanstack/react-query";
+import { http } from "@/api";
 
 const FormEx = () => {
   const form = useForm<FormTypes>({
@@ -15,6 +17,13 @@ const FormEx = () => {
   const onSubmit = (data: FormTypes) => {
     console.log("🚀 ~ onSubmit ~ data:", data);
   };
+
+  const { data } = useQuery({
+    queryKey: ["comments"],
+    queryFn: () => http.get("/comments/51"),
+  });
+  console.log("🚀 ~ FormEx ~ data:", data);
+
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
