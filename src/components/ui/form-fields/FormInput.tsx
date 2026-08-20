@@ -50,6 +50,7 @@ export const FormInput = <TFieldValues extends FieldValues = FieldValues>({
         render={({ field }) => (
           <Input
             {...field}
+            value={field.value ?? ""} //new added line for undefined state handles switching from uncontrolled to controlled.
             type={type}
             ref={ref}
             className={cn(
