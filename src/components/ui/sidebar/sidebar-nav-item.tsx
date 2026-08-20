@@ -26,7 +26,7 @@ export function SidebarNavItem({
         isActive
           ? "bg-brand-primary text-white shadow-sm"
           : "text-text-subtle hover:text-white hover:bg-sidebar-button",
-        className
+        className,
       )}
     >
       <Icon className="w-5 h-5 shrink-0" />
