@@ -1,73 +1,97 @@
-import { Typography } from "./components/Typography";
-import Button from "./components/ui/button";
+import * as React from "react";
 import { Sidebar } from "./components/ui/sidebar";
+import {
+  TableContainer,
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "./components/ui/table";
+import { Pagination } from "./components/ui/pagination";
+import { StatusBadge } from "./components/ui/table/status-badge";
+import { TableActions } from "./components/ui/table/table-actions";
+import { mockProducts } from "./data/mock-products";
+import { Typography } from "./components/Typography";
 
 export default function App() {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 5;
+
+  const totalPages = Math.ceil(mockProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentProducts = mockProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
   return (
-    <div className="flex min-h-screen bg-surface-soft font-sans antialiased">
-      {/* Sidebar Component */}
+    <div className="flex min-h-screen bg-[#F4F7F4] font-sans antialiased">
       <Sidebar />
 
-      {/* Main Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
-        <div className="mx-auto max-w-4xl space-y-12">
-          {/* ==========================================
-              SECTION 1: TYPOGRAPHY SHOWCASE 
-              ========================================== */}
-          <div className="space-y-4">
-            <Typography variant="h1" className="text-brand-primary">
-              Freshly Design System 🌿
-            </Typography>
-            <Typography variant="muted" className="mt-1">
-              Standardizing typography, colors, and components for the Grocery
-              Admin.
-            </Typography>
-            <div className="flex flex-wrap items-center gap-3">
-              <Button variant="primary" size="lg">
-                Save changes
-              </Button>
-              <Button variant="outline" size="md">
-                Cancel
-              </Button>
-              <Button variant="danger" size="default">
-                Delete item
-              </Button>
-            </div>
-          </div>
+        <div className="mx-auto max-w-6xl space-y-6">
+          <Typography variant="h1" className="text-[#1C2D27]">
+            Products
+          </Typography>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="rounded-xl border border-border-input bg-white p-6 shadow-sm space-y-4">
-              <Typography
-                variant="h3"
-                className="text-brand-primary border-b border-border-input pb-2"
-              >
-                Typography Variants
-              </Typography>
-              <div className="space-y-2">
-                <Typography variant="h1">Heading 1</Typography>
-                <Typography variant="h2">Heading 2</Typography>
-                <Typography variant="body">Body paragraph text</Typography>
-                <Typography variant="label">Input Field Label</Typography>
-              </div>
-            </div>
+          <TableContainer>
+            <Table>
+              <TableHeader>
+                <TableRow isHeader>
+                  <TableHead className="w-70 text-left">PRODUCT</TableHead>
+                  <TableHead>CATEGORY</TableHead>
+                  <TableHead>PRICE</TableHead>
+                  <TableHead>STOCK</TableHead>
+                  <TableHead>STATUS</TableHead>
+                  <TableHead className="text-right">ACTIONS</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentProducts.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="text-left">
+                      <Typography variant="body" className="font-bold text-[#1C2D27]">
+                        {product.name}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Typography variant="muted" className="font-normal text-[#64748B]">
+                        {product.category}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Typography variant="body" className="font-semibold text-[#1C2D27]">
+                        {product.price}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Typography variant="body" className="font-normal text-[#1C2D27]">
+                        {product.stock}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <StatusBadge status={product.status} />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <TableActions
+                        onView={() => console.log("View:", product.id)}
+                        onEdit={() => console.log("Edit:", product.id)}
+                        onDelete={() => console.log("Delete:", product.id)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
-            <div className="rounded-xl border border-border-input bg-white p-6 shadow-sm space-y-4">
-              <Typography
-                variant="h3"
-                className="text-brand-primary border-b border-border-input pb-2"
-              >
-                Status Tokens
-              </Typography>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="h-10 rounded bg-status-warning-bg flex items-center justify-center text-status-warning-text text-[10px] font-bold">
-                  WARNING
-                </div>
-                <div className="h-10 rounded bg-status-danger-bg flex items-center justify-center text-status-danger-text text-[10px] font-bold">
-                  DANGER
-                </div>
-              </div>
-            </div>
-          </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </TableContainer>
         </div>
       </main>
     </div>
