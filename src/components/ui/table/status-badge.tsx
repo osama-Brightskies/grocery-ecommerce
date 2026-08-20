@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export interface StatusBadgeProps {
@@ -6,29 +7,23 @@ export interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const getBadgeStyle = (val: string) => {
+  const getBadgeVariant = (val: string) => {
     switch (val.toLowerCase()) {
       case "in stock":
-        return "bg-[#EBF7EE] text-[#1B803A]";
+        return "primary";
       case "low stock":
-        return "bg-[#FFF4E5] text-[#D97706]";
+        return "warning";
       case "out of stock":
-        return "bg-[#FEECEC] text-[#DC2626]";
+        return "danger";
       default:
-        return "bg-surface-soft text-text-subtle";
+        return "outline";
     }
   };
 
   return (
-    <span
-      className={cn(
-        "inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold select-none",
-        getBadgeStyle(status),
-        className
-      )}
-    >
+    <Badge variant={getBadgeVariant(status)} className={cn(className)}>
       {status}
-    </span>
+    </Badge>
   );
 }
 

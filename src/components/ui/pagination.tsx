@@ -42,7 +42,10 @@ export function Pagination({
     <nav
       role="navigation"
       aria-label="pagination"
-      className={cn("flex items-center justify-end select-none py-4 pt-6", className)}
+      className={cn(
+        "flex items-center justify-end select-none py-4 pt-6",
+        className,
+      )}
     >
       <div className="flex items-center gap-3 text-sm font-semibold text-[#1B803A]">
         <button
@@ -71,7 +74,9 @@ export function Pagination({
               onClick={() => onPageChange(page)}
               className={cn(
                 "cursor-pointer px-1 transition-opacity",
-                isActive ? "font-bold text-[#1B803A]" : "font-medium opacity-80 hover:opacity-100"
+                isActive
+                  ? "font-bold text-[#1B803A]"
+                  : "font-medium opacity-80 hover:opacity-100",
               )}
             >
               {page}

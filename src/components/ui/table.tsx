@@ -1,10 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-function TableContainer({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function TableContainer({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="table-card"
@@ -24,7 +21,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
         data-slot="table"
         className={cn(
           "w-full caption-bottom text-sm text-[#1C2D27] border-separate border-spacing-y-2",
-          className
+          className,
         )}
         {...props}
       />
@@ -57,7 +54,7 @@ function TableRow({
       className={cn(
         !isHeader &&
           "bg-white even:bg-[#F9FAF9] hover:bg-[#F4F7F4] transition-colors rounded-xl",
-        className
+        className,
       )}
       {...props}
     />
@@ -70,7 +67,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
       data-slot="table-head"
       className={cn(
         "pb-4 px-4 text-center align-middle text-[11px] font-bold tracking-wider text-[#1C2D27] uppercase whitespace-nowrap",
-        className
+        className,
       )}
       {...props}
     />
@@ -83,7 +80,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
       data-slot="table-cell"
       className={cn(
         "py-4 px-4 align-middle text-sm font-medium text-[#1C2D27] first:rounded-l-xl last:rounded-r-xl whitespace-nowrap",
-        className
+        className,
       )}
       {...props}
     />

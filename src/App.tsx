@@ -23,7 +23,7 @@ export default function App() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentProducts = mockProducts.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
@@ -52,22 +52,34 @@ export default function App() {
                 {currentProducts.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell className="text-left">
-                      <Typography variant="body" className="font-bold text-[#1C2D27]">
+                      <Typography
+                        variant="body"
+                        className="font-bold text-[#1C2D27]"
+                      >
                         {product.name}
                       </Typography>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Typography variant="muted" className="font-normal text-[#64748B]">
+                      <Typography
+                        variant="muted"
+                        className="font-normal text-[#64748B]"
+                      >
                         {product.category}
                       </Typography>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Typography variant="body" className="font-semibold text-[#1C2D27]">
+                      <Typography
+                        variant="body"
+                        className="font-semibold text-[#1C2D27]"
+                      >
                         {product.price}
                       </Typography>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Typography variant="body" className="font-normal text-[#1C2D27]">
+                      <Typography
+                        variant="body"
+                        className="font-normal text-[#1C2D27]"
+                      >
                         {product.stock}
                       </Typography>
                     </TableCell>
