@@ -21,7 +21,7 @@ const UNIT_OPTIONS = [
   { label: "per box", value: "box" },
 ];
 
-export default function FormEx() {
+export default function ProductFormEx() {
   const form = useForm({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
@@ -29,11 +29,11 @@ export default function FormEx() {
       sku: "",
       category: "",
       unit: "",
-      price: "" as unknown as number,
-      stock: "" as unknown as number,
+      price: undefined, // Fixed: Clean, type-safe empty default value!
+      stock: undefined, // Fixed: Clean, type-safe empty default value!
       description: "",
     },
-    mode: "onChange",
+    mode: "onSubmit",
   });
 
   const onSubmit = (data: CreateProductFormTypes) => {
@@ -59,21 +59,18 @@ export default function FormEx() {
 
         {/* Inputs Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Product Name */}
           <FormInput<CreateProductFormTypes>
             name="name"
             label="Product name"
             placeholder="e.g. Organic Bananas"
           />
 
-          {/* SKU */}
           <FormInput<CreateProductFormTypes>
             name="sku"
             label="SKU"
             placeholder="e.g. FRU-BAN-001"
           />
 
-          {/* Category */}
           <FormSelect<CreateProductFormTypes>
             name="category"
             label="Category"
@@ -81,7 +78,6 @@ export default function FormEx() {
             options={CATEGORY_OPTIONS}
           />
 
-          {/* Unit */}
           <FormSelect<CreateProductFormTypes>
             name="unit"
             label="Unit"
@@ -89,7 +85,6 @@ export default function FormEx() {
             options={UNIT_OPTIONS}
           />
 
-          {/* Price */}
           <FormInput<CreateProductFormTypes>
             name="price"
             label="Price"
@@ -98,7 +93,6 @@ export default function FormEx() {
             placeholder="$0.00"
           />
 
-          {/* Stock quantity */}
           <FormInput<CreateProductFormTypes>
             name="stock"
             label="Stock quantity"
@@ -107,7 +101,7 @@ export default function FormEx() {
           />
         </div>
 
-        {/* Description - Optional */}
+        {/* Description */}
         <FormTextarea<CreateProductFormTypes>
           name="description"
           label="Description"
