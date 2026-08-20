@@ -24,7 +24,7 @@ export function SidebarNavItem({
           isActive
             ? "bg-brand-primary text-white shadow-sm"
             : "text-text-subtle hover:text-white hover:bg-sidebar-button",
-          className
+          className,
         )
       }
     >

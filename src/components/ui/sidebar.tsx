@@ -14,7 +14,7 @@ export function Sidebar({
   brandSubtitle = "GROCERY ADMIN",
   className,
 }: SidebarProps) {
-  // TODO: Implement routing / navigation handling via React Router 
+  // TODO: Implement routing / navigation handling via React Router
 
   const handleLogout = () => {
     console.log("Logged out successfully");
