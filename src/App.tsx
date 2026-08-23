@@ -14,7 +14,7 @@ export default function App() {
   const startIndex = (currentPage - 1) * INIT_PAGE_SIZE;
   const currentProducts = mockProducts.slice(
     startIndex,
-    startIndex + INIT_PAGE_SIZE
+    startIndex + INIT_PAGE_SIZE,
   );
 
   return (
