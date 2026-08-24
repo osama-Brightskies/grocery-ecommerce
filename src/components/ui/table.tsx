@@ -7,8 +7,9 @@ export interface DataTableProps<T> {
   isLoading?: boolean;
   paginationBar?: React.ReactNode;
   className?: string;
-  customCells?: Partial<Record<keyof T, (item: T) => React.ReactNode>>;
-  headerLabels?: Partial<Record<keyof T, string>>;
+  renderCell?: (key: string, item: T) => React.ReactNode;
+  columnMapping?: Record<string, string>;
+  headerLabels?: Record<string, string>;
 }
 
 export function DataTable<T extends { id: string | number }>({
@@ -16,58 +17,61 @@ export function DataTable<T extends { id: string | number }>({
   isLoading = false,
   paginationBar,
   className,
-  customCells = {},
+  renderCell,
+  columnMapping = {},
   headerLabels = {},
 }: DataTableProps<T>) {
-  const keys = data.length > 0 ? (Object.keys(data[0]) as (keyof T)[]) : [];
-  const filteredKeys = keys.filter((key) => key !== "id");
+  const firstItem = data[0];
+  const rawKeys = firstItem ? (Object.keys(firstItem) as string[]) : [];
+  const filteredKeys = rawKeys.filter((key) => key !== "id");
+
+  const mappedKeys = filteredKeys.map((key) => columnMapping[key] || key);
+  const allColumns = [...mappedKeys, "actions"];
 
   return (
     <div
-      data-slot="table-card"
-      className={cn("w-full bg-white rounded-2xl p-6 shadow-sm", className)}
+      className={cn(
+        "w-full bg-card rounded-2xl border border-border p-6 shadow-xs",
+        className
+      )}
     >
-      <div
-        data-slot="table-container"
-        className="relative w-full overflow-x-auto"
-      >
-        <table
-          data-slot="table"
-          className="w-full caption-bottom text-sm text-[#1C2D27] border-separate border-spacing-y-2"
-        >
-          <thead data-slot="table-header" className="border-b border-[#E8EDE9]">
-            <tr data-slot="table-row">
-              {filteredKeys.map((key) => {
-                const label =
-                  headerLabels[key] ||
-                  String(key).charAt(0).toUpperCase() + String(key).slice(1);
+      <div className="relative w-full overflow-x-auto">
+        <table className="w-full caption-bottom text-sm border-separate border-spacing-y-2">
+          <thead className="border-b border-border">
+            <tr>
+              {allColumns.map((colKey) => {
+                const title =
+                  headerLabels[colKey] ||
+                  (colKey === "actions"
+                    ? "Actions"
+                    : colKey.charAt(0).toUpperCase() + colKey.slice(1));
                 return (
                   <th
-                    key={String(key)}
-                    data-slot="table-head"
-                    className="pb-4 px-4 text-center align-middle text-[11px] font-bold tracking-wider text-[#1C2D27] uppercase whitespace-nowrap"
+                    key={colKey}
+                    className={cn(
+                      "pb-4 px-4 text-center align-middle whitespace-nowrap",
+                      colKey === "name" && "text-left",
+                      colKey === "actions" && "text-right pr-10"
+                    )}
                   >
                     <Typography
                       variant="body"
-                      className="font-bold text-[#1C2D27]"
+                      className="font-bold text-sidebar-bg uppercase text-[11px] tracking-wider"
                     >
-                      {label}
+                      {title}
                     </Typography>
                   </th>
                 );
               })}
             </tr>
           </thead>
-          <tbody data-slot="table-body">
+          <tbody>
             {isLoading ? (
               <tr>
-                <td
-                  colSpan={filteredKeys.length}
-                  className="py-12 text-center text-[#64748B] font-medium"
-                >
+                <td colSpan={allColumns.length} className="py-12 text-center">
                   <div className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 border-2 border-[#1B803A] border-t-transparent rounded-full animate-spin" />
-                    <Typography variant="muted" className="text-[#64748B]">
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    <Typography variant="muted" className="text-muted-foreground">
                       Loading data...
                     </Typography>
                   </div>
@@ -75,46 +79,57 @@ export function DataTable<T extends { id: string | number }>({
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td
-                  colSpan={filteredKeys.length}
-                  className="py-12 text-center text-[#64748B] font-medium"
-                >
-                  <Typography variant="muted" className="text-[#64748B]">
+                <td colSpan={allColumns.length} className="py-12 text-center">
+                  <Typography variant="muted" className="text-muted-foreground">
                     No records found.
                   </Typography>
                 </td>
               </tr>
             ) : (
-              data.map((item) => (
-                <tr
-                  key={item.id}
-                  data-slot="table-row"
-                  className="bg-white even:bg-[#F9FAF9] hover:bg-[#F4F7F4] transition-colors rounded-xl"
-                >
-                  {filteredKeys.map((key) => (
-                    <td
-                      key={String(key)}
-                      data-slot="table-cell"
-                      className="py-4 px-4 align-middle text-sm font-medium text-[#1C2D27] first:rounded-l-xl last:rounded-r-xl whitespace-nowrap text-center"
-                    >
-                      {customCells[key] ? (
-                        customCells[key]!(item)
-                      ) : (
-                        <Typography
-                          variant="body"
+              data.map((item) => {
+                const record = item as unknown as Record<string, unknown>;
+
+                return (
+                  <tr
+                    key={String(item.id)}
+                    className="bg-card even:bg-surface-soft hover:bg-surface-mint transition-colors rounded-xl"
+                  >
+                    {allColumns.map((colKey) => {
+                      const originalKey =
+                        Object.keys(columnMapping).find(
+                          (k) => columnMapping[k] === colKey
+                        ) || colKey;
+
+                      return (
+                        <td
+                          key={colKey}
                           className={cn(
-                            "font-medium text-[#1C2D27]",
-                            String(key) === "category" &&
-                              "text-[#64748B] font-normal",
+                            "py-4 px-4 align-middle text-sm font-medium first:rounded-l-xl last:rounded-r-xl whitespace-nowrap text-center",
+                            colKey === "name" && "text-left font-bold text-sidebar-bg",
+                            colKey === "category" && "text-muted-foreground font-normal",
+                            colKey === "price" && "font-semibold text-sidebar-bg",
+                            colKey === "stock" && "font-normal text-sidebar-bg",
+                            colKey === "actions" && "text-center "
                           )}
                         >
-                          {String(item[key] ?? "")}
-                        </Typography>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))
+                          {renderCell ? (
+                            renderCell(colKey, item)
+                          ) : (
+                            <Typography
+                              variant="body"
+                              className="font-medium text-sidebar-bg"
+                            >
+                              {colKey !== "actions"
+                                ? String(record[originalKey] ?? "")
+                                : null}
+                            </Typography>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
