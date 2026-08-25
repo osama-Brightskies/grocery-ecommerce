@@ -30,9 +30,11 @@ export function DataTable<T extends { id: string | number }>({
                   key={col.key}
                   className={cn(
                     "pb-4 px-4 text-center align-middle whitespace-nowrap",
-                    col.key === "name" || col.key === "title" ? "text-left" : "",
+                    col.key === "name" || col.key === "title"
+                      ? "text-left"
+                      : "",
                     col.key === "actions" ? "text-right" : "",
-                    col.className
+                    col.className,
                   )}
                 >
                   <Typography
@@ -51,7 +53,10 @@ export function DataTable<T extends { id: string | number }>({
                 <td colSpan={columns.length} className="py-12 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                    <Typography variant="muted" className="text-muted-foreground">
+                    <Typography
+                      variant="muted"
+                      className="text-muted-foreground"
+                    >
                       Loading data...
                     </Typography>
                   </div>
@@ -76,7 +81,7 @@ export function DataTable<T extends { id: string | number }>({
                     {columns.map((col) => {
                       const originalKey =
                         Object.keys(columnMapping).find(
-                          (k) => columnMapping[k] === col.key
+                          (k) => columnMapping[k] === col.key,
                         ) || col.key;
 
                       return (
@@ -84,10 +89,13 @@ export function DataTable<T extends { id: string | number }>({
                           key={col.key}
                           className={cn(
                             "py-4 px-4 align-middle text-sm font-medium first:rounded-l-xl last:rounded-r-xl whitespace-nowrap text-center",
-                            (col.key === "name" || col.key === "title") && "text-left font-bold text-sidebar-bg",
-                            col.key === "category" && "text-muted-foreground font-normal",
-                            col.key === "price" && "font-semibold text-sidebar-bg",
-                            col.key === "actions" && "text-right"
+                            (col.key === "name" || col.key === "title") &&
+                              "text-left font-bold text-sidebar-bg",
+                            col.key === "category" &&
+                              "text-muted-foreground font-normal",
+                            col.key === "price" &&
+                              "font-semibold text-sidebar-bg",
+                            col.key === "actions" && "text-right",
                           )}
                         >
                           {renderCell ? (

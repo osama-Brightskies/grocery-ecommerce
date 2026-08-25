@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { Typography } from "../../../components/Typography";
 import { Button } from "../../../components/ui/button";
 import { FormInput } from "../../../components/ui/form-fields/FormInput";
 import { useLogin } from "./hooks/useLogin";
 import { loginSchema, type LoginFormTypes } from "./schemas/login.schema";
+import { Typography } from "@/components/ui/shared/Typography";
 
 type LoginPageProps = {
   onNavigateToForgot?: () => void;

@@ -1,12 +1,18 @@
 import type { ProductItem } from "@/features/products/types/products.types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
 
-export async function fetchProducts(page: number = 1, limit: number = 5): Promise<{ data: ProductItem[]; total: number }> {
+export async function fetchProducts(
+  page: number = 1,
+  limit: number = 5,
+): Promise<{ data: ProductItem[]; total: number }> {
   try {
     const skip = (page - 1) * limit;
-    const response = await fetch(`${API_BASE_URL}/products?_page=${page}&_limit=${limit}&limit=${limit}&skip=${skip}`);
-    
+    const response = await fetch(
+      `${API_BASE_URL}/products?_page=${page}&_limit=${limit}&limit=${limit}&skip=${skip}`,
+    );
+
     if (!response.ok) {
       throw new Error("Failed to fetch products from API");
     }
@@ -47,4 +53,4 @@ export async function deleteProduct(id: string | number): Promise<void> {
   if (!response.ok) {
     throw new Error("Failed to delete product");
   }
-} 
+}

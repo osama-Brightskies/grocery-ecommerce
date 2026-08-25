@@ -1,9 +1,7 @@
 import { createColumnHelper, tableFeatures } from "@tanstack/react-table";
 import type { ProductItem } from "./types/products.types";
 
-export const features = tableFeatures({
-  
-});
+export const features = tableFeatures({});
 const columnHelper = createColumnHelper<typeof features, ProductItem>();
 
 export const columns = columnHelper.columns([
