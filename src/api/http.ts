@@ -2,10 +2,11 @@ import axios, { type AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { toApiError } from "./errors";
 
-export const AUTH_TOKEN_COOKIE = "grocery_access_token";
+export const AUTH_TOKEN_COOKIE = "freshly_access_token";
+export const REFRESH_TOKEN_COOKIE = "freshly_refresh_token";
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL || "",
 });
 
 client.interceptors.request.use((config) => {
