@@ -30,5 +30,9 @@ export const toApiError = (
   // `data` is absent on 204s and on error pages that are not JSON,
   // so the server message cannot be read unconditionally.
   // Checks data?.detail first (e.g. "Invalid credentials"), then data?.message
-  return new ApiError(data?.detail ?? data?.message ?? FALLBACK_MESSAGE, status, data);
+  return new ApiError(
+    data?.detail ?? data?.message ?? FALLBACK_MESSAGE,
+    status,
+    data,
+  );
 };

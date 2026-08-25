@@ -30,7 +30,10 @@ export default function LoginPage({ onNavigateToForgot }: LoginPageProps) {
     <div className="w-full max-w-md space-y-8">
       {/* Header */}
       <div className="space-y-1.5">
-        <Typography variant="h1" className="text-3xl lg:text-4xl font-bold text-sidebar-bg">
+        <Typography
+          variant="h1"
+          className="text-3xl lg:text-4xl font-bold text-sidebar-bg"
+        >
           Welcome back
         </Typography>
         <Typography variant="muted" className="text-text-secondary text-sm">
@@ -41,14 +44,22 @@ export default function LoginPage({ onNavigateToForgot }: LoginPageProps) {
       {/* API Server Error Display */}
       {apiError && (
         <div className="p-4 bg-status-danger-bg border border-status-danger-text/30 rounded-[7px] animate-in fade-in slide-in-from-top-1">
-          <Typography variant="caption" className="text-status-danger-text font-medium text-xs">
-            {apiError.message || "Failed to sign in. Please check your credentials."}
+          <Typography
+            variant="caption"
+            className="text-status-danger-text font-medium text-xs"
+          >
+            {apiError.message ||
+              "Failed to sign in. Please check your credentials."}
           </Typography>
         </div>
       )}
 
       <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          noValidate
+          className="space-y-6"
+        >
           <FormInput<LoginFormTypes>
             name="email"
             label="Email address"
