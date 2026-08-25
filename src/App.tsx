@@ -1,11 +1,12 @@
-import Products from "./features/products/pages/Products";
+import { RouterProvider } from "react-router-dom";
+import { Toaster } from "./components/ui/sonner";
+import { router } from "./router";
 
-export function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Products />
-    </div>
+    <>
+      <RouterProvider router={router} />
+      <Toaster position="top-right" richColors />
+    </>
   );
 }
-
-export default App;
