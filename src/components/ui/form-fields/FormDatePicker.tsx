@@ -9,7 +9,7 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { cn } from "../../../lib/utils";
-import { Typography } from "../../Typography";
+import { Typography } from "../shared/Typography";
 import { Button } from "../button";
 import { Calendar } from "../calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";

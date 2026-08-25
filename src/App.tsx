@@ -1,11 +1,11 @@
-import { Typography } from "./components/Typography";
+import Products from "./features/products/pages/Products";
 
-export default function App() {
+export function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface-soft font-sans antialiased">
-      <Typography variant="h1" className="text-brand-primary">
-        Freshly Admin 🌿 Hello
-      </Typography>
+    <div className="min-h-screen bg-background text-foreground">
+      <Products />
     </div>
   );
 }
+
+export default App;

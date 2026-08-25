@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { Typography } from "../../../components/Typography";
+import { Typography } from "../../../components/ui/shared/Typography";
 import { FormInput } from "../../../components/ui/form-fields/FormInput";
 import { FormSelect } from "../../../components/ui/form-fields/FormSelect";
 import { FormTextarea } from "../../../components/ui/form-fields/FormTextarea";

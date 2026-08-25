@@ -1,4 +1,4 @@
-import { Typography } from "../Typography";
+import { Typography } from "./Typography";
 
 export interface PageHeaderProps {
   title: string;

@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { cn } from "../../../lib/utils";
-import { Typography } from "../../Typography";
+import { Typography } from "../shared/Typography";
 import { Textarea } from "../textarea";
 
 type FormTextareaProps<TFieldValues extends FieldValues> = Omit<
