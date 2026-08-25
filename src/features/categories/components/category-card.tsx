@@ -1,6 +1,6 @@
 import { Edit2, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Typography } from "../Typography";
+import { Typography } from "../../../components/ui/shared/Typography";
 
 export interface CategoryCardProps {
   name: string;
