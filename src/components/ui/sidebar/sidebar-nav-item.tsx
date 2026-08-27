@@ -2,12 +2,12 @@ import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-export interface SidebarNavItemProps {
+export type SidebarNavItemProps = {
   title: string;
   icon: React.ElementType;
   navLink: string;
   className?: string;
-}
+};
 
 export function SidebarNavItem({
   title,
@@ -16,7 +16,11 @@ export function SidebarNavItem({
   className,
 }: SidebarNavItemProps) {
   const location = useLocation();
-  const isActive = location.hash === navLink || location.pathname === navLink;
+
+  // Active check against clean URL pathname
+  const isActive =
+    location.pathname === navLink ||
+    (navLink !== "/" && location.pathname.startsWith(navLink));
 
   return (
     <Link

@@ -1,38 +1,58 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Button } from "../../../components/ui/button";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "../../../components/ui/input-otp";
-import { useResendCode, useVerifyOtp } from "./hooks/useVerifyOtp";
+import { useResetFlowStore } from "../../../store/useResetFlowStore";
+import { ResendCodeLink } from "./components/ResendCodeLink";
+import { useVerifyOtp } from "./hooks/useVerifyOtp";
 import {
   verifyOtpSchema,
   type VerifyOtpFormTypes,
 } from "./schemas/verify-otp.schema";
 import { Typography } from "@/components/ui/shared/Typography";
 
-type VerifyOtpPageProps = {
-  email: string;
-  onSuccess: (resetToken: string) => void;
-  onBackToEmail: () => void;
-};
+export default function VerifyOtpPage() {
+  const navigate = useNavigate();
+  const resetEmail = useResetFlowStore((state) => state.resetEmail);
+  const setResetToken = useResetFlowStore((state) => state.setResetToken);
 
-export default function VerifyOtpPage({
-  email,
-  onSuccess,
-  onBackToEmail,
-}: VerifyOtpPageProps) {
+  // Guard: If user visits /auth/verify-otp directly without an email in store, redirect to forgot-password
+  useEffect(() => {
+    if (!resetEmail) {
+      navigate("/auth/forgot-password");
+    }
+  }, [resetEmail, navigate]);
+
   const {
     mutate: verifyOtp,
     isPending,
     error: apiError,
   } = useVerifyOtp({
-    onSuccessCallback: onSuccess,
-  });
+    onSuccess: (response) => {
+      toast.success(response.message || "Code verified successfully!");
 
-  const { mutate: resendCode, isPending: isResending } = useResendCode();
+      const token =
+        typeof response.data === "string"
+          ? response.data
+          : response.data?.resetToken || "";
+
+      // 1. Save resetToken to Zustand store (persisted in sessionStorage)
+      setResetToken(token);
+
+      // 2. Navigate to Reset Password screen
+      navigate("/auth/reset-password");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Invalid or expired verification code.");
+    },
+  });
 
   const form = useForm({
     resolver: zodResolver(verifyOtpSchema),
@@ -59,13 +79,13 @@ export default function VerifyOtpPage({
         <Typography variant="muted" className="text-text-secondary text-sm">
           We sent a 6-digit code to{" "}
           <span className="font-medium text-sidebar-bg">
-            {email || "your email address"}
+            {resetEmail || "your email address"}
           </span>
           .
         </Typography>
       </div>
 
-      {/* Server Error Alert */}
+      {/* Red Error Alert */}
       {apiError && (
         <div className="p-4 bg-status-danger-bg border border-status-danger-text/30 rounded-[7px] animate-in fade-in slide-in-from-top-1">
           <Typography
@@ -77,14 +97,12 @@ export default function VerifyOtpPage({
         </div>
       )}
 
-      {/* Form */}
       <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
           className="space-y-8"
         >
-          {/* Shadcn OTP Input Primitive */}
           <div className="flex justify-center">
             <Controller
               name="code"
@@ -126,7 +144,6 @@ export default function VerifyOtpPage({
             />
           </div>
 
-          {/* Submit Button */}
           <Button
             type="submit"
             variant="primary"
@@ -138,33 +155,34 @@ export default function VerifyOtpPage({
 
           {/* Action Links */}
           <div className="space-y-4 text-center">
-            {/* Resend Code Link */}
-            <Typography
-              variant="caption"
-              className="text-text-secondary text-xs block"
-            >
-              Didn't receive the code?{" "}
-              <button
-                type="button"
-                disabled={isResending}
-                onClick={() => email && resendCode(email)}
-                className="text-brand-primary font-semibold hover:underline ml-1 cursor-pointer disabled:opacity-50"
-              >
-                {isResending ? "Sending..." : "Resend code"}
-              </button>
-            </Typography>
+            <ResendCodeLink email={resetEmail} initialSeconds={120} />
 
-            {/* Back to Email / Forgot Password Link */}
             <div>
               <a
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onBackToEmail();
+                  navigate("/auth/forgot-password");
                 }}
                 className="text-brand-primary text-xs font-semibold hover:underline cursor-pointer"
               >
-                Back to reset password
+                Back to reset email
+              </a>
+            </div>
+
+            <div>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/auth/login");
+                }}
+                className="text-text-secondary text-xs font-medium hover:text-sidebar-bg hover:underline cursor-pointer"
+              >
+                Remembered your password?{" "}
+                <span className="text-brand-primary font-semibold">
+                  Sign in
+                </span>
               </a>
             </div>
           </div>

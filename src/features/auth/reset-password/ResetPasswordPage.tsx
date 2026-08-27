@@ -1,7 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Button } from "../../../components/ui/button";
 import { FormInput } from "../../../components/ui/form-fields/FormInput";
+import { useResetFlowStore } from "../../../store/useResetFlowStore";
 import { useResetPassword } from "./hooks/useResetPassword";
 import {
   resetPasswordSchema,
@@ -9,23 +13,36 @@ import {
 } from "./schemas/reset-password.schema";
 import { Typography } from "@/components/ui/shared/Typography";
 
-type ResetPasswordPageProps = {
-  resetToken: string;
-  onSuccess: () => void;
-  onBackToLogin: () => void;
-};
+export default function ResetPasswordPage() {
+  const navigate = useNavigate();
+  const resetToken = useResetFlowStore((state) => state.resetToken);
+  const clearResetFlow = useResetFlowStore((state) => state.clearResetFlow);
 
-export default function ResetPasswordPage({
-  resetToken,
-  onSuccess,
-  onBackToLogin,
-}: ResetPasswordPageProps) {
+  // Guard: If user visits /auth/reset-password directly without a token in store, redirect to forgot-password
+  useEffect(() => {
+    if (!resetToken) {
+      navigate("/auth/forgot-password");
+    }
+  }, [resetToken, navigate]);
+
   const {
     mutate: resetPassword,
     isPending,
     error: apiError,
   } = useResetPassword({
-    onSuccessCallback: onSuccess,
+    onSuccess: (response) => {
+      // 1. Wipe temporary reset flow store
+      clearResetFlow();
+
+      // 2. Toast success & return to login screen
+      toast.success(
+        response.message || "Password reset successfully! Please sign in.",
+      );
+      navigate("/auth/login");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to reset password.");
+    },
   });
 
   const form = useForm({
@@ -46,7 +63,6 @@ export default function ResetPasswordPage({
 
   return (
     <div className="w-full max-w-md space-y-8">
-      {/* Header */}
       <div className="space-y-1.5">
         <Typography
           variant="h1"
@@ -59,7 +75,6 @@ export default function ResetPasswordPage({
         </Typography>
       </div>
 
-      {/* Server Error Display */}
       {apiError && (
         <div className="p-4 bg-status-danger-bg border border-status-danger-text/30 rounded-[7px] animate-in fade-in slide-in-from-top-1">
           <Typography
@@ -71,14 +86,12 @@ export default function ResetPasswordPage({
         </div>
       )}
 
-      {/* Form */}
       <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
           className="space-y-6"
         >
-          {/* New Password */}
           <div className="space-y-1">
             <FormInput<ResetPasswordFormTypes>
               name="newPassword"
@@ -94,7 +107,6 @@ export default function ResetPasswordPage({
             </Typography>
           </div>
 
-          {/* Confirm New Password */}
           <FormInput<ResetPasswordFormTypes>
             name="confirmPassword"
             label="Confirm new password"
@@ -102,7 +114,6 @@ export default function ResetPasswordPage({
             placeholder="••••••••••••"
           />
 
-          {/* Submit Button */}
           <Button
             type="submit"
             variant="primary"
@@ -112,7 +123,6 @@ export default function ResetPasswordPage({
             {isPending ? "Resetting password..." : "Reset password"}
           </Button>
 
-          {/* Back to Sign In Link */}
           <div className="text-center pt-2">
             <Typography
               variant="caption"
@@ -122,7 +132,8 @@ export default function ResetPasswordPage({
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onBackToLogin();
+                  clearResetFlow();
+                  navigate("/auth/login");
                 }}
                 className="text-brand-primary font-semibold hover:underline cursor-pointer"
               >

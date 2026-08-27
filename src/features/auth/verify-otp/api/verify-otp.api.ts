@@ -12,7 +12,7 @@ export const resendEmailApi = (email: string) => {
     "/api/auth/resend-email",
     {
       email,
-      purpose: 0,
+      purpose: 1,
     },
     {
       headers: {

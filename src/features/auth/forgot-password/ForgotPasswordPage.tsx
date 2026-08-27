@@ -1,7 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { Button } from "../../../components/ui/button";
 import { FormInput } from "../../../components/ui/form-fields/FormInput";
+import { useResetFlowStore } from "../../../store/useResetFlowStore";
 import { useForgotPassword } from "./hooks/useForgotPassword";
 import {
   forgotPasswordSchema,
@@ -9,21 +12,29 @@ import {
 } from "./schemas/forgot-password.schema";
 import { Typography } from "@/components/ui/shared/Typography";
 
-type ForgotPasswordPageProps = {
-  onSuccess: (email: string) => void;
-  onBackToLogin: () => void;
-};
+export default function ForgotPasswordPage() {
+  const navigate = useNavigate();
+  const setResetEmail = useResetFlowStore((state) => state.setResetEmail);
 
-export default function ForgotPasswordPage({
-  onSuccess,
-  onBackToLogin,
-}: ForgotPasswordPageProps) {
   const {
     mutate: sendResetLink,
     isPending,
     error: apiError,
   } = useForgotPassword({
-    onSuccessCallback: onSuccess,
+    onSuccess: (response, variables) => {
+      // 1. Save email to Zustand store (persisted in sessionStorage)
+      setResetEmail(variables.email);
+
+      // 2. Show toast & navigate to OTP screen
+      toast.success(
+        response.message ||
+          "If an account exists for this email, a verification code has been sent.",
+      );
+      navigate("/auth/verify-otp");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to send reset link.");
+    },
   });
 
   const form = useForm({
@@ -53,7 +64,7 @@ export default function ForgotPasswordPage({
         </Typography>
       </div>
 
-      {/* Server Error Alert */}
+      {/* Red Error Banner */}
       {apiError && (
         <div className="p-4 bg-status-danger-bg border border-status-danger-text/30 rounded-[7px] animate-in fade-in slide-in-from-top-1">
           <Typography
@@ -65,7 +76,6 @@ export default function ForgotPasswordPage({
         </div>
       )}
 
-      {/* Form */}
       <FormProvider {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -79,7 +89,6 @@ export default function ForgotPasswordPage({
             placeholder="email@example.com"
           />
 
-          {/* Submit Button */}
           <Button
             type="submit"
             variant="primary"
@@ -89,8 +98,8 @@ export default function ForgotPasswordPage({
             {isPending ? "Sending link..." : "Send reset link"}
           </Button>
 
-          {/* Back to Sign In Link */}
-          <div className="text-center">
+          {/* Back to Sign In */}
+          <div className="text-center pt-2">
             <Typography
               variant="caption"
               className="text-text-secondary text-xs"
@@ -100,7 +109,7 @@ export default function ForgotPasswordPage({
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  onBackToLogin();
+                  navigate("/auth/login");
                 }}
                 className="text-brand-primary font-semibold hover:underline ml-1 cursor-pointer"
               >
@@ -112,13 +121,13 @@ export default function ForgotPasswordPage({
       </FormProvider>
 
       {/* Info Box */}
-      <div className="p-5 bg-surface-mint/80 rounded-2xl border border-brand-primary/10">
+      <div className="p-5 bg-surface-mint rounded-2xl border border-border-input">
         <Typography
           variant="body"
           className="text-sidebar-bg font-medium text-sm leading-relaxed"
         >
-          A 6-digit verification code will be sent to your email address if an
-          account exists under that address.
+          If your email address is registered in our database, you will receive
+          a 6-digit verification code.
         </Typography>
       </div>
     </div>

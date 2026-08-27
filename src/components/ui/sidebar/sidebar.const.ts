@@ -1,5 +1,5 @@
 import {
-  LayoutGrid,
+  LayoutDashboard, //changed here the logo of overview
   Package,
   FolderClosed,
   Clock,
@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 
 export const navItems = [
-  { title: "Overview", navLink: "#overview", icon: LayoutGrid },
-  { title: "Products", navLink: "#products", icon: Package },
-  { title: "Categories", navLink: "#categories", icon: FolderClosed },
-  { title: "Orders", navLink: "#orders", icon: Clock },
-  { title: "Settings", navLink: "#settings", icon: Settings },
+  { title: "Dashboard", navLink: "/dashboard", icon: LayoutDashboard }, //changed here the overview to dashboard
+  { title: "Products", navLink: "/products", icon: Package },
+  { title: "Categories", navLink: "/categories", icon: FolderClosed },
+  { title: "Orders", navLink: "/orders", icon: Clock },
+  { title: "Settings", navLink: "/settings", icon: Settings },
 ];

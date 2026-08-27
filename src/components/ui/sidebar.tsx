@@ -14,12 +14,6 @@ export function Sidebar({
   brandSubtitle = "GROCERY ADMIN",
   className,
 }: SidebarProps) {
-  // TODO: Add route handlers or store actions as needed
-
-  const handleLogout = () => {
-    console.log("Logged out successfully");
-  };
-
   return (
     <aside
       className={`w-64 h-screen bg-sidebar-bg flex flex-col justify-between p-4 select-none shrink-0 font-sans sticky top-0 ${
@@ -50,7 +44,7 @@ export function Sidebar({
 
       <div className="space-y-4 pt-4 border-t border-sidebar-button/40">
         <SidebarUserCard />
-        <SidebarLogoutButton onLogout={handleLogout} />
+        <SidebarLogoutButton />
       </div>
     </aside>
   );
