@@ -1,47 +1,64 @@
-import { Eye, Edit2, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export interface TableActionsProps {
-  onView?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  className?: string;
+type TableActionRow = Record<string, unknown>;
+
+interface TableActionsProps {
+  row: TableActionRow;
+  onView?: (row: TableActionRow) => void;
+  onEdit?: (row: TableActionRow) => void;
+  onDelete?: (row: TableActionRow) => void;
 }
 
 export function TableActions({
+  row,
   onView,
   onEdit,
   onDelete,
-  className,
 }: TableActionsProps) {
+  const navigate = useNavigate();
+  // Aggressively extract the ID from the row object
+  const productId = row?.id || row?.Id || row?.ID;
+
   return (
-    <div className={cn("flex items-center justify-end gap-3", className)}>
+    <div className="flex items-center gap-3">
       <button
         type="button"
-        aria-label="View product"
-        onClick={onView}
-        className="text-[#2E7D32] hover:text-[#1B5E20] transition-colors p-1"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (onView) onView(row);
+          else if (productId) navigate(`/products/${productId}`);
+        }}
+        className="text-muted-foreground hover:text-primary p-1"
       >
         <Eye className="w-4 h-4" />
       </button>
+
       <button
         type="button"
-        aria-label="Edit product"
-        onClick={onEdit}
-        className="text-[#2E7D32] hover:text-[#1B5E20] transition-colors p-1"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (onEdit) onEdit(row);
+          else if (productId) navigate(`/products/${productId}`);
+        }}
+        className="text-muted-foreground hover:text-foreground p-1"
       >
-        <Edit2 className="w-4 h-4" />
+        <Pencil className="w-4 h-4" />
       </button>
+
       <button
         type="button"
-        aria-label="Delete product"
-        onClick={onDelete}
-        className="text-[#E53935] hover:text-[#B71C1C] transition-colors p-1"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (onDelete) onDelete(row);
+        }}
+        className="text-destructive hover:text-destructive/80 p-1"
       >
         <Trash2 className="w-4 h-4" />
       </button>
     </div>
   );
 }
-
-export default TableActions;

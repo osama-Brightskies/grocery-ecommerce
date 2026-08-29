@@ -1,46 +1,34 @@
-export type ProductItem = {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  tags: string[];
+export interface ProductItem {
+  id: string | number;
+  Name?: string;
+  name?: string;
+  Description?: string;
+  description?: string;
+  Brand?: string;
   brand?: string;
-  sku: string;
-  weight: number;
-  dimensions: {
-    width: number;
-    height: number;
-    depth: number;
-  };
-  warrantyInformation: string;
-  shippingInformation: string;
-  availabilityStatus: string;
-  reviews: Array<{
-    rating: number;
-    comment: string;
-    date: string;
-    reviewerName: string;
-    reviewerEmail: string;
-  }>;
-  returnPolicy: string;
-  minimumOrderQuantity: number;
-  meta: {
-    createdAt: string;
-    updatedAt: string;
-    barcode: string;
-    qrCode: string;
-  };
-  thumbnail: string;
-  images: string[];
-};
+  Price?: number;
+  price?: number;
+  StockQuantity?: number;
+  stockQuantity?: number;
+  CategoryId?: number;
+  categoryId?: number;
+  Image?: string;
+  image?: string;
+  AltText?: string;
+  altText?: string;
+  TagIds?: number[];
+  tagIds?: number[];
+}
 
-export type Product = {
-  products: ProductItem[];
-  total: number;
-  skip: number;
-  limit: number;
-};
+export interface ProductDetail {
+  id: string | number;
+  Name: string;
+  Description: string;
+  Brand: string;
+  Price: number;
+  StockQuantity: number;
+  AltText?: string;
+  CategoryId: number;
+  Image: string;
+  TagIds: number[];
+}
