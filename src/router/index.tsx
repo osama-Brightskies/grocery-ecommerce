@@ -8,9 +8,10 @@ import VerifyOtpPage from "../features/auth/verify-otp/VerifyOtpPage";
 import DashboardPage from "../features/dashboard/DashboardPage";
 import { protectedGuard } from "./guards/protectedGuard";
 import { publicAuthGuard } from "./guards/publicAuthGuard";
+import NotFoundRedirect from "./components/NotFoundRedirect";
 
 export const router = createBrowserRouter([
-  // 1. PUBLIC AUTH ROUTES (Wrapped in AuthLayout)
+  // 1. PUBLIC AUTH ROUTES
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -24,27 +25,20 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // 2. PROTECTED APP ROUTES (Wrapped in AppLayout with Sidebar)
+  // 2. PROTECTED APP ROUTES
   {
     path: "/",
     element: <AppLayout />,
     loader: protectedGuard,
     children: [
-      // Default page when visiting / (Dashboard renders by default)
-      { index: true, element: <DashboardPage /> },
-
-      // Alias route for /dashboard
+      { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: "dashboard", element: <DashboardPage /> },
-
-      // Clean top-level sibling routes for teammates:
-      // { path: "products", element: <ProductsPage /> },  <-- URL: /products
-      // { path: "users", element: <UsersPage /> },        <-- URL: /users
     ],
   },
 
-  // Fallback Catch-All
+  // Dynamic Fallback Catch-All
   {
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <NotFoundRedirect />,
   },
 ]);
