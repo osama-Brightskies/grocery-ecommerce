@@ -1,4 +1,4 @@
-import { Gauge, Package, Layers, Tags, ReceiptText } from "lucide-react";
+import { Gauge, Package, Layers, Tags, ReceiptText, Users } from "lucide-react";
 
 export const navItems = [
   { title: "Dashboard", navLink: "/dashboard", icon: Gauge },
@@ -6,4 +6,5 @@ export const navItems = [
   { title: "Categories", navLink: "/categories", icon: Layers },
   { title: "Tags", navLink: "/tags", icon: Tags },
   { title: "Orders", navLink: "/orders", icon: ReceiptText },
+  { title: "Users", navLink: "/users", icon: Users },
 ];
