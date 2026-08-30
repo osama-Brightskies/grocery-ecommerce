@@ -1,22 +1,22 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useResetFlowStore } from "@/store/useResetFlowStore";
 import { useEffect } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { Button } from "../../../components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "../../../components/ui/input-otp";
-import { useResetFlowStore } from "../../../store/useResetFlowStore";
-import { ResendCodeLink } from "./components/ResendCodeLink";
 import { useVerifyOtp } from "./hooks/useVerifyOtp";
+import { toast } from "sonner";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   verifyOtpSchema,
   type VerifyOtpFormTypes,
 } from "./schemas/verify-otp.schema";
 import { Typography } from "@/components/ui/shared/Typography";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import Button from "@/components/ui/button";
+import { ResendCodeLink } from "./components/ResendCodeLink";
 
 export default function VerifyOtpPage() {
   const navigate = useNavigate();

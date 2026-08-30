@@ -1,4 +1,4 @@
-import { http } from "../../../../api";
+import { http } from "@/api";
 import type { ForgotPasswordFormTypes } from "../schemas/forgot-password.schema";
 import type { ForgotPasswordResponse } from "../types/forgot-password.types";
 

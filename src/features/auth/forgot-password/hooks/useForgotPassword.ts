@@ -1,8 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-import type { ApiError } from "../../../../api";
-import { forgotPasswordApi } from "../api/forgot-password.api";
+import type { ApiError } from "@/api";
 import type { ForgotPasswordFormTypes } from "../schemas/forgot-password.schema";
 import type { ForgotPasswordResponse } from "../types/forgot-password.types";
+import { forgotPasswordApi } from "../api/forgot-password.api";
+import { useMutation } from "@tanstack/react-query";
 
 type UseForgotPasswordOptions = {
   onSuccess?: (

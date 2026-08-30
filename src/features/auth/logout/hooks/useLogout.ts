@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import { REFRESH_TOKEN_COOKIE, type ApiError } from "../../../../api";
+import { REFRESH_TOKEN_COOKIE, type ApiError } from "@/api";
 import { logoutApi } from "../api/logout.api";
 
 type UseLogoutOptions = {
@@ -14,13 +14,7 @@ export const useLogout = (options?: UseLogoutOptions) => {
       const refreshToken = Cookies.get(REFRESH_TOKEN_COOKIE) || "";
       return logoutApi(refreshToken);
     },
-
-    onSuccess: () => {
-      options?.onSuccess?.();
-    },
-
-    onError: (error) => {
-      options?.onError?.(error);
-    },
+    onSuccess: options?.onSuccess,
+    onError: options?.onError,
   });
 };

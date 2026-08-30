@@ -1,4 +1,4 @@
-import { http, ApiError } from "../../../../api";
+import { ApiError, http } from "@/api";
 import type { LoginFormTypes } from "../schemas/login.schema";
 import type { LoginResponse } from "../types/login.types";
 

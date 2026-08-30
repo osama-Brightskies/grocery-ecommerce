@@ -1,14 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
-import {
-  AUTH_TOKEN_COOKIE,
-  REFRESH_TOKEN_COOKIE,
-  type ApiError,
-} from "../../../../api/";
-import { useAuthStore } from "../../../../store/useAuthStore";
-import { loginApi } from "../api/login.api";
-import type { LoginFormTypes } from "../schemas/login.schema";
 import type { LoginResponse } from "../types/login.types";
+import type { LoginFormTypes } from "../schemas/login.schema";
+import { AUTH_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, type ApiError } from "@/api";
+import { useAuthStore } from "@/store/useAuthStore";
+import { loginApi } from "../api/login.api";
 
 type UseLoginOptions = {
   onSuccess?: (data: LoginResponse, variables: LoginFormTypes) => void;

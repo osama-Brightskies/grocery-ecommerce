@@ -3,25 +3,25 @@ import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Button } from "../../../components/ui/button";
-import { FormInput } from "../../../components/ui/form-fields/FormInput";
-import { useResetFlowStore } from "../../../store/useResetFlowStore";
+import { Button } from "@/components/ui/button";
+import { FormInput } from "@/components/ui/form-fields/FormInput";
+import { Typography } from "@/components/ui/shared/Typography";
+import { useResetFlowStore } from "@/store/useResetFlowStore";
 import { useResetPassword } from "./hooks/useResetPassword";
 import {
   resetPasswordSchema,
   type ResetPasswordFormTypes,
 } from "./schemas/reset-password.schema";
-import { Typography } from "@/components/ui/shared/Typography";
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const resetToken = useResetFlowStore((state) => state.resetToken);
   const clearResetFlow = useResetFlowStore((state) => state.clearResetFlow);
 
-  // Guard: If user visits /auth/reset-password directly without a token in store, redirect to forgot-password
+  // Guard: If user visits /auth/reset-password directly without a token in store, redirect to login
   useEffect(() => {
     if (!resetToken) {
-      navigate("/auth/forgot-password");
+      navigate("/auth/login", { replace: true });
     }
   }, [resetToken, navigate]);
 
@@ -31,21 +31,21 @@ export default function ResetPasswordPage() {
     error: apiError,
   } = useResetPassword({
     onSuccess: (response) => {
-      // 1. Wipe temporary reset flow store
+      // 1. Wipe temporary reset flow store & purge sessionStorage
       clearResetFlow();
 
       // 2. Toast success & return to login screen
       toast.success(
         response.message || "Password reset successfully! Please sign in.",
       );
-      navigate("/auth/login");
+      navigate("/auth/login", { replace: true });
     },
     onError: (error) => {
       toast.error(error.message || "Failed to reset password.");
     },
   });
 
-  const form = useForm({
+  const form = useForm<ResetPasswordFormTypes>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       newPassword: "",
@@ -133,7 +133,7 @@ export default function ResetPasswordPage() {
                 onClick={(e) => {
                   e.preventDefault();
                   clearResetFlow();
-                  navigate("/auth/login");
+                  navigate("/auth/login", { replace: true });
                 }}
                 className="text-brand-primary font-semibold hover:underline cursor-pointer"
               >

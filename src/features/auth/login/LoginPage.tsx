@@ -1,12 +1,12 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom"; // Imported Link
-import { toast } from "sonner";
-import { Button } from "../../../components/ui/button";
-import { FormInput } from "../../../components/ui/form-fields/FormInput";
+import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "./hooks/useLogin";
+import { toast } from "sonner";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormTypes } from "./schemas/login.schema";
 import { Typography } from "@/components/ui/shared/Typography";
+import { FormInput } from "@/components/ui/form-fields/FormInput";
+import Button from "@/components/ui/button";
 
 export default function LoginPage() {
   const navigate = useNavigate();

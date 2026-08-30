@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware"; // Imported persist middleware
+import { persist } from "zustand/middleware";
 import { AUTH_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "../api";
 import { executeSilentRefresh } from "../features/auth/api/refresh.api";
 import type { LoginData } from "../features/auth/login/types/login.types";
@@ -45,18 +45,22 @@ export const useAuthStore = create<AuthState>()(
           refreshTimerId = null;
         }
 
-        Cookies.remove(AUTH_TOKEN_COOKIE);
-        Cookies.remove(REFRESH_TOKEN_COOKIE);
+        // Remove auth cookies across all subpaths
+        Cookies.remove(AUTH_TOKEN_COOKIE, { path: "/" });
+        Cookies.remove(REFRESH_TOKEN_COOKIE, { path: "/" });
 
+        // Reset state
         set({
           user: null,
           isAuthenticated: false,
         });
+
+        // Completely purge storage key from localStorage on logout
+        useAuthStore.persist.clearStorage();
       },
     }),
     {
-      name: "freshly_auth_session", // Key name in storage
-      storage: createJSONStorage(() => localStorage), // Persists user profile across F5 refreshes!
+      name: "freshly_auth_session", // Defaults to localStorage automatically
     },
   ),
 );

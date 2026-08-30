@@ -1,8 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
-import type { ApiError } from "../../../../api";
-import { resendEmailApi, verifyOtpApi } from "../api/verify-otp.api";
+import type { ApiError } from "@/api";
 import type { VerifyOtpFormTypes } from "../schemas/verify-otp.schema";
 import type { VerifyOtpResponse } from "../types/verify-otp.types";
+import { useMutation } from "@tanstack/react-query";
+import { resendEmailApi, verifyOtpApi } from "../api/verify-otp.api";
 
 type UseVerifyOtpOptions = {
   onSuccess?: (data: VerifyOtpResponse, variables: VerifyOtpFormTypes) => void;

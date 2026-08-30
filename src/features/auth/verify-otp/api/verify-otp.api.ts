@@ -1,4 +1,4 @@
-import { http } from "../../../../api";
+import { http } from "@/api";
 import type { VerifyOtpFormTypes } from "../schemas/verify-otp.schema";
 import type { VerifyOtpResponse } from "../types/verify-otp.types";
 

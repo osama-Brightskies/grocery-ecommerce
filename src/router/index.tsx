@@ -1,13 +1,13 @@
+import AuthLayout from "@/features/auth/layout/AuthLayout";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import AppLayout from "../components/layout/AppLayout";
-import ForgotPasswordPage from "../features/auth/forgot-password/ForgotPasswordPage";
-import AuthLayout from "../features/auth/layout/AuthLayout";
-import LoginPage from "../features/auth/login/LoginPage";
-import ResetPasswordPage from "../features/auth/reset-password/ResetPasswordPage";
-import VerifyOtpPage from "../features/auth/verify-otp/VerifyOtpPage";
-import DashboardPage from "../features/dashboard/DashboardPage";
-import { protectedGuard } from "./guards/protectedGuard";
 import { publicAuthGuard } from "./guards/publicAuthGuard";
+import LoginPage from "@/features/auth/login/LoginPage";
+import ForgotPasswordPage from "@/features/auth/forgot-password/ForgotPasswordPage";
+import VerifyOtpPage from "@/features/auth/verify-otp/VerifyOtpPage";
+import ResetPasswordPage from "@/features/auth/reset-password/ResetPasswordPage";
+import AppLayout from "@/components/layout/AppLayout";
+import { protectedGuard } from "./guards/protectedGuard";
+import DashboardPage from "@/features/dashboard/DashboardPage";
 import NotFoundRedirect from "./components/NotFoundRedirect";
 
 export const router = createBrowserRouter([

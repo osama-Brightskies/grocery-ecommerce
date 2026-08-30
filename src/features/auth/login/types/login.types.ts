@@ -1,10 +1,11 @@
-// Exact structure returned by backend
+import type { UserRole } from "@/store/types/authStore.types";
+
 export type LoginData = {
   accessToken: string;
   accessTokenExpiresAtUtc: string;
   refreshToken: string;
   refreshTokenExpiresAtUtc: string;
-  role: number;
+  role: UserRole;
   userId: string;
 };
 

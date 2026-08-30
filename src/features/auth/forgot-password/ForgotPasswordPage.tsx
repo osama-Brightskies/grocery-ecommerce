@@ -1,16 +1,16 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { Typography } from "@/components/ui/shared/Typography";
+import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { Button } from "../../../components/ui/button";
-import { FormInput } from "../../../components/ui/form-fields/FormInput";
-import { useResetFlowStore } from "../../../store/useResetFlowStore";
+import { useResetFlowStore } from "@/store/useResetFlowStore";
 import { useForgotPassword } from "./hooks/useForgotPassword";
+import { toast } from "sonner";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   forgotPasswordSchema,
   type ForgotPasswordFormTypes,
 } from "./schemas/forgot-password.schema";
-import { Typography } from "@/components/ui/shared/Typography";
+import Button from "@/components/ui/button";
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();

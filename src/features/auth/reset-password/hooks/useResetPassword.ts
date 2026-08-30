@@ -1,10 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
-import type { ApiError } from "../../../../api";
-import { resetPasswordApi } from "../api/reset-password.api";
+import type { ApiError } from "@/api";
 import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
 } from "../types/reset-password.types";
+import { resetPasswordApi } from "../api/reset-password.api";
+import { useMutation } from "@tanstack/react-query";
 
 type UseResetPasswordOptions = {
   onSuccess?: (
