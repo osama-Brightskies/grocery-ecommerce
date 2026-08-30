@@ -1,8 +1,15 @@
-import type { LoginData } from "../../features/auth/login/types/login.types";
+import type { LoginData } from "@/features/auth/login/types/login.types";
+
+export const UserRole = {
+  User: 0,
+  Admin: 1,
+} as const;
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export type UserProfile = {
   userId: string;
-  role: number;
+  role: UserRole;
 };
 
 export type AuthState = {

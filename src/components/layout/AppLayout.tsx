@@ -1,0 +1,26 @@
+import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { Sidebar } from "../ui/sidebar";
+
+export default function AppLayout() {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => !prev);
+  };
+
+  return (
+    <div className="flex min-h-screen bg-surface-soft font-sans antialiased">
+      {/* Sidebar Navigation */}
+      <Sidebar
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebar}
+      />
+
+      {/* Dynamic Main App Page Content */}
+      <main className="flex-1 min-w-0 overflow-y-auto p-8 transition-all duration-300">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
