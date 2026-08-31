@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "freshly_auth_session", // Defaults to localStorage automatically
+      name: "BigCart_auth_session", // Defaults to localStorage automatically
     },
   ),
 );

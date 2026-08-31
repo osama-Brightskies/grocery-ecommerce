@@ -19,7 +19,7 @@ export const useResetFlowStore = create<ResetFlowState>()(
       clearResetFlow: () => set({ resetEmail: "", resetToken: "" }),
     }),
     {
-      name: "freshly_reset_flow",
+      name: "BigCart_reset_flow",
       storage: createJSONStorage(() => sessionStorage),
     },
   ),
