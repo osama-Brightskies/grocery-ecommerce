@@ -108,4 +108,14 @@
   --color-status-danger-bg: #ffe5e5; /* "Out of stock" status badge background */
   --color-status-danger-text: #c7332e; /* "Out of stock" status badge text */
   --color-status-danger-icon: #c8332f; /* Trash/Delete icon color */
+
+  /* ==========================================================================
+     7. AVATAR ACCENT COLORS
+     ========================================================================== */
+  --color-avatar-emerald: #1f7d47;
+  --color-avatar-green: #33a35c;
+  --color-avatar-purple: #8b5cf6;
+  --color-avatar-blue: #0284c7;
+  --color-avatar-orange: #f59e0b;
+  --color-avatar-pink: #ec4899;
 }
