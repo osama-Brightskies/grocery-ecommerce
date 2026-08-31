@@ -2,8 +2,8 @@ import axios, { type AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { toApiError } from "./errors";
 
-export const AUTH_TOKEN_COOKIE = "freshly_access_token";
-export const REFRESH_TOKEN_COOKIE = "freshly_refresh_token";
+export const AUTH_TOKEN_COOKIE = "BigCart_access_token";
+export const REFRESH_TOKEN_COOKIE = "BigCart_refresh_token";
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "",

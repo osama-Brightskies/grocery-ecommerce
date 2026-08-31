@@ -18,7 +18,7 @@ export default function DashboardPage() {
     <div data-testid="dashboard-page" className="mx-auto max-w-4xl space-y-6">
       <div className="bg-white p-8 rounded-[7px] border border-border-input shadow-sm space-y-4">
         <Typography variant="h1" className="text-brand-primary font-bold">
-          Freshly Admin Dashboard 🌿
+          Big Cart Admin Dashboard 🌿
         </Typography>
         <Typography variant="muted" className="text-text-secondary">
           You are successfully authenticated and inside the protected main app!
