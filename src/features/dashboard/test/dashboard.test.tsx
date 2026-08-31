@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import DashboardPage from "../DashboardPage";
 import { UserRole } from "@/store/types/authStore.types";
@@ -6,7 +6,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 describe("DashboardPage", () => {
   afterEach(() => {
-    useAuthStore.setState({ user: null, isAuthenticated: false });
+    act(() => {
+      useAuthStore.setState({ user: null, isAuthenticated: false });
+    });
   });
 
   it.each([
@@ -31,7 +33,9 @@ describe("DashboardPage", () => {
   ])(
     "renders the $label profile state",
     ({ user, isAuthenticated, roleText }) => {
-      useAuthStore.setState({ user, isAuthenticated });
+      act(() => {
+        useAuthStore.setState({ user, isAuthenticated });
+      });
       render(<DashboardPage />);
 
       expect(screen.getByTestId("dashboard-page")).toBeInTheDocument();

@@ -1,8 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import {
+  AUTH_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+  type ApiError,
+} from "../../../../api/";
 import type { LoginResponse } from "../types/login.types";
 import type { LoginFormTypes } from "../schemas/login.schema";
-import { AUTH_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, type ApiError } from "@/api";
 import { useAuthStore } from "@/store/useAuthStore";
 import { loginApi } from "../api/login.api";
 
@@ -28,16 +32,22 @@ export const useLogin = (options?: UseLoginOptions) => {
       const accessExpires = new Date(accessTokenExpiresAtUtc);
       const refreshExpires = new Date(refreshTokenExpiresAtUtc);
 
-      // Core Security Infrastructure: Cookies & Zustand
-      Cookies.set(AUTH_TOKEN_COOKIE, accessToken, { expires: accessExpires });
+      // 1. Store Access Token & Refresh Token in Cookies with root path '/'
+      Cookies.set(AUTH_TOKEN_COOKIE, accessToken, {
+        expires: accessExpires,
+        path: "/",
+      });
       if (refreshToken) {
         Cookies.set(REFRESH_TOKEN_COOKIE, refreshToken, {
           expires: refreshExpires,
+          path: "/",
         });
       }
+
+      // 2. Set Global Zustand Auth State & Schedule Proactive Timer
       setAuth(response.data);
 
-      // External UI Callback
+      // 3. Trigger UI callback (e.g. toast & navigate in LoginPage)
       options?.onSuccess?.(response, variables);
     },
 

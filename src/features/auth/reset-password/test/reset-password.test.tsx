@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import ResetPasswordPage from "../ResetPasswordPage";
 import { resetPasswordSchema } from "../schemas/reset-password.schema";
@@ -7,11 +7,15 @@ import { useResetFlowStore } from "@/store/useResetFlowStore";
 
 describe("ResetPasswordPage", () => {
   afterEach(() => {
-    useResetFlowStore.getState().clearResetFlow();
+    act(() => {
+      useResetFlowStore.getState().clearResetFlow();
+    });
   });
 
   it("renders the password reset form with a reset token", () => {
-    useResetFlowStore.getState().setResetToken("reset-token");
+    act(() => {
+      useResetFlowStore.getState().setResetToken("reset-token");
+    });
     renderAuthPage(<ResetPasswordPage />);
 
     expect(screen.getByTestId("reset-password-page")).toBeInTheDocument();
@@ -22,7 +26,9 @@ describe("ResetPasswordPage", () => {
   });
 
   it("validates both password fields", async () => {
-    useResetFlowStore.getState().setResetToken("reset-token");
+    act(() => {
+      useResetFlowStore.getState().setResetToken("reset-token");
+    });
     renderAuthPage(<ResetPasswordPage />);
 
     fireEvent.click(screen.getByTestId("reset-password-submit-button"));
