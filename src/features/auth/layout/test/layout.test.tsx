@@ -22,7 +22,9 @@ describe("AuthLayout", () => {
 
     expect(screen.getByTestId("auth-layout")).toBeInTheDocument();
     expect(screen.getByTestId("auth-left-banner")).toBeInTheDocument();
-    expect(screen.getByText(/Fresh products\. Clear operations/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Fresh products\. Clear operations/),
+    ).toBeInTheDocument();
     expect(screen.getByText("auth content")).toBeInTheDocument();
   });
 

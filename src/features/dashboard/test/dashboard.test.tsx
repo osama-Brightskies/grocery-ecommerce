@@ -28,16 +28,19 @@ describe("DashboardPage", () => {
       isAuthenticated: false,
       roleText: "N/A",
     },
-  ])("renders the $label profile state", ({ user, isAuthenticated, roleText }) => {
-    useAuthStore.setState({ user, isAuthenticated });
-    render(<DashboardPage />);
+  ])(
+    "renders the $label profile state",
+    ({ user, isAuthenticated, roleText }) => {
+      useAuthStore.setState({ user, isAuthenticated });
+      render(<DashboardPage />);
 
-    expect(screen.getByTestId("dashboard-page")).toBeInTheDocument();
-    expect(screen.getByTestId("dashboard-user-profile")).toHaveTextContent(
-      roleText,
-    );
-    expect(screen.getByTestId("dashboard-user-profile")).toHaveTextContent(
-      String(isAuthenticated),
-    );
-  });
+      expect(screen.getByTestId("dashboard-page")).toBeInTheDocument();
+      expect(screen.getByTestId("dashboard-user-profile")).toHaveTextContent(
+        roleText,
+      );
+      expect(screen.getByTestId("dashboard-user-profile")).toHaveTextContent(
+        String(isAuthenticated),
+      );
+    },
+  );
 });

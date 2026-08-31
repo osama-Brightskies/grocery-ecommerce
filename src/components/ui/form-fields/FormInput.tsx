@@ -97,12 +97,12 @@ export const FormInput = <TFieldValues extends FieldValues = FieldValues>({
       />
 
       {typeof errMsg === "string" && (
-          <Typography
-            variant="muted"
-            className="text-status-danger-text text-[12px] ml-0.5 mt-0.5 animate-in fade-in slide-in-from-top-1"
-          >
-            {errMsg}
-          </Typography>
+        <Typography
+          variant="muted"
+          className="text-status-danger-text text-[12px] ml-0.5 mt-0.5 animate-in fade-in slide-in-from-top-1"
+        >
+          {errMsg}
+        </Typography>
       )}
     </div>
   );

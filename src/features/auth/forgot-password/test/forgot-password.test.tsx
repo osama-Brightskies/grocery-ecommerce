@@ -30,7 +30,8 @@ describe("ForgotPasswordPage", () => {
 
 describe("forgotPasswordSchema", () => {
   it("accepts a valid email", () => {
-    expect(forgotPasswordSchema.safeParse({ email: "user@example.com" }).success)
-      .toBe(true);
+    expect(
+      forgotPasswordSchema.safeParse({ email: "user@example.com" }).success,
+    ).toBe(true);
   });
 });

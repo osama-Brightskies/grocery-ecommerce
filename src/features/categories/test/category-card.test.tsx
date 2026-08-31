@@ -38,8 +38,8 @@ describe("CategoryCard", () => {
     );
 
     expect(screen.getByTestId("category-card")).toBeInTheDocument();
-    expect(screen.getByTestId("category-card").firstElementChild).toHaveTextContent(
-      "0 products",
-    );
+    expect(
+      screen.getByTestId("category-card").firstElementChild,
+    ).toHaveTextContent("0 products");
   });
 });
