@@ -62,7 +62,10 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div
+      data-testid="reset-password-page"
+      className="w-full max-w-md space-y-8"
+    >
       <div className="space-y-1.5">
         <Typography
           variant="h1"
@@ -88,6 +91,7 @@ export default function ResetPasswordPage() {
 
       <FormProvider {...form}>
         <form
+          data-testid="reset-password-form"
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
           className="space-y-6"
@@ -116,6 +120,7 @@ export default function ResetPasswordPage() {
 
           <Button
             type="submit"
+            data-testid="reset-password-submit-button"
             variant="primary"
             disabled={isPending}
             className="w-full h-11 rounded-[7px]"

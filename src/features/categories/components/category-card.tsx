@@ -21,6 +21,7 @@ export function CategoryCard({
 
   return (
     <div
+      data-testid="category-card"
       className={cn(
         "bg-card rounded-2xl border border-border p-6 shadow-xs flex flex-col justify-between hover:shadow-sm transition-all relative group",
         className,
@@ -51,6 +52,7 @@ export function CategoryCard({
       <div className="flex items-center justify-start ml-15 gap-3 mt-6 pt-3 border-t border-border">
         <button
           type="button"
+          data-testid="category-edit-button"
           aria-label={`Edit ${name}`}
           onClick={onEdit}
           className="p-1.5 rounded-lg text-primary hover:bg-secondary transition-colors cursor-pointer"
@@ -59,6 +61,7 @@ export function CategoryCard({
         </button>
         <button
           type="button"
+          data-testid="category-delete-button"
           aria-label={`Delete ${name}`}
           onClick={onDelete}
           className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
