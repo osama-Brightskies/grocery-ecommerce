@@ -15,7 +15,7 @@ export default function DashboardPage() {
         : "N/A";
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div data-testid="dashboard-page" className="mx-auto max-w-4xl space-y-6">
       <div className="bg-white p-8 rounded-[7px] border border-border-input shadow-sm space-y-4">
         <Typography variant="h1" className="text-brand-primary font-bold">
           Freshly Admin Dashboard 🌿
@@ -25,7 +25,10 @@ export default function DashboardPage() {
         </Typography>
 
         {/* User Profile Card */}
-        <div className="p-4 bg-surface-soft rounded-[7px] border border-border-input space-y-2 text-xs font-mono">
+        <div
+          data-testid="dashboard-user-profile"
+          className="p-4 bg-surface-soft rounded-[7px] border border-border-input space-y-2 text-xs font-mono"
+        >
           <Typography className="text-sidebar-bg font-bold">
             Zustand Store Payload:
           </Typography>
