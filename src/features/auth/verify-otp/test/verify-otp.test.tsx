@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { act, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import VerifyOtpPage from "../VerifyOtpPage";
 import { verifyOtpSchema } from "../schemas/verify-otp.schema";
@@ -7,11 +7,15 @@ import { useResetFlowStore } from "@/store/useResetFlowStore";
 
 describe("VerifyOtpPage", () => {
   afterEach(() => {
-    useResetFlowStore.getState().clearResetFlow();
+    act(() => {
+      useResetFlowStore.getState().clearResetFlow();
+    });
   });
 
   it("renders the code form for the stored reset email", () => {
-    useResetFlowStore.getState().setResetEmail("user@example.com");
+    act(() => {
+      useResetFlowStore.getState().setResetEmail("user@example.com");
+    });
     renderAuthPage(<VerifyOtpPage />);
 
     expect(screen.getByTestId("verify-otp-page")).toBeInTheDocument();

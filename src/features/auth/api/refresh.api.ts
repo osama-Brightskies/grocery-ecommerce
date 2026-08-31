@@ -37,7 +37,7 @@ export const executeSilentRefresh = async (): Promise<boolean> => {
     const accessExpires = getValidDate(accessTokenExpiresAtUtc);
     const refreshExpires = getValidDate(refreshTokenExpiresAtUtc);
 
-    // 1. SET COOKIES SYNCHRONOUSLY (0ms delay)
+    // Save Access Token & Refresh Token with root path '/'
     Cookies.set(AUTH_TOKEN_COOKIE, accessToken, {
       expires: accessExpires,
       path: "/",
@@ -47,29 +47,14 @@ export const executeSilentRefresh = async (): Promise<boolean> => {
       path: "/",
     });
 
-    // 2. PROOF: Read cookies from RAM on the very next line of code
-    console.log("⚡ INSTANT VERIFICATION (0ms delay):");
-    console.log(
-      " - Active Access Token in RAM:",
-      Cookies.get(AUTH_TOKEN_COOKIE),
-    );
-    console.log(
-      " - Active Refresh Token in RAM:",
-      Cookies.get(REFRESH_TOKEN_COOKIE),
-    );
-
-    // 3. Update Zustand state
+    // Update Zustand State & Schedule NEXT Proactive Timer
     useAuthStore.getState().setAuth({
       ...data.data,
       refreshToken: activeRefreshToken,
     });
 
     return true;
-  } catch (error) {
-    console.error(
-      "❌ Silent Refresh Failed -> Triggering Forced Logout",
-      error,
-    );
+  } catch {
     useAuthStore.getState().clearAuth();
     return false;
   }
