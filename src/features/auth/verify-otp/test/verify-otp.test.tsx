@@ -18,7 +18,6 @@ describe("VerifyOtpPage", () => {
     expect(screen.getByText(/user@example.com/)).toBeInTheDocument();
     expect(screen.getByTestId("resend-code-button")).toBeInTheDocument();
   });
-
 });
 
 describe("verifyOtpSchema", () => {

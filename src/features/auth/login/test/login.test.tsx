@@ -23,9 +23,7 @@ describe("LoginPage", () => {
     expect(
       await screen.findByText("Please enter a valid email address"),
     ).toBeInTheDocument();
-    expect(
-      await screen.findByText("Password is required"),
-    ).toBeInTheDocument();
+    expect(await screen.findByText("Password is required")).toBeInTheDocument();
   });
 });
 
