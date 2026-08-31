@@ -17,7 +17,7 @@ export function AuthLeftBanner({
         variant="h1"
         className="text-3xl font-bold tracking-tight text-white"
       >
-        freshly
+        Big Cart
       </Typography>
 
       {/* Hero Heading & Quote Card */}
