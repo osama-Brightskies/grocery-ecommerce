@@ -50,6 +50,7 @@ export function ResendCodeLink({
       Didn't receive the code?{" "}
       <button
         type="button"
+        data-testid="resend-code-button"
         disabled={countdown > 0 || isResending}
         onClick={handleResend}
         className="text-brand-primary font-semibold hover:underline ml-1 cursor-pointer disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
