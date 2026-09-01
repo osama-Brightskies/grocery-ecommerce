@@ -6,6 +6,12 @@ import type { LoginResponse } from "../login/types/login.types";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "";
 
+const getValidDate = (dateStr?: string): Date | undefined => {
+  if (!dateStr) return undefined;
+  const parsed = new Date(dateStr);
+  return isNaN(parsed.getTime()) ? undefined : parsed;
+};
+
 export const executeSilentRefresh = async (): Promise<boolean> => {
   const refreshToken = Cookies.get(REFRESH_TOKEN_COOKIE);
 
@@ -27,17 +33,26 @@ export const executeSilentRefresh = async (): Promise<boolean> => {
       refreshTokenExpiresAtUtc,
     } = data.data;
 
-    const accessExpires = new Date(accessTokenExpiresAtUtc);
-    const refreshExpires = new Date(refreshTokenExpiresAtUtc);
+    const activeRefreshToken = newRefreshToken || refreshToken;
+    const accessExpires = getValidDate(accessTokenExpiresAtUtc);
+    const refreshExpires = getValidDate(refreshTokenExpiresAtUtc);
 
-    Cookies.set(AUTH_TOKEN_COOKIE, accessToken, { expires: accessExpires });
-    if (newRefreshToken) {
-      Cookies.set(REFRESH_TOKEN_COOKIE, newRefreshToken, {
-        expires: refreshExpires,
-      });
-    }
+    // Save Access Token & Refresh Token with root path '/'
+    Cookies.set(AUTH_TOKEN_COOKIE, accessToken, {
+      expires: accessExpires,
+      path: "/",
+    });
+    Cookies.set(REFRESH_TOKEN_COOKIE, activeRefreshToken, {
+      expires: refreshExpires,
+      path: "/",
+    });
 
-    useAuthStore.getState().setAuth(data.data);
+    // Update Zustand State & Schedule NEXT Proactive Timer
+    useAuthStore.getState().setAuth({
+      ...data.data,
+      refreshToken: activeRefreshToken,
+    });
+
     return true;
   } catch {
     useAuthStore.getState().clearAuth();
