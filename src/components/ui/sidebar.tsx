@@ -4,13 +4,13 @@ import { SidebarLogoutButton } from "./sidebar/sidebar-logout-button";
 import { navItems } from "./sidebar/sidebar.const";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export interface SidebarProps {
+export type SidebarProps = {
   brandTitle?: string;
   brandSubtitle?: string;
   className?: string;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
-}
+};
 
 export function Sidebar({
   brandTitle = "freshly",
@@ -21,7 +21,7 @@ export function Sidebar({
 }: SidebarProps) {
   return (
     <aside
-      className={`h-screen bg-sidebar-bg flex flex-col justify-between select-none shrink-0 font-sans sticky top-0 border-r border-white/10 transition-all duration-300 ease-in-out ${
+      className={`z-50 h-screen bg-sidebar-bg flex flex-col justify-between select-none shrink-0 font-sans sticky top-0 border-r border-white/10 transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-16 p-2" : "w-64 p-4"
       } ${className}`}
     >

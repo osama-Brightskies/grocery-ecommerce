@@ -118,4 +118,12 @@
   --color-avatar-blue: #0284c7;
   --color-avatar-orange: #f59e0b;
   --color-avatar-pink: #ec4899;
+
+  /* ==========================================================================
+     8. ROLE BADGES (Admin / User)
+     ========================================================================== */
+  --color-role-admin-bg: #f3e8ff; /* Admin role badge background */
+  --color-role-admin-text: #7e22ce; /* Admin role badge text */
+  --color-role-user-bg: #e0f2fe; /* User/Customer role badge background */
+  --color-role-user-text: #0369a1; /* User/Customer role badge text */
 }

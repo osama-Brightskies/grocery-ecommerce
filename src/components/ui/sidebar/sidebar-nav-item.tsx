@@ -24,7 +24,7 @@ export function SidebarNavItem({
     (navLink !== "/" && location.pathname.startsWith(navLink));
 
   return (
-    <div className="relative group/tooltip flex items-center w-full">
+    <div className="relative group flex items-center w-full group-hover:z-50">
       <Link
         to={navLink}
         className={cn(
@@ -40,11 +40,16 @@ export function SidebarNavItem({
         {!isCollapsed && <span>{title}</span>}
       </Link>
 
-      {/* Brand Green Themed Tooltip */}
+      {/* Flyout Tooltip with Dark #141C18 Triangle */}
       {isCollapsed && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 px-3 py-1.5 bg-[#141C18] text-surface-mint text-xs font-semibold rounded-[7px] border border-brand-primary/60 shadow-lg shadow-brand-primary/10 whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-150 pointer-events-none z-50">
-          {title}
-          <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#141C18] border-l border-b border-brand-primary/60 rotate-45" />
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-100">
+          {/* Dark Triangle Pointer */}
+          <div className="w-0 h-0 border-y-[5px] border-y-transparent border-r-[6px] border-r-[#141C18] shrink-0 -mr-px" />
+
+          {/* Dark Tooltip Body */}
+          <div className="px-3 py-1.5 bg-[#141C18] text-surface-mint text-xs font-semibold rounded-[7px] border border-brand-primary shadow-lg shadow-black/50 whitespace-nowrap">
+            {title}
+          </div>
         </div>
       )}
     </div>

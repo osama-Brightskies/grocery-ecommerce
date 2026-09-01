@@ -1,11 +1,15 @@
 import { cn } from "@/lib/utils";
+import { Typography } from "@/components/ui/shared/Typography";
 
-export interface PaginationProps {
+// ============================================================================
+// 1. Pure Pagination Control (Numbers & Arrows only)
+// ============================================================================
+export type PaginationProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
   className?: string;
-}
+};
 
 export function Pagination({
   currentPage,
@@ -42,59 +46,139 @@ export function Pagination({
     <nav
       role="navigation"
       aria-label="pagination"
-      className={cn(
-        "flex items-center justify-end select-none py-4 pt-6",
-        className,
-      )}
+      className={cn("flex items-center gap-2 select-none", className)}
     >
-      <div className="flex items-center gap-3 text-sm font-semibold text-[#1B803A]">
-        <button
-          type="button"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-          className="text-lg leading-none disabled:opacity-30 hover:opacity-75 cursor-pointer px-1"
-        >
-          ‹
-        </button>
+      {/* Previous Button */}
+      <button
+        type="button"
+        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPage - 1)}
+        className="text-lg leading-none disabled:opacity-30 hover:opacity-75 cursor-pointer px-1 text-brand-primary transition-opacity"
+        title="Previous page"
+      >
+        ‹
+      </button>
 
-        {getPageNumbers().map((page, idx) => {
-          if (typeof page === "string") {
-            return (
-              <span key={`ellipsis-${idx}`} className="px-0.5 tracking-wider">
-                ...
-              </span>
-            );
-          }
-
-          const isActive = page === currentPage;
+      {/* Page Numbers & Ellipsis */}
+      {getPageNumbers().map((page, idx) => {
+        if (typeof page === "string") {
           return (
-            <button
-              key={page}
-              type="button"
-              onClick={() => onPageChange(page)}
-              className={cn(
-                "cursor-pointer px-1 transition-opacity",
-                isActive
-                  ? "font-bold text-[#1B803A]"
-                  : "font-medium opacity-80 hover:opacity-100",
-              )}
+            <span
+              key={`ellipsis-${idx}`}
+              className="px-0.5 tracking-wider text-text-secondary font-normal"
             >
-              {page}
-            </button>
+              ...
+            </span>
           );
-        })}
+        }
 
-        <button
-          type="button"
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-          className="text-lg leading-none disabled:opacity-30 hover:opacity-75 cursor-pointer px-1"
-        >
-          ›
-        </button>
-      </div>
+        const isActive = page === currentPage;
+        return (
+          <button
+            key={page}
+            type="button"
+            onClick={() => onPageChange(page)}
+            className={cn(
+              "cursor-pointer px-2 py-0.5 rounded text-sm transition-colors",
+              isActive
+                ? "font-bold text-brand-primary bg-surface-mint"
+                : "font-medium text-sidebar-bg/80 hover:text-sidebar-bg hover:bg-surface-soft",
+            )}
+          >
+            {page}
+          </button>
+        );
+      })}
+
+      {/* Next Button */}
+      <button
+        type="button"
+        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+        className="text-lg leading-none disabled:opacity-30 hover:opacity-75 cursor-pointer px-1 text-brand-primary transition-opacity"
+        title="Next page"
+      >
+        ›
+      </button>
     </nav>
   );
 }
 
-export default Pagination;
+// ============================================================================
+// 2. Full Pagination Bar (Showing Info + Dropdown + <Pagination />)
+// ============================================================================
+export type PaginationBarProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  totalCount?: number;
+  pageSize?: number;
+  onPageSizeChange?: (pageSize: number) => void;
+  pageSizeOptions?: number[];
+  showPageSizeSelect?: boolean;
+  showShowingInfo?: boolean;
+  className?: string;
+};
+
+export function PaginationBar({
+  currentPage,
+  totalPages,
+  onPageChange,
+  totalCount,
+  pageSize = 10,
+  onPageSizeChange,
+  pageSizeOptions = [5, 10, 15, 20, 25, 50],
+  showPageSizeSelect = true,
+  showShowingInfo = true,
+  className,
+}: PaginationBarProps) {
+  const hasShowingInfo = showShowingInfo && totalCount !== undefined;
+  const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalCount ?? 0);
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border select-none",
+        className,
+      )}
+    >
+      {/* 1. Left: Showing entries text */}
+      {hasShowingInfo ? (
+        <Typography variant="muted" className="text-xs text-text-secondary">
+          Showing {startItem}-{endItem} of {totalCount}
+        </Typography>
+      ) : (
+        <div />
+      )}
+
+      {/* 2. Right: Page Size Dropdown + Inner <Pagination /> */}
+      <div className="flex items-center gap-4">
+        {showPageSizeSelect && onPageSizeChange && (
+          <div className="flex items-center gap-2">
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="h-9 px-3 rounded-lg border border-border bg-card text-xs font-medium text-sidebar-bg focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer hover:border-border-input transition-colors"
+            >
+              {pageSizeOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt} per page
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Pure Pagination Component */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default PaginationBar;

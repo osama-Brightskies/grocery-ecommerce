@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "../ui/sidebar";
+import Sidebar from "../ui/sidebar";
 
 export default function AppLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -18,7 +18,7 @@ export default function AppLayout() {
       />
 
       {/* Dynamic Main App Page Content */}
-      <main className="flex-1 min-w-0 overflow-y-auto p-8 transition-all duration-300">
+      <main className="flex-1 min-w-0 overflow-y-auto p-8 transition-all duration-300 relative z-0">
         <Outlet />
       </main>
     </div>

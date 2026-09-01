@@ -25,6 +25,7 @@ export function useGetUserDetail(
         throw error;
       }
     },
-    enabled: options?.enabled ?? Boolean(userId),
+    enabled: Boolean(userId),
+    retry: false,
   });
 }

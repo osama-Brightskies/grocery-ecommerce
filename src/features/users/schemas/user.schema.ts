@@ -7,7 +7,6 @@ export const updateUserSchema = z.object({
     .string()
     .min(1, "Phone number is required")
     .regex(/^[0-9+\s-]{8,15}$/, "Invalid phone number format"),
-  isActive: z.boolean(),
 });
 
 export type UpdateUserFormValues = z.infer<typeof updateUserSchema>;

@@ -23,8 +23,8 @@ export function useUpdateUser(options?: UseUpdateUserOptions) {
       payload: UpdateUserPayload;
     }) => updateUserApi(userId, payload),
 
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
       options?.onSuccess?.(data);
     },
 

@@ -1,9 +1,12 @@
+import { UserRole } from "@/store/types/authStore.types";
+
 export type User = {
   guid: string;
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
+  role: UserRole;
   isActive: boolean;
   createdAt: string;
 };
@@ -50,7 +53,7 @@ export type UpdateUserResponse = {
   success: boolean;
   statusCode: number;
   message: string;
-  data: null;
+  data: User;
 };
 
 export type UserActivity = {

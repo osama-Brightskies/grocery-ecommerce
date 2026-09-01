@@ -1,10 +1,10 @@
 import * as React from "react";
-import { Pagination } from "@/components/ui/pagination";
 import { TableActions } from "@/components/ui/shared/table/table-actions";
 import { fetchProducts, deleteProduct } from "@/api/products.api";
 import StatusBadge from "@/features/products/components/status-badge";
 import type { ProductItem } from "@/features/products/types/products.types";
 import DataTable from "../../table";
+import { Pagination } from "../../pagination";
 
 export default function Products() {
   const [data, setData] = React.useState<ProductItem[]>([]);
