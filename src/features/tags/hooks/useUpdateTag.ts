@@ -11,7 +11,8 @@ export const useUpdateTag = (options?: { onSuccess?: () => void }) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ slug, ...data }: UpdateTagPayload) => updateTagApi(slug, data),
+    mutationFn: ({ slug, ...data }: UpdateTagPayload) =>
+      updateTagApi(slug, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       options?.onSuccess?.();

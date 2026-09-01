@@ -11,18 +11,20 @@ interface ApiTagResponse {
   success?: boolean;
   statusCode?: number;
   message?: string;
-  data?: {
-    data?: Tag[];
-    items?: Tag[];
-    pagination?: {
-      currentPage?: number;
-      pageSize?: number;
-      totalCount?: number;
-      totalPages?: number;
-      hasNext?: boolean;
-      hasPrevious?: boolean;
-    };
-  } | Tag[];
+  data?:
+    | {
+        data?: Tag[];
+        items?: Tag[];
+        pagination?: {
+          currentPage?: number;
+          pageSize?: number;
+          totalCount?: number;
+          totalPages?: number;
+          hasNext?: boolean;
+          hasPrevious?: boolean;
+        };
+      }
+    | Tag[];
 }
 
 export function useTagsPage() {
@@ -33,10 +35,15 @@ export function useTagsPage() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [activeTag, setActiveTag] = useState<Tag | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: tagsData, isLoading, isError, refetch } = useGetTags(page, pageSize);
+  const {
+    data: tagsData,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetTags(page, pageSize);
 
   const createMutation = useCreateTag({
     onSuccess: () => {
@@ -64,7 +71,7 @@ export function useTagsPage() {
   });
 
   const responseObj = tagsData as ApiTagResponse | undefined;
-  
+
   let tags: Tag[] = [];
   let totalPages = 1;
 
