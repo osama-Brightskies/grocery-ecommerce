@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "freshly_auth_session",
+      name: "BigCart_auth_session",
       storage: createJSONStorage(() => localStorage),
     },
   ),
