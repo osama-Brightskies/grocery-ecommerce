@@ -32,7 +32,7 @@ describe("UserDetailPage", () => {
     vi.mocked(useGetUserActivities).mockReturnValue({
       data: { data: [] },
       isLoading: false,
-    } as ReturnType<typeof useGetUserActivities>);
+    } as unknown as ReturnType<typeof useGetUserActivities>);
   });
 
   it("renders the loading state", () => {
@@ -40,7 +40,7 @@ describe("UserDetailPage", () => {
       data: undefined,
       isLoading: true,
       isError: false,
-    } as ReturnType<typeof useGetUserDetail>);
+    } as unknown as ReturnType<typeof useGetUserDetail>);
 
     renderUsersPage(<UserDetailPage />, "/users/user-123", "/users/:userId");
     expect(screen.getByText("Loading user profile...")).toBeInTheDocument();
@@ -51,12 +51,16 @@ describe("UserDetailPage", () => {
       data: undefined,
       isLoading: false,
       isError: true,
-    } as ReturnType<typeof useGetUserDetail>);
+    } as unknown as ReturnType<typeof useGetUserDetail>);
 
     renderUsersPage(<UserDetailPage />, "/users/missing", "/users/:userId");
-    expect(screen.getByRole("heading", { name: "User not found" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "User not found" }),
+    ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /return to user list/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /return to user list/i }),
+    );
     expect(screen.getByText("User list destination")).toBeInTheDocument();
   });
 
@@ -65,7 +69,7 @@ describe("UserDetailPage", () => {
       data: { data: user },
       isLoading: false,
       isError: false,
-    } as ReturnType<typeof useGetUserDetail>);
+    } as unknown as ReturnType<typeof useGetUserDetail>);
     vi.mocked(useGetUserActivities).mockReturnValue({
       data: {
         data: [
@@ -78,11 +82,13 @@ describe("UserDetailPage", () => {
         ],
       },
       isLoading: false,
-    } as ReturnType<typeof useGetUserActivities>);
+    } as unknown as ReturnType<typeof useGetUserActivities>);
 
     renderUsersPage(<UserDetailPage />, "/users/user-123", "/users/:userId");
 
-    expect(screen.getByRole("heading", { name: "Mona Ali" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Mona Ali" }),
+    ).toBeInTheDocument();
     expect(screen.getAllByText("User").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
     expect(screen.getByText("Placed order")).toBeInTheDocument();

@@ -78,7 +78,10 @@ export default function EditUserSheet({
     });
   };
 
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+  const fullName = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>

@@ -31,7 +31,9 @@ function createWrapper() {
   });
 
   return function Wrapper({ children }: { children: ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+    return (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
   };
 }
 
@@ -68,9 +70,12 @@ describe("users query hooks", () => {
     };
     vi.mocked(getUsersApi).mockResolvedValue(response);
 
-    const { result } = renderHook(() => useGetUsers({ pageNumber: 2, pageSize: 5 }), {
-      wrapper: createWrapper(),
-    });
+    const { result } = renderHook(
+      () => useGetUsers({ pageNumber: 2, pageSize: 5 }),
+      {
+        wrapper: createWrapper(),
+      },
+    );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(getUsersApi).toHaveBeenCalledWith({ pageNumber: 2, pageSize: 5 });
@@ -87,7 +92,12 @@ describe("users query hooks", () => {
   });
 
   it("loads activities for the selected user", async () => {
-    const response = { success: true, statusCode: 200, message: "ok", data: [] };
+    const response = {
+      success: true,
+      statusCode: 200,
+      message: "ok",
+      data: [],
+    };
     vi.mocked(getUserActivitiesApi).mockResolvedValue(response);
 
     const { result } = renderHook(() => useGetUserActivities("user-123"), {

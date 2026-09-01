@@ -21,7 +21,10 @@ export function renderUsersPage(
         <Routes>
           <Route path={routePath} element={ui} />
           <Route path="/users" element={<div>User list destination</div>} />
-          <Route path="/users/:userId" element={<div>User detail destination</div>} />
+          <Route
+            path="/users/:userId"
+            element={<div>User detail destination</div>}
+          />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
