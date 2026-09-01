@@ -13,7 +13,7 @@ export type SidebarProps = {
 };
 
 export function Sidebar({
-  brandTitle = "freshly",
+  brandTitle = "Big Cart",
   brandSubtitle = "GROCERY ADMIN",
   className = "",
   isCollapsed = false,

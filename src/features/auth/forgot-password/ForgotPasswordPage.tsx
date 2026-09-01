@@ -50,7 +50,10 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div
+      data-testid="forgot-password-page"
+      className="w-full max-w-md space-y-8"
+    >
       {/* Header */}
       <div className="space-y-1.5">
         <Typography
@@ -78,6 +81,7 @@ export default function ForgotPasswordPage() {
 
       <FormProvider {...form}>
         <form
+          data-testid="forgot-password-form"
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
           className="space-y-6"
@@ -91,6 +95,7 @@ export default function ForgotPasswordPage() {
 
           <Button
             type="submit"
+            data-testid="forgot-password-submit-button"
             variant="primary"
             disabled={isPending}
             className="w-full h-11 rounded-[7px]"

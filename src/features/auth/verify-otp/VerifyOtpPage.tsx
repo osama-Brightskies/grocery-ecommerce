@@ -67,7 +67,7 @@ export default function VerifyOtpPage() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div data-testid="verify-otp-page" className="w-full max-w-md space-y-8">
       {/* Header */}
       <div className="space-y-1.5">
         <Typography
@@ -99,6 +99,7 @@ export default function VerifyOtpPage() {
 
       <FormProvider {...form}>
         <form
+          data-testid="verify-otp-form"
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
           className="space-y-8"
@@ -146,6 +147,7 @@ export default function VerifyOtpPage() {
 
           <Button
             type="submit"
+            data-testid="verify-otp-submit-button"
             variant="primary"
             disabled={isPending}
             className="w-full h-11 rounded-[7px]"

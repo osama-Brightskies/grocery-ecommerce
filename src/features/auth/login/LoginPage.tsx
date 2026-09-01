@@ -36,7 +36,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-8">
+    <div data-testid="login-page" className="w-full max-w-md space-y-8">
       {/* Header */}
       <div className="space-y-1.5">
         <Typography
@@ -65,6 +65,7 @@ export default function LoginPage() {
 
       <FormProvider {...form}>
         <form
+          data-testid="login-form"
           onSubmit={form.handleSubmit(onSubmit)}
           noValidate
           className="space-y-6"
@@ -97,6 +98,7 @@ export default function LoginPage() {
 
           <Button
             type="submit"
+            data-testid="login-submit-button"
             variant="primary"
             disabled={isPending}
             className="w-full h-11 rounded-[7px]"

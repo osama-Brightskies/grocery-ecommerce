@@ -1,4 +1,3 @@
-import { ErrorMessage } from "@hookform/error-message";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, type InputHTMLAttributes } from "react";
 import {
@@ -97,17 +96,14 @@ export const FormInput = <TFieldValues extends FieldValues = FieldValues>({
         )}
       />
 
-      <ErrorMessage
-        name={name}
-        render={({ message }) => (
-          <Typography
-            variant="muted"
-            className="text-status-danger-text text-[12px] ml-0.5 mt-0.5 animate-in fade-in slide-in-from-top-1"
-          >
-            {message}
-          </Typography>
-        )}
-      />
+      {typeof errMsg === "string" && (
+        <Typography
+          variant="muted"
+          className="text-status-danger-text text-[12px] ml-0.5 mt-0.5 animate-in fade-in slide-in-from-top-1"
+        >
+          {errMsg}
+        </Typography>
+      )}
     </div>
   );
 };

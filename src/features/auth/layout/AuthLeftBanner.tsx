@@ -8,13 +8,16 @@ export function AuthLeftBanner({
   quote = "“Keep your shelves fresh and your data even fresher.”",
 }: AuthLeftBannerProps) {
   return (
-    <div className="bg-brand-primary p-12 lg:p-20 flex flex-col justify-between text-white">
+    <div
+      data-testid="auth-left-banner"
+      className="bg-brand-primary p-12 lg:p-20 flex flex-col justify-between text-white"
+    >
       {/* Logo */}
       <Typography
         variant="h1"
         className="text-3xl font-bold tracking-tight text-white"
       >
-        freshly
+        Big Cart
       </Typography>
 
       {/* Hero Heading & Quote Card */}

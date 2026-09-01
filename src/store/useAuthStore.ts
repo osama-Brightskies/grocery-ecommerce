@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { AUTH_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "../api";
 import { executeSilentRefresh } from "../features/auth/api/refresh.api";
 import type { LoginData } from "../features/auth/login/types/login.types";
@@ -12,7 +12,7 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      isAuthenticated: false,
+      isAuthenticated: !!Cookies.get(AUTH_TOKEN_COOKIE),
 
       setAuth: (data: LoginData) => {
         if (refreshTimerId) {
@@ -20,6 +20,7 @@ export const useAuthStore = create<AuthState>()(
           refreshTimerId = null;
         }
 
+        // Production Math: Refreshes 2 minutes before token expires (~13 minutes for a 15-min token)
         const expiresAt = new Date(data.accessTokenExpiresAtUtc).getTime();
         const twoMinutes = 2 * 60 * 1000;
         const timeUntilRefresh = expiresAt - Date.now() - twoMinutes;
@@ -45,22 +46,18 @@ export const useAuthStore = create<AuthState>()(
           refreshTimerId = null;
         }
 
-        // Remove auth cookies across all subpaths
         Cookies.remove(AUTH_TOKEN_COOKIE, { path: "/" });
         Cookies.remove(REFRESH_TOKEN_COOKIE, { path: "/" });
 
-        // Reset state
         set({
           user: null,
           isAuthenticated: false,
         });
-
-        // Completely purge storage key from localStorage on logout
-        useAuthStore.persist.clearStorage();
       },
     }),
     {
-      name: "freshly_auth_session", // Defaults to localStorage automatically
+      name: "freshly_auth_session",
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );
