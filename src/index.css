@@ -3,7 +3,7 @@
 @import "tw-animate-css";
 
 /* ==========================================================================
-   Shadcn UI LIGHT THEME (Connected to BigCart Brand Palette)
+   Shadcn UI LIGHT THEME (Connected to BigCart / Freshly Brand Palette)
    ========================================================================== */
 :root {
   --background: #fafcf7;
@@ -67,51 +67,38 @@
 @theme {
   --font-sans: "Inter", sans-serif;
 
-  /* ==========================================================================
-     1. BRAND & PRIMARY GREENS (Main CTAs, Sidebar Active State, Banners)
-     ========================================================================== */
-  --color-brand-primary: #1f7d47; /* Primary buttons, active sidebar pill, auth left banner */
-  --color-brand-accent: #34a853; /* Bright green hover/accent */
-  --color-brand-medium: #33a35c; /* Medium green icon/badge accent */
-  --color-brand-muted: #8cb294; /* Green text variant */
-  --color-brand-subtle-text: #94a89c; /* Muted green subtext */
+  /* 1. BRAND & PRIMARY GREENS */
+  --color-brand-primary: #1f7d47;
+  --color-brand-accent: #34a853;
+  --color-brand-medium: #33a35c;
+  --color-brand-muted: #8cb294;
+  --color-brand-subtle-text: #94a89c;
 
-  /* ==========================================================================
-     2. LIGHT SURFACES & BACKGROUNDS
-     ========================================================================== */
-  --color-surface-mint: #e8f7eb; /* "In stock" badge bg, image upload area, auth quote card */
-  --color-surface-soft: #fafcf7; /* Alternating table row background */
-  --color-white: #ffffff; /* Pure white background / card container */
+  /* 2. SURFACES & BACKGROUNDS */
+  --color-surface-mint: #e8f7eb;
+  --color-surface-soft: #fafcf7;
+  --color-white: #ffffff;
 
-  /* ==========================================================================
-     3. DARK NEUTRALS & SIDEBAR
-     ========================================================================== */
-  --color-sidebar-bg: #1a241f; /* Main dark sidebar background & primary headings */
-  --color-sidebar-button: #26332b; /* Logout button background inside sidebar */
-  --color-text-secondary: #637369; /* Body secondary text / muted subheadings */
-  --color-text-subtle: #bdc7bf; /* Light gray-green subtext in dark sidebar */
+  /* 3. DARK NEUTRALS & SIDEBAR */
+  --color-sidebar-bg: #1a241f;
+  --color-sidebar-button: #26332b;
+  --color-tooltip-dark: #141c18;
+  --color-text-secondary: #637369;
+  --color-text-subtle: #bdc7bf;
 
-  /* ==========================================================================
-     4. BORDERS & INPUTS
-     ========================================================================== */
-  --color-border-input: #e0e8e0; /* Input field borders & card outlines */
+  /* 4. BORDERS & INPUTS */
+  --color-border-input: #e0e8e0;
 
-  /* ==========================================================================
-     5. STATUS BADGES: WARNING (Low Stock)
-     ========================================================================== */
-  --color-status-warning-bg: #fff0d4; /* "Low stock" status badge background */
-  --color-status-warning-text: #e57a1f; /* "Low stock" status badge text */
+  /* 5. STATUS BADGES: WARNING */
+  --color-status-warning-bg: #fff0d4;
+  --color-status-warning-text: #e57a1f;
 
-  /* ==========================================================================
-     6. STATUS BADGES: DANGER (Out of Stock / Delete)
-     ========================================================================== */
-  --color-status-danger-bg: #ffe5e5; /* "Out of stock" status badge background */
-  --color-status-danger-text: #c7332e; /* "Out of stock" status badge text */
-  --color-status-danger-icon: #c8332f; /* Trash/Delete icon color */
+  /* 6. STATUS BADGES: DANGER */
+  --color-status-danger-bg: #ffe5e5;
+  --color-status-danger-text: #c7332e;
+  --color-status-danger-icon: #c8332f;
 
-  /* ==========================================================================
-     7. AVATAR ACCENT COLORS
-     ========================================================================== */
+  /* 7. AVATAR COLORS */
   --color-avatar-emerald: #1f7d47;
   --color-avatar-green: #33a35c;
   --color-avatar-purple: #8b5cf6;
@@ -119,11 +106,9 @@
   --color-avatar-orange: #f59e0b;
   --color-avatar-pink: #ec4899;
 
-  /* ==========================================================================
-     8. ROLE BADGES (Admin / User)
-     ========================================================================== */
-  --color-role-admin-bg: #f3e8ff; /* Admin role badge background */
-  --color-role-admin-text: #7e22ce; /* Admin role badge text */
-  --color-role-user-bg: #e0f2fe; /* User/Customer role badge background */
-  --color-role-user-text: #0369a1; /* User/Customer role badge text */
+  /* 8. ROLE BADGES */
+  --color-role-admin-bg: #f3e8ff;
+  --color-role-admin-text: #7e22ce;
+  --color-role-user-bg: #e0f2fe;
+  --color-role-user-text: #0369a1;
 }

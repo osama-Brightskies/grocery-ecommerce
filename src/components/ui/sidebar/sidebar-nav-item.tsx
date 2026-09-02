@@ -1,5 +1,11 @@
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import { Typography } from "@/components/ui/shared/Typography";
 import { cn } from "@/lib/utils";
 
 export type SidebarNavItemProps = {
@@ -23,37 +29,40 @@ export function SidebarNavItem({
     location.pathname === navLink ||
     (navLink !== "/" && location.pathname.startsWith(navLink));
 
-  return (
-    <div className="relative group flex items-center w-full group-hover:z-50">
-      <Link
-        to={navLink}
-        className={cn(
-          "w-full flex items-center rounded-lg text-sm font-medium transition-all cursor-pointer select-none whitespace-nowrap",
-          isCollapsed ? "justify-center px-0 py-3" : "gap-3.5 px-4 py-3",
-          isActive
-            ? "bg-brand-primary text-white shadow-sm"
-            : "text-text-subtle hover:text-white hover:bg-sidebar-button",
-          className,
-        )}
-      >
-        <Icon className="w-5 h-5 shrink-0" />
-        {!isCollapsed && <span>{title}</span>}
-      </Link>
-
-      {/* Flyout Tooltip with Dark #141C18 Triangle */}
-      {isCollapsed && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 flex items-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-100">
-          {/* Dark Triangle Pointer */}
-          <div className="w-0 h-0 border-y-[5px] border-y-transparent border-r-[6px] border-r-[#141C18] shrink-0 -mr-px" />
-
-          {/* Dark Tooltip Body */}
-          <div className="px-3 py-1.5 bg-[#141C18] text-surface-mint text-xs font-semibold rounded-[7px] border border-brand-primary shadow-lg shadow-black/50 whitespace-nowrap">
-            {title}
-          </div>
-        </div>
+  const content = (
+    <Link
+      to={navLink}
+      className={cn(
+        "w-full flex items-center rounded-lg text-sm font-medium transition-all cursor-pointer select-none whitespace-nowrap",
+        {
+          "justify-center px-0 py-3": isCollapsed,
+          "gap-3.5 px-4 py-3": !isCollapsed,
+          "bg-brand-primary text-white shadow-xs": isActive,
+          "text-text-subtle hover:text-white hover:bg-sidebar-button":
+            !isActive,
+        },
+        className,
       )}
-    </div>
+    >
+      <Icon className="w-5 h-5 shrink-0" />
+      {!isCollapsed && (
+        <Typography className="text-sm font-medium text-inherit">
+          {title}
+        </Typography>
+      )}
+    </Link>
   );
+
+  if (isCollapsed) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
+        <TooltipContent side="right">{title}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return content;
 }
 
 export default SidebarNavItem;
