@@ -4,10 +4,7 @@ import { forgotPasswordApi } from "../forgot-password/api/forgot-password.api";
 import { loginApi } from "../login/api/login.api";
 import { logoutApi } from "../logout/api/logout.api";
 import { resetPasswordApi } from "../reset-password/api/reset-password.api";
-import {
-  resendEmailApi,
-  verifyOtpApi,
-} from "../verify-otp/api/verify-otp.api";
+import { resendEmailApi, verifyOtpApi } from "../verify-otp/api/verify-otp.api";
 import { UserRole } from "@/store/types/authStore.types";
 
 const adminResponse = {
@@ -95,10 +92,7 @@ describe("auth API contracts", () => {
     vi.spyOn(http, "post").mockResolvedValue({ message: "reset" });
 
     await resetPasswordApi(payload);
-    expect(http.post).toHaveBeenCalledWith(
-      "/api/auth/reset-password",
-      payload,
-    );
+    expect(http.post).toHaveBeenCalledWith("/api/auth/reset-password", payload);
   });
 
   it("posts the refresh token on logout", async () => {
