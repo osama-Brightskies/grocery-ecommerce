@@ -1,42 +1,19 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import type { Tag } from "../types/tags.types";
 import { useGetTags } from "./useGetTags";
 import { useCreateTag } from "./useCreateTag";
 import { useUpdateTag } from "./useUpdateTag";
 import { useDeleteTag } from "./useDeleteTag";
-import type { Tag } from "../types/tags.types";
-
-interface ApiTagResponse {
-  success?: boolean;
-  statusCode?: number;
-  message?: string;
-  data?:
-    | {
-        data?: Tag[];
-        items?: Tag[];
-        pagination?: {
-          currentPage?: number;
-          pageSize?: number;
-          totalCount?: number;
-          totalPages?: number;
-          hasNext?: boolean;
-          hasPrevious?: boolean;
-        };
-      }
-    | Tag[];
-}
 
 export function useTagsPage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [activeTag, setActiveTag] = useState<Tag | null>(null);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     data: tagsData,
@@ -70,7 +47,15 @@ export function useTagsPage() {
     },
   });
 
-  const responseObj = tagsData as ApiTagResponse | undefined;
+  const responseObj = tagsData as unknown as {
+    data?:
+      | Tag[]
+      | {
+          data?: Tag[];
+          items?: Tag[];
+          pagination?: { totalPages?: number };
+        };
+  } | undefined;
 
   let tags: Tag[] = [];
   let totalPages = 1;
@@ -113,7 +98,6 @@ export function useTagsPage() {
   };
 
   return {
-    navigate,
     tags,
     isLoading,
     isError,
@@ -126,7 +110,6 @@ export function useTagsPage() {
     setIsDeleteOpen,
     activeTag,
     setActiveTag,
-    fileInputRef,
     openCreate,
     openEdit,
     handleFormSubmit,
