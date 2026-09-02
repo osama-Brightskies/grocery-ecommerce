@@ -72,14 +72,16 @@ describe("UserDetailPage", () => {
     } as unknown as ReturnType<typeof useGetUserDetail>);
     vi.mocked(useGetUserActivities).mockReturnValue({
       data: {
-        data: [
-          {
-            id: "activity-1",
-            action: "Placed order",
-            targetName: "Order #42",
-            timestamp: "2026-08-21T11:00:00Z",
-          },
-        ],
+        data: {
+          data: [
+            {
+              userId: "user-123",
+              actionType: "ViewProduct",
+              slug: "organic-apples",
+              timestamp: "2026-08-21T11:00:00Z",
+            },
+          ],
+        },
       },
       isLoading: false,
     } as unknown as ReturnType<typeof useGetUserActivities>);
@@ -91,8 +93,8 @@ describe("UserDetailPage", () => {
     ).toBeInTheDocument();
     expect(screen.getAllByText("User").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
-    expect(screen.getByText("Placed order")).toBeInTheDocument();
-    expect(screen.getByText("Order #42")).toBeInTheDocument();
+    expect(screen.getByText("Viewed product")).toBeInTheDocument();
+    expect(screen.getByText("Organic Apples")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /edit user/i }));
     expect(screen.getByText("Edit user sheet")).toBeInTheDocument();
