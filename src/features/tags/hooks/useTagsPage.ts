@@ -8,9 +8,10 @@ import { useDeleteTag } from "./useDeleteTag";
 
 export function useTagsPage() {
   const queryClient = useQueryClient();
+
   const [page, setPage] = useState(1);
-  const pageSize = 10;
-  
+  const [pageSize, setPageSize] = useState(10);
+
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [activeTag, setActiveTag] = useState<Tag | null>(null);
@@ -26,7 +27,6 @@ export function useTagsPage() {
     onSuccess: () => {
       setIsSheetOpen(false);
       queryClient.invalidateQueries({ queryKey: ["tags"] });
-      refetch();
     },
   });
 
@@ -34,7 +34,6 @@ export function useTagsPage() {
     onSuccess: () => {
       setIsSheetOpen(false);
       queryClient.invalidateQueries({ queryKey: ["tags"] });
-      refetch();
     },
   });
 
@@ -43,33 +42,12 @@ export function useTagsPage() {
       setIsDeleteOpen(false);
       setActiveTag(null);
       queryClient.invalidateQueries({ queryKey: ["tags"] });
-      refetch();
     },
   });
 
-  const responseObj = tagsData as unknown as {
-    data?:
-      | Tag[]
-      | {
-          data?: Tag[];
-          items?: Tag[];
-          pagination?: { totalPages?: number };
-        };
-  } | undefined;
-
-  let tags: Tag[] = [];
-  let totalPages = 1;
-
-  if (responseObj?.data) {
-    if (Array.isArray(responseObj.data)) {
-      tags = responseObj.data;
-    } else {
-      tags = responseObj.data.data || responseObj.data.items || [];
-      totalPages = responseObj.data.pagination?.totalPages || 1;
-    }
-  } else if (Array.isArray(tagsData)) {
-    tags = tagsData;
-  }
+  const tags: Tag[] = tagsData?.data?.data ?? [];
+  const totalPages = tagsData?.data?.pagination?.totalPages;
+  const totalCount = tagsData?.data?.pagination?.totalCount;
 
   const openCreate = () => {
     setActiveTag(null);
@@ -97,13 +75,21 @@ export function useTagsPage() {
     setPage(newPage);
   };
 
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setPage(1);
+  };
+
   return {
     tags,
     isLoading,
     isError,
     page,
+    pageSize,
     totalPages,
+    totalCount,
     handlePageChange,
+    handlePageSizeChange,
     isSheetOpen,
     setIsSheetOpen,
     isDeleteOpen,

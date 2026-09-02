@@ -50,8 +50,13 @@ export function TagFormModal({
               <Typography variant="h3" className="font-bold text-sidebar-bg">
                 {activeTag ? "Edit Tag" : "Create Tag"}
               </Typography>
-              <Typography variant="body" className="text-sm text-text-secondary">
-                {activeTag ? "Update the tag details below." : "Add a new tag for your products."}
+              <Typography
+                variant="body"
+                className="text-sm text-text-secondary"
+              >
+                {activeTag
+                  ? "Update the tag details below."
+                  : "Add a new tag for your products."}
               </Typography>
             </div>
             <button

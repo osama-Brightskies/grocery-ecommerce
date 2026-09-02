@@ -1,7 +1,7 @@
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
 import type { Tag } from "@/features/tags/types/tags.types";
+import { X } from "lucide-react";
 
 export function TagDeleteModal({
   isOpen,
@@ -27,7 +27,10 @@ export function TagDeleteModal({
               <Typography variant="h3" className="font-bold text-sidebar-bg">
                 Delete Tag?
               </Typography>
-              <Typography variant="body" className="text-sm text-text-secondary">
+              <Typography
+                variant="body"
+                className="text-sm text-text-secondary"
+              >
                 This action cannot be undone.
               </Typography>
             </div>
