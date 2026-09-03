@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import { Typography } from "@/components/ui/shared/Typography";
 
-// ============================================================================
-// 1. Pure Pagination Control (Numbers & Arrows only)
-// ============================================================================
+/* ==========================================================================
+   1. PURE PAGINATION CONTROL (Page Numbers & Navigation Arrows Only)
+   ========================================================================== */
+
 export type PaginationProps = {
   currentPage: number;
   totalPages: number;
@@ -11,21 +12,29 @@ export type PaginationProps = {
   className?: string;
 };
 
+/**
+ * Pure, lightweight pagination component that renders numbered page buttons,
+ * smart ellipsis (...), and previous/next arrow triggers.
+ */
 export function Pagination({
   currentPage,
   totalPages,
   onPageChange,
   className,
 }: PaginationProps) {
+  // Generate numbered pages with smart ellipsis for large page counts
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
 
     if (totalPages <= 5) {
+      // If 5 or fewer pages, display all numbers directly
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
+      // Always show the first page
       pages.push(1);
       if (currentPage > 3) pages.push("...");
 
+      // Calculate sliding window around current page
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
 
@@ -33,6 +42,7 @@ export function Pagination({
         if (!pages.includes(i)) pages.push(i);
       }
 
+      // Ellipsis before the final page
       if (currentPage < totalPages - 2) pages.push("...");
       if (!pages.includes(totalPages)) pages.push(totalPages);
     }
@@ -40,6 +50,7 @@ export function Pagination({
     return pages;
   };
 
+  // Hide component if there is only 1 page or none
   if (totalPages <= 1) return null;
 
   return (
@@ -48,7 +59,7 @@ export function Pagination({
       aria-label="pagination"
       className={cn("flex items-center gap-2 select-none", className)}
     >
-      {/* Previous Button */}
+      {/* Previous Page Arrow Button */}
       <button
         type="button"
         disabled={currentPage === 1}
@@ -59,7 +70,7 @@ export function Pagination({
         ‹
       </button>
 
-      {/* Page Numbers & Ellipsis */}
+      {/* Numbered Page Buttons & Ellipsis */}
       {getPageNumbers().map((page, idx) => {
         if (typeof page === "string") {
           return (
@@ -90,7 +101,7 @@ export function Pagination({
         );
       })}
 
-      {/* Next Button */}
+      {/* Next Page Arrow Button */}
       <button
         type="button"
         disabled={currentPage === totalPages}
@@ -104,9 +115,10 @@ export function Pagination({
   );
 }
 
-// ============================================================================
-// 2. Full Pagination Bar (Showing Info + Dropdown + <Pagination />)
-// ============================================================================
+/* ==========================================================================
+   2. COMPLETE PAGINATION BAR (Info Text + Dropdown + Inner <Pagination />)
+   ========================================================================== */
+
 export type PaginationBarProps = {
   currentPage: number;
   totalPages: number;
@@ -116,10 +128,15 @@ export type PaginationBarProps = {
   onPageSizeChange?: (pageSize: number) => void;
   pageSizeOptions?: number[];
   showPageSizeSelect?: boolean;
-  showShowingInfo?: boolean;
+  isCurrentPaginationInfoVisible?: boolean;
   className?: string;
 };
 
+/**
+ * Enterprise-grade composite pagination bar designed for table footers.
+ * Features automatic "Showing X-Y of Z" calculations, customizable page-size
+ * dropdown selector, and embedded <Pagination /> controls.
+ */
 export function PaginationBar({
   currentPage,
   totalPages,
@@ -129,10 +146,12 @@ export function PaginationBar({
   onPageSizeChange,
   pageSizeOptions = [5, 10, 15, 20, 25, 50],
   showPageSizeSelect = true,
-  showShowingInfo = true,
+  isCurrentPaginationInfoVisible = true,
   className,
 }: PaginationBarProps) {
-  const hasShowingInfo = showShowingInfo && totalCount !== undefined;
+  // Calculate item range ("Showing 1-10 of 32")
+  const hasShowingInfo =
+    isCurrentPaginationInfoVisible && totalCount !== undefined;
   const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalCount ?? 0);
 
@@ -143,7 +162,7 @@ export function PaginationBar({
         className,
       )}
     >
-      {/* 1. Left: Showing entries text */}
+      {/* Left: Dynamic Record Count Summary */}
       {hasShowingInfo ? (
         <Typography variant="muted" className="text-xs text-text-secondary">
           Showing {startItem}-{endItem} of {totalCount}
@@ -152,8 +171,9 @@ export function PaginationBar({
         <div />
       )}
 
-      {/* 2. Right: Page Size Dropdown + Inner <Pagination /> */}
+      {/* Right: Page Size Selector & Numbered Pagination */}
       <div className="flex items-center gap-4">
+        {/* Optional Page Size Dropdown */}
         {showPageSizeSelect && onPageSizeChange && (
           <div className="flex items-center gap-2">
             <select
@@ -170,7 +190,7 @@ export function PaginationBar({
           </div>
         )}
 
-        {/* Pure Pagination Component */}
+        {/* Embedded Pure Pagination Controls */}
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -181,4 +201,5 @@ export function PaginationBar({
   );
 }
 
+// Default export for standard import convenience
 export default PaginationBar;
