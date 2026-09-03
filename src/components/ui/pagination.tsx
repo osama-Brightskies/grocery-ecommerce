@@ -149,7 +149,6 @@ export function PaginationBar({
   isCurrentPaginationInfoVisible = true,
   className,
 }: PaginationBarProps) {
-  // Calculate item range ("Showing 1-10 of 32")
   const hasShowingInfo =
     isCurrentPaginationInfoVisible && totalCount !== undefined;
   const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
