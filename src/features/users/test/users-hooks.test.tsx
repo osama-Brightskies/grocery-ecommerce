@@ -96,7 +96,9 @@ describe("users query hooks", () => {
       success: true,
       statusCode: 200,
       message: "ok",
-      data: [],
+      data: {
+        data: [],
+      },
     };
     vi.mocked(getUserActivitiesApi).mockResolvedValue(response);
 

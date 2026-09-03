@@ -8,11 +8,11 @@ import type {
   GetUserActivitiesResponse,
 } from "../types/users.types";
 
-export const getUsersApi = (params?: GetUsersParams) => {
+export const getUsersApi = (params: GetUsersParams) => {
   return http.get<GetUsersResponse>("/api/users", {
     params: {
-      PageNumber: params?.pageNumber ?? 1,
-      PageSize: params?.pageSize ?? 10,
+      PageNumber: params.pageNumber,
+      PageSize: params.pageSize,
     },
   });
 };

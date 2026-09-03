@@ -21,8 +21,8 @@ export type PaginationMeta = {
 };
 
 export type GetUsersParams = {
-  pageNumber?: number;
-  pageSize?: number;
+  pageNumber: number;
+  pageSize: number;
 };
 
 export type GetUsersResponse = {
@@ -57,9 +57,9 @@ export type UpdateUserResponse = {
 };
 
 export type UserActivity = {
-  id: string;
-  action: string;
-  targetName: string;
+  userId: string;
+  actionType: string;
+  slug: string;
   timestamp: string;
 };
 
@@ -67,5 +67,12 @@ export type GetUserActivitiesResponse = {
   success: boolean;
   statusCode: number;
   message: string;
-  data: UserActivity[];
+  data: {
+    data: UserActivity[];
+    pagination?: {
+      nextCursor?: string;
+      hasNext?: boolean;
+      pageSize?: number;
+    };
+  };
 };

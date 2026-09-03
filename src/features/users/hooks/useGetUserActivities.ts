@@ -3,28 +3,17 @@ import { getUserActivitiesApi } from "../api/users.api";
 import type { GetUserActivitiesResponse } from "../types/users.types";
 import type { ApiError } from "@/api/errors";
 
-type UseGetUserActivitiesOptions = {
+export type UseGetUserActivitiesOptions = {
   enabled?: boolean;
-  onSuccess?: (data: GetUserActivitiesResponse) => void;
-  onError?: (error: ApiError) => void;
 };
 
 export function useGetUserActivities(
   userId?: string,
   options?: UseGetUserActivitiesOptions,
 ) {
-  return useQuery({
+  return useQuery<GetUserActivitiesResponse, ApiError>({
     queryKey: ["user-activities", userId],
-    queryFn: async () => {
-      try {
-        const data = await getUserActivitiesApi(userId);
-        options?.onSuccess?.(data);
-        return data;
-      } catch (error) {
-        options?.onError?.(error as ApiError);
-        throw error;
-      }
-    },
+    queryFn: () => getUserActivitiesApi(userId),
     enabled: options?.enabled ?? true,
   });
 }

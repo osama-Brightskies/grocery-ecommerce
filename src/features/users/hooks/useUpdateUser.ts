@@ -6,7 +6,7 @@ import type {
 } from "../types/users.types";
 import type { ApiError } from "@/api/errors";
 
-type UseUpdateUserOptions = {
+export type UseUpdateUserOptions = {
   onSuccess?: (data: UpdateUserResponse) => void;
   onError?: (error: ApiError) => void;
 };
@@ -14,21 +14,22 @@ type UseUpdateUserOptions = {
 export function useUpdateUser(options?: UseUpdateUserOptions) {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({
-      userId,
-      payload,
-    }: {
-      userId: string;
-      payload: UpdateUserPayload;
-    }) => updateUserApi(userId, payload),
-
-    onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
+  return useMutation<
+    UpdateUserResponse,
+    ApiError,
+    { userId: string; payload: UpdateUserPayload }
+  >({
+    mutationFn: ({ userId, payload }) => updateUserApi(userId, payload),
+    onSuccess: async (data, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["users"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["user-detail", variables.userId],
+        }),
+      ]);
       options?.onSuccess?.(data);
     },
-
-    onError: (error: ApiError) => {
+    onError: (error) => {
       options?.onError?.(error);
     },
   });
