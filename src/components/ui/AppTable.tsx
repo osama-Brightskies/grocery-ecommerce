@@ -29,7 +29,6 @@ export function AppTable<TData extends RowData>({
   emptyMessage = "No records found.",
   className,
 }: AppTableProps<TData>) {
-  // 2. Initialize V9 Table
   const table = useTable<DefaultTableFeatures, TData>(
     {
       features: defaultTableFeatures,

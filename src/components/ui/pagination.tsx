@@ -128,7 +128,7 @@ export type PaginationBarProps = {
   onPageSizeChange?: (pageSize: number) => void;
   pageSizeOptions?: number[];
   showPageSizeSelect?: boolean;
-  showShowingInfo?: boolean;
+  isCurrentPaginationInfoVisible?: boolean;
   className?: string;
 };
 
@@ -146,11 +146,12 @@ export function PaginationBar({
   onPageSizeChange,
   pageSizeOptions = [5, 10, 15, 20, 25, 50],
   showPageSizeSelect = true,
-  showShowingInfo = true,
+  isCurrentPaginationInfoVisible = true,
   className,
 }: PaginationBarProps) {
   // Calculate item range ("Showing 1-10 of 32")
-  const hasShowingInfo = showShowingInfo && totalCount !== undefined;
+  const hasShowingInfo =
+    isCurrentPaginationInfoVisible && totalCount !== undefined;
   const startItem = totalCount === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const endItem = Math.min(currentPage * pageSize, totalCount ?? 0);
 
