@@ -10,7 +10,8 @@ import { protectedGuard } from "./guards/protectedGuard";
 import DashboardPage from "@/features/dashboard/DashboardPage";
 import UsersListPage from "@/features/users/pages/UsersListPage";
 import UserDetailPage from "@/features/users/pages/UserDetailPage";
-import TagListPage from "@/features/tags/pages/TagListPage";
+import CategoriesListPage from "@/features/categories/pages/CategoriesListPage";
+import CategoryDetailPage from "@/features/categories/pages/CategoryDetailPage";
 import NotFoundRedirect from "./components/NotFoundRedirect";
 
 export const router = createBrowserRouter([
@@ -38,7 +39,8 @@ export const router = createBrowserRouter([
       { path: "dashboard", element: <DashboardPage /> },
       { path: "users", element: <UsersListPage /> },
       { path: "users/:userId", element: <UserDetailPage /> },
-      { path: "tags", element: <TagListPage /> },
+      { path: "categories", element: <CategoriesListPage /> },
+      { path: "categories/:slug", element: <CategoryDetailPage /> },
     ],
   },
 

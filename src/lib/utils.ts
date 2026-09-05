@@ -59,3 +59,18 @@ export function getInitials(
   if (email) return email.slice(0, 2).toUpperCase();
   return "U";
 }
+
+/**
+ * Resolves a relative image path (e.g. "categories/fruit.jpg") to its full S3 URL.
+ * Reads base URL from .env (VITE_S3_BASE_URL).
+ */
+export function getImageUrl(path?: string): string {
+  if (!path || path.trim() === "") return "/placeholder-image.png";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+
+  const s3Base =
+    import.meta.env.VITE_S3_BASE_URL ||
+    "https://ecommerce-interns-bucket.s3.eu-central-1.amazonaws.com";
+
+  return `${s3Base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+}
