@@ -1,4 +1,4 @@
-import { useForm, FormProvider, useWatch } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
@@ -12,6 +12,7 @@ import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormImageUploader } from "@/components/ui/form-fields/FormImageUploader";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
+
 import { useCreateCategory } from "../hooks/useCreateCategory";
 import {
   createCategorySchema,
@@ -23,22 +24,10 @@ export type CreateCategorySheetProps = {
   onClose: () => void;
 };
 
-// Helper: Live Slug Formatter
-function generateSlug(text?: string): string {
-  if (!text) return "";
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
 export default function CreateCategorySheet({
   isOpen,
   onClose,
 }: CreateCategorySheetProps) {
-  // 1. Initialize React Hook Form
   const methods = useForm<CreateCategoryFormValues>({
     resolver: zodResolver(createCategorySchema),
     defaultValues: {
@@ -47,14 +36,6 @@ export default function CreateCategorySheet({
     },
   });
 
-  // React 19 Compiler-Safe Field Watch
-  const watchedName = useWatch({
-    control: methods.control,
-    name: "name",
-  });
-  const slugPreview = generateSlug(watchedName);
-
-  // 2. Mutation Hook
   const { mutate: createCategory, isPending } = useCreateCategory({
     onSuccess: () => {
       toast.success("Category created.");
@@ -69,7 +50,7 @@ export default function CreateCategorySheet({
   const onSubmit = (values: CreateCategoryFormValues) => {
     const formData = new FormData();
     formData.append("Name", values.name.trim());
-    formData.append("Image", values.image); // Native File binary
+    formData.append("Image", values.image);
 
     createCategory(formData);
   };
@@ -83,7 +64,6 @@ export default function CreateCategorySheet({
     <Sheet open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <SheetContent className="w-full sm:max-w-md flex flex-col justify-between p-6 bg-card">
         <div className="space-y-6">
-          {/* Header */}
           <SheetHeader className="space-y-1 p-0 text-left">
             <SheetTitle className="text-2xl font-bold text-sidebar-bg">
               Add category
@@ -93,32 +73,19 @@ export default function CreateCategorySheet({
             </SheetDescription>
           </SheetHeader>
 
-          {/* Form */}
           <FormProvider {...methods}>
             <form
               id="create-category-form"
               onSubmit={methods.handleSubmit(onSubmit)}
               className="space-y-5"
             >
-              {/* Category Name Input + Live Slug Preview */}
-              <div className="space-y-1.5">
-                <FormInput<CreateCategoryFormValues>
-                  label="Category name"
-                  name="name"
-                  placeholder="Enter category name"
-                  required
-                />
+              <FormInput<CreateCategoryFormValues>
+                label="Category name"
+                name="name"
+                placeholder="Enter category name"
+                required
+              />
 
-                {/* Live Slug Preview */}
-                {slugPreview && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-soft border border-border/50 text-[11px] text-text-secondary font-mono animate-in fade-in">
-                    <span className="text-brand-primary font-bold">URL:</span>
-                    <span>/categories/{slugPreview}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Category Image Dropzone */}
               <FormImageUploader<CreateCategoryFormValues>
                 name="image"
                 label="Category image"
@@ -128,7 +95,6 @@ export default function CreateCategorySheet({
           </FormProvider>
         </div>
 
-        {/* Footer Actions */}
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-border mt-auto">
           <Button
             type="button"
