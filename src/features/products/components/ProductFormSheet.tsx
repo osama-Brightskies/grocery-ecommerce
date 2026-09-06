@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-import type { Product } from "../types/products.types";
+import type { Product } from "../products.types";
 import { FormTextarea } from "@/components/ui/form-fields/FormTextarea";
 import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormSelect } from "@/components/ui/form-fields/FormSelect";
@@ -54,6 +54,16 @@ const productSchema = z.object({
 type ProductFormValues = z.infer<typeof productSchema>;
 type ProductFormInput = z.input<typeof productSchema>;
 
+const EMPTY_PRODUCT_FORM: ProductFormInput = {
+  name: "",
+  description: "",
+  price: "",
+  stockQuantity: "",
+  categorySlug: "",
+  altText: "",
+  tags: [],
+};
+
 type SelectOption = {
   label: string;
   value: string;
@@ -78,54 +88,25 @@ export function ProductFormSheet({
 }) {
   const methods = useForm<ProductFormInput, unknown, ProductFormValues>({
     resolver: zodResolver(productSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: "" as unknown as number,
-      stockQuantity: "" as unknown as number,
-      categorySlug: "",
-      altText: "",
-      tags: [],
-    },
+    defaultValues: EMPTY_PRODUCT_FORM,
   });
 
   useEffect(() => {
-    const productDetails = activeProduct as
-      | (Partial<Product> & {
-          name: string;
-          description: string;
-          price: number;
-          stockQuantity: number;
-          categorySlug: string;
-          altText?: string;
-          tags?: string[];
-        })
-      | null;
+    if (!isOpen) return;
 
-    if (productDetails && isOpen) {
-      methods.reset({
-        name: productDetails.name || "",
-        description:
-          typeof productDetails.description === "string"
-            ? productDetails.description
-            : "",
-        price: productDetails.price ?? "",
-        stockQuantity: productDetails.stockQuantity ?? "",
-        categorySlug: productDetails.categorySlug || "",
-        altText: productDetails.altText || "",
-        tags: productDetails.tags || [],
-      });
-    } else if (!productDetails && isOpen) {
-      methods.reset({
-        name: "",
-        description: "",
-        price: "" as unknown as number,
-        stockQuantity: "" as unknown as number,
-        categorySlug: "",
-        altText: "",
-        tags: [],
-      });
-    }
+    methods.reset(
+      activeProduct
+        ? {
+            name: activeProduct.name,
+            description: activeProduct.description,
+            price: activeProduct.price,
+            stockQuantity: activeProduct.stockQuantity,
+            categorySlug: activeProduct.categorySlug,
+            altText: activeProduct.altText ?? "",
+            tags: activeProduct.tags,
+          }
+        : EMPTY_PRODUCT_FORM,
+    );
   }, [activeProduct, isOpen, methods]);
 
   const handleSubmitWrapper = (values: ProductFormValues) => {

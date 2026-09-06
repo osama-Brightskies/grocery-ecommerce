@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
 import PaginationBar from "@/components/ui/pagination";
 
-import type { Product } from "../types/products.types";
+import type { Product } from "../products.types";
 import { useProductsPage } from "../hooks/useProductsPage";
 import { ProductFormSheet } from "../components/ProductFormSheet";
 import { ProductDeleteModal } from "../components/ProductDeleteModal";

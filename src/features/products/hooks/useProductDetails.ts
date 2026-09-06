@@ -29,6 +29,7 @@ export function useProductDetails(slug: string) {
     queryKey: ["tags", 1, 100],
     queryFn: () => getTagsApi(1, 100),
   });
+  console.log("🚀 ~ useProductDetails ~ tagsData:", tagsData);
 
   const product = (data as { data?: unknown } | undefined)?.data;
 
