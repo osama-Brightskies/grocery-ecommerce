@@ -18,7 +18,7 @@ export function CategoryCard({ category, productCount }: CategoryCardProps) {
     >
       <div className="w-full h-36 rounded-xl bg-surface-soft flex items-center justify-center p-3 mb-4 overflow-hidden border border-border/50 group-hover:bg-surface-mint/50 transition-colors">
         <img
-          src={getImageUrl(category.imageUrl)}
+          src={getImageUrl(category.imageUrl, category.updatedAt)}
           alt={category.name}
           className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
           loading="lazy"

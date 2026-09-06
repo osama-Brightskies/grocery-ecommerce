@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm, FormProvider, useWatch } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -21,22 +21,13 @@ import {
   updateCategorySchema,
   type UpdateCategoryFormValues,
 } from "../schemas/categories.schema";
+import { getImageUrl } from "@/lib/utils";
 
 export type EditCategorySheetProps = {
   isOpen: boolean;
   onClose: () => void;
   category: Category;
 };
-
-function generateSlug(text?: string): string {
-  if (!text) return "";
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 export default function EditCategorySheet({
   isOpen,
@@ -56,12 +47,6 @@ export default function EditCategorySheet({
   const {
     formState: { isDirty },
   } = methods;
-
-  const watchedName = useWatch({
-    control: methods.control,
-    name: "name",
-  });
-  const slugPreview = generateSlug(watchedName || category?.name);
 
   useEffect(() => {
     if (isOpen && category) {
@@ -120,26 +105,20 @@ export default function EditCategorySheet({
               onSubmit={methods.handleSubmit(onSubmit)}
               className="space-y-5"
             >
-              <div className="space-y-1.5">
-                <FormInput<UpdateCategoryFormValues>
-                  label="Category name"
-                  name="name"
-                  placeholder="Enter category name"
-                  required
-                />
-
-                {slugPreview && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-soft border border-border/50 text-[11px] text-text-secondary font-mono animate-in fade-in">
-                    <span className="text-brand-primary font-bold">URL:</span>
-                    <span>/categories/{slugPreview}</span>
-                  </div>
-                )}
-              </div>
+              <FormInput<UpdateCategoryFormValues>
+                label="Category name"
+                name="name"
+                placeholder="Enter category name"
+                required
+              />
 
               <FormImageUploader<UpdateCategoryFormValues>
                 name="image"
                 label="Category image"
-                existingImageUrl={category?.imageUrl}
+                existingImageUrl={getImageUrl(
+                  category?.imageUrl,
+                  category?.updatedAt,
+                )}
               />
             </form>
           </FormProvider>
