@@ -1,16 +1,38 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-/**
- * Shadcn class merger helper
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const DEFAULT_S3_BASE =
+  "https://ecommerce-interns-bucket.s3.eu-central-1.amazonaws.com/";
+
 /**
- * Formats an ISO UTC date string to short date (e.g., "Jan 1, 2024")
+ * Resolves a relative image path to its full S3 URL.
+ * Busses browser disk cache using the backend's official updatedAt timestamp.
  */
+export function getImageUrl(path?: string, updatedAt?: string): string {
+  if (!path || path.trim() === "") return "/placeholder-image.png";
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+
+  const s3Base = import.meta.env.VITE_S3_BASE_URL || DEFAULT_S3_BASE;
+
+  const cleanBase = s3Base.replace(/\/+$/, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  const baseFullUrl = `${cleanBase}/${cleanPath}`;
+
+  // If the server provided a real updatedAt timestamp (not default 0001-01-01), use it to bust cache
+  if (updatedAt && updatedAt !== "0001-01-01T00:00:00") {
+    const time = new Date(updatedAt).getTime();
+    if (!isNaN(time) && time > 0) {
+      return `${baseFullUrl}?v=${time}`;
+    }
+  }
+
+  return baseFullUrl;
+}
+
 export function formatDate(dateStr?: string): string {
   if (!dateStr) return "—";
   try {
@@ -25,9 +47,6 @@ export function formatDate(dateStr?: string): string {
   }
 }
 
-/**
- * Formats an ISO UTC date string to full date & time (e.g., "Aug 18, 2026, 9:02 PM")
- */
 export function formatDateTime(dateStr?: string): string {
   if (!dateStr) return "—";
   try {
@@ -45,9 +64,6 @@ export function formatDateTime(dateStr?: string): string {
   }
 }
 
-/**
- * Extracts 2-letter uppercase initials from names or email
- */
 export function getInitials(
   firstName?: string,
   lastName?: string,
@@ -58,19 +74,4 @@ export function getInitials(
   if (firstName) return firstName.slice(0, 2).toUpperCase();
   if (email) return email.slice(0, 2).toUpperCase();
   return "U";
-}
-
-/**
- * Resolves a relative image path (e.g. "categories/fruit.jpg") to its full S3 URL.
- * Reads base URL from .env (VITE_S3_BASE_URL).
- */
-export function getImageUrl(path?: string): string {
-  if (!path || path.trim() === "") return "/placeholder-image.png";
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-
-  const s3Base =
-    import.meta.env.VITE_S3_BASE_URL ||
-    "https://ecommerce-interns-bucket.s3.eu-central-1.amazonaws.com";
-
-  return `${s3Base.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
 }

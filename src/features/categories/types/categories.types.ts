@@ -3,6 +3,7 @@ export type Category = {
   imageUrl: string;
   slug: string;
   createdAt: string;
+  updatedAt: string;
 };
 
 export type CategoryProduct = {

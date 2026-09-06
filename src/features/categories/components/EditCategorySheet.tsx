@@ -21,6 +21,7 @@ import {
   updateCategorySchema,
   type UpdateCategoryFormValues,
 } from "../schemas/categories.schema";
+import { getImageUrl } from "@/lib/utils";
 
 export type EditCategorySheetProps = {
   isOpen: boolean;
@@ -114,7 +115,10 @@ export default function EditCategorySheet({
               <FormImageUploader<UpdateCategoryFormValues>
                 name="image"
                 label="Category image"
-                existingImageUrl={category?.imageUrl}
+                existingImageUrl={getImageUrl(
+                  category?.imageUrl,
+                  category?.updatedAt,
+                )}
               />
             </form>
           </FormProvider>

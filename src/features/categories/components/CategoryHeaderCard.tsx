@@ -17,7 +17,7 @@ export function CategoryHeaderCard({
       {/* Large S3 Image Thumbnail */}
       <div className="w-32 h-32 rounded-xl bg-surface-soft border border-border/80 p-3 flex items-center justify-center shrink-0 overflow-hidden">
         <img
-          src={getImageUrl(category.imageUrl)}
+          src={getImageUrl(category.imageUrl, category.updatedAt)}
           alt={category.name}
           className="max-h-full max-w-full object-contain"
         />
