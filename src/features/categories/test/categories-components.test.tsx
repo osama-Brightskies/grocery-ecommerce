@@ -32,36 +32,38 @@ describe("category components", () => {
   it("renders product prices and stock states and loads more", () => {
     const onLoadMore = vi.fn();
     render(
-      <CategoryProductsTable
-        products={[
-          {
-            name: "Apple",
-            slug: "apple",
-            stockQuantity: 0,
-            categorySlug: "fresh-fruit",
-            price: 2.5,
-            productImageUrl: "apple.png",
-          },
-          {
-            name: "Pear",
-            slug: "pear",
-            stockQuantity: 5,
-            categorySlug: "fresh-fruit",
-            price: 3,
-            productImageUrl: "pear.png",
-          },
-          {
-            name: "Orange",
-            slug: "orange",
-            stockQuantity: 20,
-            categorySlug: "fresh-fruit",
-            price: 4,
-            productImageUrl: "orange.png",
-          },
-        ]}
-        hasNext
-        onLoadMore={onLoadMore}
-      />,
+      <MemoryRouter>
+        <CategoryProductsTable
+          products={[
+            {
+              name: "Apple",
+              slug: "apple",
+              stockQuantity: 0,
+              categorySlug: "fresh-fruit",
+              price: 2.5,
+              productImageUrl: "apple.png",
+            },
+            {
+              name: "Pear",
+              slug: "pear",
+              stockQuantity: 5,
+              categorySlug: "fresh-fruit",
+              price: 3,
+              productImageUrl: "pear.png",
+            },
+            {
+              name: "Orange",
+              slug: "orange",
+              stockQuantity: 20,
+              categorySlug: "fresh-fruit",
+              price: 4,
+              productImageUrl: "orange.png",
+            },
+          ]}
+          hasNext
+          onLoadMore={onLoadMore}
+        />
+      </MemoryRouter>,
     );
     expect(screen.getByText("$2.50")).toBeInTheDocument();
     expect(screen.getByText("No stock (0)")).toBeInTheDocument();

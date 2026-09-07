@@ -46,13 +46,17 @@ describe("DashboardKpiCards", () => {
         totalUsers={8}
         totalCategories={4}
         activeUsers={6}
+        totalProducts={20}
+        criticalProductsCount={2}
         totalCartActions={12}
+        addToCartCount={9}
+        removeFromCartCount={2}
       />,
     );
     expect(screen.getByText("Total Users")).toBeInTheDocument();
     expect(screen.getByText("Categories")).toBeInTheDocument();
-    expect(screen.getByText("75%")).toBeInTheDocument();
-    expect(screen.getByText("6 accounts active")).toBeInTheDocument();
+    expect(screen.getByText("6 active")).toBeInTheDocument();
+    expect(screen.getByText("2 low / out of stock")).toBeInTheDocument();
     expect(screen.getByText("12")).toBeInTheDocument();
   });
 
@@ -62,18 +66,23 @@ describe("DashboardKpiCards", () => {
         totalUsers={8}
         totalCategories={4}
         activeUsers={6}
+        totalProducts={20}
+        criticalProductsCount={2}
         totalCartActions={12}
+        addToCartCount={9}
+        removeFromCartCount={2}
         isLoading
       />,
     );
-    expect(screen.queryByText("75%")).not.toBeInTheDocument();
     expect(screen.queryByText("12")).not.toBeInTheDocument();
   });
 });
 
 describe("dashboard charts", () => {
   it("builds the user growth series with the current total", () => {
-    render(<UserGrowthChart totalUsers={42} />);
+    render(
+      <UserGrowthChart totalUsers={42} data={[{ month: "Aug", users: 42 }]} />,
+    );
     expect(screen.getByText("User Registrations Trend")).toBeInTheDocument();
     expect(screen.getByText("Total Users: 42")).toBeInTheDocument();
     expect(screen.getByTestId("area-chart")).toHaveAttribute(
@@ -100,8 +109,15 @@ describe("dashboard charts", () => {
   });
 
   it("builds cart activity bars from the supplied counts", () => {
-    render(<CartActivityBarChart addToCartCount={9} removeFromCartCount={2} />);
-    expect(screen.getByText("Customer Cart Behavior")).toBeInTheDocument();
+    render(
+      <CartActivityBarChart
+        ordersPlacedCount={3}
+        addToCartCount={9}
+        addToFavoritesCount={4}
+        removeFromCartCount={2}
+      />,
+    );
+    expect(screen.getByText("Customer Store Engagement")).toBeInTheDocument();
     expect(screen.getByTestId("bar-chart")).toHaveAttribute(
       "data-chart",
       expect.stringContaining('"count":9'),

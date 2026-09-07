@@ -8,10 +8,6 @@ export function cn(...inputs: ClassValue[]) {
 const DEFAULT_S3_BASE =
   "https://ecommerce-interns-bucket.s3.eu-central-1.amazonaws.com/";
 
-/**
- * Resolves a relative image path to its full S3 URL.
- * Busses browser disk cache using the backend's official updatedAt timestamp.
- */
 export function getImageUrl(path?: string, updatedAt?: string): string {
   if (!path || path.trim() === "") return "/placeholder-image.png";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
@@ -22,7 +18,6 @@ export function getImageUrl(path?: string, updatedAt?: string): string {
   const cleanPath = path.replace(/^\/+/, "");
   const baseFullUrl = `${cleanBase}/${cleanPath}`;
 
-  // If the server provided a real updatedAt timestamp (not default 0001-01-01), use it to bust cache
   if (updatedAt && updatedAt !== "0001-01-01T00:00:00") {
     const time = new Date(updatedAt).getTime();
     if (!isNaN(time) && time > 0) {
@@ -74,4 +69,55 @@ export function getInitials(
   if (firstName) return firstName.slice(0, 2).toUpperCase();
   if (email) return email.slice(0, 2).toUpperCase();
   return "U";
+}
+
+/**
+ * 🪄 Pure Data Function: Extracts months from real `createdAt` timestamps,
+ * sorts chronologically, and calculates real cumulative user registrations.
+ */
+export function calculateUserGrowth(
+  users: { createdAt: string }[],
+): { month: string; users: number }[] {
+  if (!users || users.length === 0) return [];
+
+  const monthMap = new Map<string, { label: string; count: number }>();
+
+  users.forEach((u) => {
+    if (!u.createdAt) return;
+    const date = new Date(u.createdAt);
+    if (isNaN(date.getTime())) return;
+
+    // e.g. "2026-08" for sorting
+    const year = date.getFullYear();
+    const monthNum = String(date.getMonth() + 1).padStart(2, "0");
+    const sortKey = `${year}-${monthNum}`;
+
+    // e.g. "Aug '26" or "Jan '24"
+    const label = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      year: "2-digit",
+    }).format(date);
+
+    const existing = monthMap.get(sortKey);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      monthMap.set(sortKey, { label, count: 1 });
+    }
+  });
+
+  // Sort chronologically
+  const sortedEntries = Array.from(monthMap.entries()).sort(([a], [b]) =>
+    a.localeCompare(b),
+  );
+
+  // Compute cumulative growth curve from real records
+  let cumulative = 0;
+  return sortedEntries.map(([, val]) => {
+    cumulative += val.count;
+    return {
+      month: val.label,
+      users: cumulative,
+    };
+  });
 }
