@@ -15,6 +15,7 @@ import CategoryDetailPage from "@/features/categories/pages/CategoryDetailPage";
 import NotFoundRedirect from "./components/NotFoundRedirect";
 import ProductsListPage from "@/features/products/pages/ProductsListPage";
 import ProductDetailsPage from "@/features/products/pages/ProductDetailsPage";
+import TagListPage from "@/features/tags/pages/TagListPage";
 
 export const router = createBrowserRouter([
   {
