@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProductsApi } from "../api/getProducts";
+import { getProductApi } from "../api/getProduct"; // Added import for full product details
 import { createProductApi } from "../api/createProduct";
 import { updateProductApi } from "../api/updateProduct";
 import { deleteProductApi } from "../api/deleteProduct";
@@ -47,26 +48,26 @@ export function useProductsPage() {
 
   const createMutation = useMutation({
     mutationFn: createProductApi,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsSheetOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: updateProductApi,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsSheetOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteProductApi,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsDeleteOpen(false);
       setActiveProduct(null);
-      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
   });
 
@@ -78,7 +79,8 @@ export function useProductsPage() {
   );
   const totalPages = (
     productsData as
-      { data?: { pagination?: { hasNext?: boolean } } } | undefined
+      | { data?: { pagination?: { hasNext?: boolean } } }
+      | undefined
   )?.data?.pagination?.hasNext
     ? page + 1
     : page;
@@ -110,9 +112,32 @@ export function useProductsPage() {
     setActiveProduct(null);
     setIsSheetOpen(true);
   };
-  const openEdit = (product: Product) => {
+
+  const openEdit = async (product: Product) => {
     setActiveProduct(product);
     setIsSheetOpen(true);
+
+    try {
+      const response = await queryClient.fetchQuery({
+        queryKey: ["product", product.slug],
+        queryFn: () => getProductApi(product.slug),
+      });
+
+      const responseData = (response as { data?: unknown }).data;
+      const nestedData =
+        responseData &&
+        typeof responseData === "object" &&
+        "data" in responseData
+          ? responseData.data
+          : undefined;
+      const fullProduct = nestedData ?? responseData ?? response;
+
+      if (fullProduct && typeof fullProduct === "object" && "name" in fullProduct) {
+        setActiveProduct(fullProduct as Product);
+      }
+    } catch (error) {
+      console.error("Failed to load full product details for edit", error);
+    }
   };
 
   const handleFormSubmit = (formData: FormData) => {
@@ -126,7 +151,8 @@ export function useProductsPage() {
   const handlePageChange = (newPage: number) => {
     const pagination = (
       productsData as
-        { data?: { pagination?: { nextCursor?: string | null } } } | undefined
+        | { data?: { pagination?: { nextCursor?: string | null } } }
+        | undefined
     )?.data?.pagination;
     if (newPage === page + 1) {
       setCursors((prev) => ({

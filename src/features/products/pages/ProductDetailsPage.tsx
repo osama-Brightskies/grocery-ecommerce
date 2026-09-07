@@ -58,25 +58,40 @@ export default function ProductDetailsPage() {
     : "—";
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-6 py-8">
-      <div className="mb-6">
-        <PageHeader
-          title="Products"
-          description="Review and manage a single product"
-        />
-        <Link
-          to="/products"
-          className="inline-flex items-center text-sm font-semibold text-brand-primary hover:text-brand-medium mt-4 transition-colors"
-        >
-          <span className="mr-1">‹</span> Back to products
-        </Link>
+    <div className="w-full max-w-6xl mx-auto px-6 py-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <PageHeader
+            title="Products"
+            description="Review and manage a single product"
+          />
+          <Link
+            to="/products"
+            className="inline-flex items-center text-sm font-semibold text-brand-primary hover:text-brand-medium mt-3 transition-colors"
+          >
+            <span className="mr-1">‹</span> Back to products
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0 mt-4 sm:mt-0">
+          <Button
+            onClick={() => hook.setIsSheetOpen(true)}
+            className="bg-brand-primary text-white hover:bg-brand-medium font-semibold px-6 shadow-sm"
+          >
+            Edit product
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => hook.setIsDeleteOpen(true)}
+            className="bg-status-danger-bg border-status-danger-text text-status-danger-text hover:bg-status-danger-text hover:text-white transition-colors font-semibold px-6"
+          >
+            Delete
+          </Button>
+        </div>
       </div>
-      {/* Main Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Image & Title */}
         <div className="lg:col-span-5 flex flex-col gap-4">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-input h-full flex flex-col">
-            {/* BEAUTIFUL PREMIUM IMAGE CONTAINER */}
             <div className="w-full flex-1 min-h-70 bg-surface-soft rounded-xl flex items-center justify-center mb-6 p-8 overflow-hidden border border-border-input/50 relative group">
               {imageUrl ? (
                 <img
@@ -85,7 +100,6 @@ export default function ProductDetailsPage() {
                     (p as { altText?: string; name?: string }).altText ||
                     "Product image"
                   }
-                  // mix-blend-multiply eliminates white JPEG backgrounds!
                   className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-110 transition-transform duration-500 ease-out"
                 />
               ) : (
@@ -98,7 +112,6 @@ export default function ProductDetailsPage() {
               )}
             </div>
 
-            {/* ALIGNED TEXT DETAILS */}
             <div className="mt-auto">
               <Typography
                 variant="h1"
@@ -122,7 +135,6 @@ export default function ProductDetailsPage() {
           </div>
         </div>
 
-        {/* Right Column: Overview List */}
         <div className="lg:col-span-7 flex flex-col gap-4">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-input h-full">
             <Typography variant="h2" className="text-lg font-bold mb-6">
@@ -164,7 +176,6 @@ export default function ProductDetailsPage() {
               />
               <Row label="Created" value={createdDate} />
 
-              {/* Tags Section */}
               <div className="flex justify-between items-start py-5 border-b border-border-input last:border-0">
                 <Typography
                   variant="body"
@@ -195,22 +206,6 @@ export default function ProductDetailsPage() {
             </div>
           </div>
         </div>
-      </div>
-      {/* Action Buttons (Bottom Right) */}
-      <div className="flex justify-end gap-3 mt-6">
-        <Button
-          onClick={() => hook.setIsSheetOpen(true)}
-          className="bg-brand-primary text-white hover:bg-brand-medium font-semibold px-6 shadow-sm"
-        >
-          Edit product
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => hook.setIsDeleteOpen(true)}
-          className="border-border-input text-sidebar-bg hover:bg-surface-soft font-semibold px-6"
-        >
-          Delete
-        </Button>
       </div>
       {/* Modals */}
       <ProductFormSheet
