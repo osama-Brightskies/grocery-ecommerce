@@ -11,15 +11,14 @@ export interface Product {
   creationDate: string;
   categorySlug: string;
   tags: string[];
+  updatedAt?: string; // <-- ADDED THIS!
 }
 
-// Pagination metadata returned by the cursor-based API
 export interface PaginationMetadata {
   hasNext: boolean;
   nextCursor: string | null;
 }
 
-// Standard API Wrapper for a single product (GET /api/products/{slug})
 export interface SingleProductResponse {
   success: boolean;
   statusCode: number;
@@ -27,7 +26,6 @@ export interface SingleProductResponse {
   data: Product;
 }
 
-// Standard API Wrapper for the paginated product list (GET /api/products)
 export interface PaginatedProductsResponse {
   success: boolean;
   statusCode: number;
