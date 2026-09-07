@@ -79,8 +79,7 @@ export function useProductsPage() {
   );
   const totalPages = (
     productsData as
-      | { data?: { pagination?: { hasNext?: boolean } } }
-      | undefined
+      { data?: { pagination?: { hasNext?: boolean } } } | undefined
   )?.data?.pagination?.hasNext
     ? page + 1
     : page;
@@ -132,7 +131,11 @@ export function useProductsPage() {
           : undefined;
       const fullProduct = nestedData ?? responseData ?? response;
 
-      if (fullProduct && typeof fullProduct === "object" && "name" in fullProduct) {
+      if (
+        fullProduct &&
+        typeof fullProduct === "object" &&
+        "name" in fullProduct
+      ) {
         setActiveProduct(fullProduct as Product);
       }
     } catch (error) {
@@ -151,8 +154,7 @@ export function useProductsPage() {
   const handlePageChange = (newPage: number) => {
     const pagination = (
       productsData as
-        | { data?: { pagination?: { nextCursor?: string | null } } }
-        | undefined
+        { data?: { pagination?: { nextCursor?: string | null } } } | undefined
     )?.data?.pagination;
     if (newPage === page + 1) {
       setCursors((prev) => ({
