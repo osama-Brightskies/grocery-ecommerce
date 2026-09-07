@@ -13,9 +13,11 @@ import UserDetailPage from "@/features/users/pages/UserDetailPage";
 import CategoriesListPage from "@/features/categories/pages/CategoriesListPage";
 import CategoryDetailPage from "@/features/categories/pages/CategoryDetailPage";
 import NotFoundRedirect from "./components/NotFoundRedirect";
+import ProductsListPage from "@/features/products/pages/ProductsListPage";
+import ProductDetailsPage from "@/features/products/pages/ProductDetailsPage";
+import TagListPage from "@/features/tags/pages/TagListPage";
 
 export const router = createBrowserRouter([
-  // 1. PUBLIC AUTH ROUTES
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -29,7 +31,6 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // 2. PROTECTED APP ROUTES
   {
     path: "/",
     element: <AppLayout />,
@@ -41,6 +42,9 @@ export const router = createBrowserRouter([
       { path: "users/:userId", element: <UserDetailPage /> },
       { path: "categories", element: <CategoriesListPage /> },
       { path: "categories/:slug", element: <CategoryDetailPage /> },
+      { path: "tags", element: <TagListPage /> },
+      { path: "products", element: <ProductsListPage /> },
+      { path: "products/:slug", element: <ProductDetailsPage /> },
     ],
   },
 
