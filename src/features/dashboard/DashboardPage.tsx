@@ -3,32 +3,58 @@ import { useQuery } from "@tanstack/react-query";
 import { Typography } from "@/components/ui/shared/Typography";
 import { useGetUsers } from "@/features/users/hooks/useGetUsers";
 import { useGetCategories } from "@/features/categories/hooks/useGetCategories";
-import { useGetUserActivities } from "@/features/users/hooks/useGetUserActivities";
 import { getProductsApi } from "@/features/products/api/getProducts";
-import { calculateUserGrowth } from "@/lib/utils";
+import { calculateLast3MonthsGrowth } from "@/lib/utils";
 import { DashboardKpiCards } from "./components/DashboardKpiCards";
 import { UserGrowthChart } from "./components/UserGrowthChart";
 import { UserStatusDonutChart } from "./components/UserStatusDonutChart";
 import { CartActivityBarChart } from "./components/CartActivityBarChart";
 import { LowStockWatchCard } from "./components/LowStockWatchCard";
 import type { PaginatedProductsResponse } from "@/features/products/products.types";
+import { useGetAllUserActivities } from "../users/hooks/useGetAllUsersActivities";
+
+// 🪄 Self-contained Action Classifier
+type ActionCategory =
+  | "place_order"
+  | "add_to_cart"
+  | "remove_from_cart"
+  | "add_to_favorites"
+  | "remove_from_favorites"
+  | "other";
+
+function classifyAction(raw?: string): ActionCategory {
+  if (!raw) return "other";
+  const s = raw.toLowerCase().replace(/[^a-z]/g, "");
+
+  if (s.includes("order")) return "place_order";
+
+  if (s.includes("cart")) {
+    return s.includes("remov") ? "remove_from_cart" : "add_to_cart";
+  }
+
+  if (s.includes("fav") || s.includes("wish")) {
+    return s.includes("remov") ? "remove_from_favorites" : "add_to_favorites";
+  }
+
+  return "other";
+}
 
 export default function DashboardPage() {
-  // 1. Fetch Users Query
-  const { data: usersResponse, isLoading: isUsersLoading } = useGetUsers(
-    { pageNumber: 1, pageSize: 50 },
-    { enabled: true },
-  );
+  // 1. Fetch Users Query (600 covers entire database)
+  const { data: usersResponse, isLoading: isUsersLoading } = useGetUsers({
+    pageNumber: 1,
+    pageSize: 600,
+  });
 
   // 2. Fetch Categories Query
   const { data: categoriesResponse, isLoading: isCategoriesLoading } =
     useGetCategories({ limit: 50 });
 
-  // 3. Fetch Activities Query
+  // 3. Fetch All Store Activities (100 latest)
   const { data: activitiesResponse, isLoading: isActivitiesLoading } =
-    useGetUserActivities();
+    useGetAllUserActivities(100);
 
-  // 4. Fetch Products Catalog (100 items with 30s cache)
+  // 4. Fetch Products Catalog (100 items)
   const { data: productsResponse, isLoading: isProductsLoading } =
     useQuery<PaginatedProductsResponse>({
       queryKey: ["dashboard-catalog-products"],
@@ -36,14 +62,14 @@ export default function DashboardPage() {
       staleTime: 30 * 1000,
     });
 
-  // User Stats
+  // User Calculations
   const { totalUsersCount, activeUsersCount, inactiveUsersCount, growthData } =
     useMemo(() => {
       const userList = usersResponse?.data?.data ?? [];
       const total =
         usersResponse?.data?.pagination?.totalCount ?? userList.length;
       const active = userList.filter((u) => u.isActive).length;
-      const growth = calculateUserGrowth(userList);
+      const growth = calculateLast3MonthsGrowth(userList, total);
 
       return {
         totalUsersCount: total,
@@ -55,7 +81,7 @@ export default function DashboardPage() {
 
   const totalCategoriesCount = categoriesResponse?.data?.data?.length ?? 0;
 
-  // Products
+  // Products Calculations
   const products = useMemo(() => {
     return productsResponse?.data?.data ?? [];
   }, [productsResponse]);
@@ -69,43 +95,47 @@ export default function DashboardPage() {
     };
   }, [products]);
 
-  // Activity Calculations (Orders, Add to Cart, Remove from Cart Only)
-  const { ordersPlacedCount, addToCartCount, removeFromCartCount } =
-    useMemo(() => {
-      const activityList = activitiesResponse?.data?.data ?? [];
+  // Robust Classification of all 100 actions
+  const {
+    ordersPlacedCount,
+    addToCartCount,
+    removeFromCartCount,
+    addToFavoritesCount,
+    removeFromFavoritesCount,
+  } = useMemo(() => {
+    const activityList = activitiesResponse?.data?.data ?? [];
 
-      let orders = 0;
-      let addCart = 0;
-      let removeCart = 0;
+    let orders = 0;
+    let addCart = 0;
+    let removeCart = 0;
+    let addFav = 0;
+    let removeFav = 0;
 
-      for (const item of activityList) {
-        const act = String(item.actionType || "")
-          .toLowerCase()
-          .replace(/[^a-z]/g, "");
+    for (const item of activityList) {
+      const category = classifyAction(item.actionType);
 
-        // 1. Orders
-        if (act.includes("order")) {
-          orders++;
-        }
-        // 2. Cart Actions
-        else if (act.includes("cart")) {
-          if (act.includes("remov")) {
-            removeCart++;
-          } else {
-            addCart++;
-          }
-        }
-      }
+      if (category === "place_order") orders++;
+      else if (category === "add_to_cart") addCart++;
+      else if (category === "remove_from_cart") removeCart++;
+      else if (category === "add_to_favorites") addFav++;
+      else if (category === "remove_from_favorites") removeFav++;
+    }
 
-      return {
-        ordersPlacedCount: orders,
-        addToCartCount: addCart,
-        removeFromCartCount: removeCart,
-      };
-    }, [activitiesResponse]);
+    return {
+      ordersPlacedCount: orders,
+      addToCartCount: addCart,
+      removeFromCartCount: removeCart,
+      addToFavoritesCount: addFav,
+      removeFromFavoritesCount: removeFav,
+    };
+  }, [activitiesResponse]);
 
   const totalCartActions =
-    ordersPlacedCount + addToCartCount + removeFromCartCount;
+    ordersPlacedCount +
+    addToCartCount +
+    removeFromCartCount +
+    addToFavoritesCount +
+    removeFromFavoritesCount;
 
   const isLoadingAny =
     isUsersLoading ||
@@ -115,7 +145,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 max-w-7xl pb-16">
-      {/* Page Header */}
+      {/* Header */}
       <div className="space-y-1">
         <Typography
           variant="h1"
@@ -129,7 +159,7 @@ export default function DashboardPage() {
         </Typography>
       </div>
 
-      {/* 1. KPI Metric Summary Cards */}
+      {/* 1. Real-Data KPI Cards */}
       <DashboardKpiCards
         totalUsers={totalUsersCount}
         activeUsers={activeUsersCount}
@@ -137,14 +167,14 @@ export default function DashboardPage() {
         totalProducts={totalProductsCount}
         criticalProductsCount={criticalProductsCount}
         totalCartActions={totalCartActions}
-        addToCartCount={addToCartCount}
-        removeFromCartCount={removeFromCartCount}
+        positiveActionsCount={addToCartCount + addToFavoritesCount}
+        negativeActionsCount={removeFromCartCount + removeFromFavoritesCount}
         isLoading={isLoadingAny}
       />
 
-      {/* 2. User Growth & Status Donut Charts */}
+      {/* 2. User Growth & Status Donut */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <UserGrowthChart totalUsers={totalUsersCount} data={growthData} />
+        <UserGrowthChart data={growthData} totalUsers={totalUsersCount} />
         <UserStatusDonutChart
           totalUsers={totalUsersCount}
           activeUsers={activeUsersCount}
@@ -157,6 +187,8 @@ export default function DashboardPage() {
         ordersPlacedCount={ordersPlacedCount}
         addToCartCount={addToCartCount}
         removeFromCartCount={removeFromCartCount}
+        addToFavoritesCount={addToFavoritesCount}
+        removeFromFavoritesCount={removeFromFavoritesCount}
       />
 
       {/* 4. Complete Catalog Low Stock Watchlist */}

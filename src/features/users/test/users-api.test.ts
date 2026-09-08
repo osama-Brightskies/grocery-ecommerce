@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { http } from "@/api";
 import {
+  getAllUserActivitiesApi,
   getUserActivitiesApi,
   getUserByIdApi,
   getUsersApi,
@@ -52,13 +53,13 @@ describe("users API contracts", () => {
     });
   });
 
-  it("gets all activities without an undefined query parameter", async () => {
+  it("gets the store-wide activity feed with its limit", async () => {
     vi.spyOn(http, "get").mockResolvedValue(undefined);
 
-    await getUserActivitiesApi();
+    await getAllUserActivitiesApi(100);
 
     expect(http.get).toHaveBeenCalledWith("/api/user-activities", {
-      params: undefined,
+      params: { Limit: 100, PageSize: 100 },
     });
   });
 });

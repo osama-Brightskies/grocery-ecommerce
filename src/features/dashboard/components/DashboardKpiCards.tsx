@@ -15,8 +15,8 @@ export type DashboardKpiCardsProps = {
   totalProducts: number;
   criticalProductsCount: number;
   totalCartActions: number;
-  addToCartCount: number;
-  removeFromCartCount: number;
+  positiveActionsCount: number;
+  negativeActionsCount: number;
   isLoading?: boolean;
 };
 
@@ -27,15 +27,15 @@ export function DashboardKpiCards({
   totalProducts,
   criticalProductsCount,
   totalCartActions,
-  addToCartCount,
-  removeFromCartCount,
+  positiveActionsCount,
+  negativeActionsCount,
   isLoading = false,
 }: DashboardKpiCardsProps) {
   const inactiveUsers = Math.max(0, totalUsers - activeUsers);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {/* 1. Total Users Card */}
+      {/* 1. Total Users */}
       <div className="bg-card rounded-2xl border border-border p-6 shadow-xs flex items-center justify-between">
         <div className="space-y-1">
           <Typography
@@ -63,7 +63,7 @@ export function DashboardKpiCards({
         </div>
       </div>
 
-      {/* 2. Categories Card */}
+      {/* 2. Categories */}
       <div className="bg-card rounded-2xl border border-border p-6 shadow-xs flex items-center justify-between">
         <div className="space-y-1">
           <Typography
@@ -85,13 +85,12 @@ export function DashboardKpiCards({
             Catalog categories
           </Typography>
         </div>
-        {/* Unified Brand Green Icon Container */}
         <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <Layers className="w-6 h-6" />
         </div>
       </div>
 
-      {/* 3. Catalog Products & Inventory Health Card */}
+      {/* 3. Catalog Products */}
       <div className="bg-card rounded-2xl border border-border p-6 shadow-xs flex items-center justify-between">
         <div className="space-y-1">
           <Typography
@@ -120,20 +119,19 @@ export function DashboardKpiCards({
             )}
           </div>
         </div>
-        {/* Unified Brand Green Icon Container */}
         <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <Package className="w-6 h-6" />
         </div>
       </div>
 
-      {/* 4. Cart Behavior & Actions Card */}
+      {/* 4. Store Actions */}
       <div className="bg-card rounded-2xl border border-border p-6 shadow-xs flex items-center justify-between">
         <div className="space-y-1">
           <Typography
             variant="muted"
             className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
           >
-            Cart Actions
+            Store Actions
           </Typography>
           <Typography
             variant="h1"
@@ -143,11 +141,11 @@ export function DashboardKpiCards({
           </Typography>
           <div className="text-[11px] text-text-secondary font-medium">
             <span className="text-brand-primary font-semibold">
-              +{addToCartCount} added
+              +{positiveActionsCount} added
             </span>
             <span className="mx-1">•</span>
             <span className="text-status-warning-text font-semibold">
-              -{removeFromCartCount} removed
+              -{negativeActionsCount} removed
             </span>
           </div>
         </div>

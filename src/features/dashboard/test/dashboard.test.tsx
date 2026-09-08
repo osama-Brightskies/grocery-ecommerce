@@ -22,8 +22,8 @@ vi.mock("@/features/users/hooks/useGetUsers", () => ({
 vi.mock("@/features/categories/hooks/useGetCategories", () => ({
   useGetCategories: categoriesHook,
 }));
-vi.mock("@/features/users/hooks/useGetUserActivities", () => ({
-  useGetUserActivities: activitiesHook,
+vi.mock("@/features/users/hooks/useGetAllUsersActivities", () => ({
+  useGetAllUserActivities: activitiesHook,
 }));
 vi.mock("../components/DashboardKpiCards", () => ({
   DashboardKpiCards: (props: object) => (
@@ -93,12 +93,9 @@ describe("DashboardPage", () => {
     expect(
       screen.getByRole("heading", { name: "Admin Dashboard" }),
     ).toBeInTheDocument();
-    expect(usersHook).toHaveBeenCalledWith(
-      { pageNumber: 1, pageSize: 50 },
-      { enabled: true },
-    );
+    expect(usersHook).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 600 });
     expect(categoriesHook).toHaveBeenCalledWith({ limit: 50 });
-    expect(activitiesHook).toHaveBeenCalledWith();
+    expect(activitiesHook).toHaveBeenCalledWith(100);
     expect(screen.getByTestId("kpis")).toHaveTextContent(
       JSON.stringify({
         totalUsers: 5,
@@ -107,14 +104,13 @@ describe("DashboardPage", () => {
         totalProducts: 0,
         criticalProductsCount: 0,
         totalCartActions: 3,
-        addToCartCount: 2,
-        removeFromCartCount: 1,
+        positiveActionsCount: 2,
+        negativeActionsCount: 1,
         isLoading: false,
       }),
     );
-    expect(screen.getByTestId("growth")).toHaveTextContent(
-      JSON.stringify({ totalUsers: 5, data: [] }),
-    );
+    expect(screen.getByTestId("growth")).toHaveTextContent(/"totalUsers":5/);
+    expect(screen.getByTestId("growth")).toHaveTextContent(/"data":\[/);
     expect(screen.getByTestId("status")).toHaveTextContent(
       JSON.stringify({
         totalUsers: 5,
@@ -127,6 +123,8 @@ describe("DashboardPage", () => {
         ordersPlacedCount: 0,
         addToCartCount: 2,
         removeFromCartCount: 1,
+        addToFavoritesCount: 0,
+        removeFromFavoritesCount: 0,
       }),
     );
   });
@@ -146,8 +144,8 @@ describe("DashboardPage", () => {
         totalProducts: 0,
         criticalProductsCount: 0,
         totalCartActions: 0,
-        addToCartCount: 0,
-        removeFromCartCount: 0,
+        positiveActionsCount: 0,
+        negativeActionsCount: 0,
         isLoading: true,
       }),
     );
@@ -180,6 +178,8 @@ describe("DashboardPage", () => {
         ordersPlacedCount: 0,
         addToCartCount: 1,
         removeFromCartCount: 0,
+        addToFavoritesCount: 0,
+        removeFromFavoritesCount: 0,
       }),
     );
   });

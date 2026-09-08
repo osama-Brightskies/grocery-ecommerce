@@ -25,8 +25,21 @@ export const updateUserApi = (userId: string, payload: UpdateUserPayload) => {
   return http.put<UpdateUserResponse>(`/api/users/${userId}`, payload);
 };
 
-export const getUserActivitiesApi = (userId?: string) => {
+// Single User Activities API (Requires specific userId)
+export const getUserActivitiesApi = (userId: string) => {
   return http.get<GetUserActivitiesResponse>("/api/user-activities", {
-    params: userId ? { userId } : undefined,
+    params: {
+      userId,
+    },
+  });
+};
+
+// All Users Activities API (Store-wide feed for dashboard, up to limit)
+export const getAllUserActivitiesApi = (limit: number = 100) => {
+  return http.get<GetUserActivitiesResponse>("/api/user-activities", {
+    params: {
+      Limit: limit,
+      PageSize: limit,
+    },
   });
 };

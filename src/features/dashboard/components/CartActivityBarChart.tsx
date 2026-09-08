@@ -11,6 +11,8 @@ export type CartActivityBarChartProps = {
   ordersPlacedCount: number;
   addToCartCount: number;
   removeFromCartCount: number;
+  addToFavoritesCount: number;
+  removeFromFavoritesCount: number;
 };
 
 const activityConfig = {
@@ -24,25 +26,41 @@ export function CartActivityBarChart({
   ordersPlacedCount,
   addToCartCount,
   removeFromCartCount,
+  addToFavoritesCount,
+  removeFromFavoritesCount,
 }: CartActivityBarChartProps) {
   const totalInteractions =
-    ordersPlacedCount + addToCartCount + removeFromCartCount;
+    ordersPlacedCount +
+    addToCartCount +
+    removeFromCartCount +
+    addToFavoritesCount +
+    removeFromFavoritesCount;
 
   const activityData = [
     {
       action: "Orders Placed",
       count: ordersPlacedCount,
-      fill: "var(--color-chart-1)",
+      fill: "var(--color-chart-1)", // Emerald Green
     },
     {
       action: "Added to Cart",
       count: addToCartCount,
-      fill: "var(--color-chart-2)",
+      fill: "var(--color-chart-2)", // Bright Green
     },
     {
       action: "Removed from Cart",
       count: removeFromCartCount,
-      fill: "var(--color-chart-3)",
+      fill: "var(--color-chart-3)", // Amber
+    },
+    {
+      action: "Added to Favorites",
+      count: addToFavoritesCount,
+      fill: "var(--color-chart-4)", // Purple
+    },
+    {
+      action: "Removed from Favorites",
+      count: removeFromFavoritesCount,
+      fill: "var(--color-status-danger-text)", // Red
     },
   ];
 
@@ -58,7 +76,8 @@ export function CartActivityBarChart({
             Customer Store Engagement
           </Typography>
           <Typography variant="muted" className="text-xs text-text-secondary">
-            Breakdown of orders and cart modifications from store activity
+            Live breakdown of orders, cart modifications, and wishlist
+            interactions
           </Typography>
         </div>
         <Typography
@@ -69,7 +88,7 @@ export function CartActivityBarChart({
         </Typography>
       </div>
 
-      {/* Chart Body */}
+      {/* Body */}
       {totalInteractions === 0 ? (
         <div className="py-12 text-center">
           <Typography variant="muted" className="text-sm text-text-secondary">
@@ -77,11 +96,11 @@ export function CartActivityBarChart({
           </Typography>
         </div>
       ) : (
-        <ChartContainer config={activityConfig} className="h-56 w-full">
+        <ChartContainer config={activityConfig} className="h-72 w-full">
           <BarChart
             data={activityData}
             layout="vertical"
-            margin={{ left: 30, right: 30 }}
+            margin={{ left: 35, right: 30 }}
           >
             <CartesianGrid
               horizontal={false}
@@ -99,14 +118,14 @@ export function CartActivityBarChart({
               type="category"
               tickLine={false}
               axisLine={false}
-              width={140}
+              width={170}
               className="text-xs font-medium"
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Bar
               dataKey="count"
               radius={[0, 8, 8, 0]}
-              barSize={24}
+              barSize={18}
               isAnimationActive={true}
               animationDuration={1000}
             >

@@ -70,54 +70,81 @@ export function getInitials(
   if (email) return email.slice(0, 2).toUpperCase();
   return "U";
 }
-
 /**
- * 🪄 Pure Data Function: Extracts months from real `createdAt` timestamps,
- * sorts chronologically, and calculates real cumulative user registrations.
+ * Dynamically computes cumulative store user growth leading up to today's total count
+ * across the past 3 calendar months [Month-2, Month-1, Current Month].
+ * Reaches the exact totalUsersCount in the current month!
  */
-export function calculateUserGrowth(
+export function calculateLast3MonthsGrowth(
   users: { createdAt: string }[],
-): { month: string; users: number }[] {
-  if (!users || users.length === 0) return [];
+  totalUsersCount: number,
+): { month: string; users: number; newUsers: number }[] {
+  // Determine reference date: use system date, or anchor to newest database user date
+  let refDate = new Date();
+  if (users && users.length > 0) {
+    const dates = users
+      .map((u) => new Date(u.createdAt).getTime())
+      .filter((t) => !isNaN(t));
+    if (dates.length > 0) {
+      const maxDate = new Date(Math.max(...dates));
+      if (maxDate.getTime() > refDate.getTime()) {
+        refDate = maxDate;
+      }
+    }
+  }
 
-  const monthMap = new Map<string, { label: string; count: number }>();
+  const months: {
+    year: number;
+    monthIndex: number;
+    key: string;
+    label: string;
+    newUsers: number;
+  }[] = [];
 
+  // Generate the 3 calendar months: [2 months ago, 1 month ago, Current month]
+  for (let i = 2; i >= 0; i--) {
+    const d = new Date(refDate.getFullYear(), refDate.getMonth() - i, 1);
+    const year = d.getFullYear();
+    const monthNum = String(d.getMonth() + 1).padStart(2, "0");
+    const key = `${year}-${monthNum}`;
+
+    // Clean, unambiguous month name (e.g. "July", "August", "September")
+    const label = new Intl.DateTimeFormat("en-US", { month: "long" }).format(d);
+
+    months.push({
+      year,
+      monthIndex: d.getMonth(),
+      key,
+      label,
+      newUsers: 0,
+    });
+  }
+
+  // Count new registrations in each of the 3 months from real API timestamps
   users.forEach((u) => {
     if (!u.createdAt) return;
-    const date = new Date(u.createdAt);
-    if (isNaN(date.getTime())) return;
+    const uDate = new Date(u.createdAt);
+    if (isNaN(uDate.getTime())) return;
 
-    // e.g. "2026-08" for sorting
-    const year = date.getFullYear();
-    const monthNum = String(date.getMonth() + 1).padStart(2, "0");
-    const sortKey = `${year}-${monthNum}`;
-
-    // e.g. "Aug '26" or "Jan '24"
-    const label = new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      year: "2-digit",
-    }).format(date);
-
-    const existing = monthMap.get(sortKey);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      monthMap.set(sortKey, { label, count: 1 });
+    const uKey = `${uDate.getFullYear()}-${String(uDate.getMonth() + 1).padStart(2, "0")}`;
+    const target = months.find((m) => m.key === uKey);
+    if (target) {
+      target.newUsers += 1;
     }
   });
 
-  // Sort chronologically
-  const sortedEntries = Array.from(monthMap.entries()).sort(([a], [b]) =>
-    a.localeCompare(b),
-  );
+  // Calculate cumulative baseline so the current month ends EXACTLY at totalUsersCount!
+  const currentTotal =
+    totalUsersCount > 0 ? totalUsersCount : (users?.length ?? 0);
+  const month2Total = currentTotal;
+  const month1Total = Math.max(0, month2Total - months[2].newUsers);
+  const month0Total = Math.max(0, month1Total - months[1].newUsers);
 
-  // Compute cumulative growth curve from real records
-  let cumulative = 0;
-  return sortedEntries.map(([, val]) => {
-    cumulative += val.count;
-    return {
-      month: val.label,
-      users: cumulative,
-    };
-  });
+  const totals = [month0Total, month1Total, month2Total];
+
+  return months.map((m, idx) => ({
+    month: m.label,
+    users: totals[idx],
+    newUsers: m.newUsers,
+  }));
 }

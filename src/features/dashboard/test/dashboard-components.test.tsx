@@ -52,8 +52,8 @@ describe("DashboardKpiCards", () => {
         totalProducts={20}
         criticalProductsCount={2}
         totalCartActions={12}
-        addToCartCount={9}
-        removeFromCartCount={2}
+        positiveActionsCount={9}
+        negativeActionsCount={2}
       />,
     );
     expect(screen.getByText("Total Users")).toBeInTheDocument();
@@ -72,8 +72,8 @@ describe("DashboardKpiCards", () => {
         totalProducts={20}
         criticalProductsCount={2}
         totalCartActions={12}
-        addToCartCount={9}
-        removeFromCartCount={2}
+        positiveActionsCount={9}
+        negativeActionsCount={2}
         isLoading
       />,
     );
@@ -84,9 +84,12 @@ describe("DashboardKpiCards", () => {
 describe("dashboard charts", () => {
   it("builds the user growth series with the current total", () => {
     render(
-      <UserGrowthChart totalUsers={42} data={[{ month: "Aug", users: 42 }]} />,
+      <UserGrowthChart
+        totalUsers={42}
+        data={[{ month: "Aug", users: 42, newUsers: 5 }]}
+      />,
     );
-    expect(screen.getByText("User Registrations Trend")).toBeInTheDocument();
+    expect(screen.getByText("User Growth (Past 3 Months)")).toBeInTheDocument();
     expect(screen.getByText("Total Users: 42")).toBeInTheDocument();
     expect(screen.getByTestId("area-chart")).toHaveAttribute(
       "data-chart",
@@ -117,6 +120,8 @@ describe("dashboard charts", () => {
         ordersPlacedCount={3}
         addToCartCount={9}
         removeFromCartCount={2}
+        addToFavoritesCount={4}
+        removeFromFavoritesCount={1}
       />,
     );
     expect(screen.getByText("Customer Store Engagement")).toBeInTheDocument();
@@ -143,6 +148,8 @@ describe("dashboard charts", () => {
           ordersPlacedCount={0}
           addToCartCount={0}
           removeFromCartCount={0}
+          addToFavoritesCount={0}
+          removeFromFavoritesCount={0}
         />
       </>,
     );

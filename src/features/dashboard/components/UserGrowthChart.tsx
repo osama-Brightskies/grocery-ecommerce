@@ -8,44 +8,47 @@ import {
 } from "@/components/ui/chart";
 
 export type UserGrowthChartProps = {
+  data: { month: string; users: number; newUsers: number }[];
   totalUsers: number;
-  data: { month: string; users: number }[];
 };
 
 const userGrowthConfig = {
   users: {
-    label: "Registered Users",
+    label: "Total Users",
     color: "var(--color-chart-1)",
   },
 } satisfies ChartConfig;
 
-export function UserGrowthChart({ totalUsers, data }: UserGrowthChartProps) {
+export function UserGrowthChart({ data, totalUsers }: UserGrowthChartProps) {
   return (
     <div className="lg:col-span-2 bg-card rounded-2xl border border-border p-6 shadow-xs space-y-4 flex flex-col justify-between">
+      {/* Header */}
       <div className="flex items-center justify-between border-b border-border pb-4">
         <div>
           <Typography
             variant="h2"
             className="text-lg font-bold text-sidebar-bg"
           >
-            User Registrations Trend
+            User Growth (Past 3 Months)
           </Typography>
           <Typography variant="muted" className="text-xs text-text-secondary">
-            Cumulative customer growth extracted from real account creation
-            dates
+            Cumulative store customer growth leading to today
           </Typography>
         </div>
+
+        {/* Matches the 546 total */}
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-brand-primary" />
           <Typography
             variant="caption"
-            className="text-xs font-semibold text-sidebar-bg"
+            className="text-xs font-semibold text-sidebar-bg font-mono"
           >
             Total Users: {totalUsers}
           </Typography>
         </div>
       </div>
 
+      {/* Chart */}
       {data.length === 0 ? (
         <div className="h-72 flex items-center justify-center">
           <Typography variant="muted" className="text-sm text-text-secondary">
@@ -56,7 +59,7 @@ export function UserGrowthChart({ totalUsers, data }: UserGrowthChartProps) {
         <ChartContainer config={userGrowthConfig} className="h-72 w-full">
           <AreaChart
             data={data}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           >
             <defs>
               <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
@@ -88,6 +91,7 @@ export function UserGrowthChart({ totalUsers, data }: UserGrowthChartProps) {
               axisLine={false}
               tickMargin={8}
               allowDecimals={false}
+              domain={["auto", "auto"]}
             />
             <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
             <Area
