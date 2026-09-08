@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
 import { UserRole } from "@/store/types/authStore.types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,6 +20,7 @@ export function SidebarUserCard({
   isCollapsed = false,
   className,
 }: SidebarUserCardProps) {
+  const navigate = useNavigate();
   const authUser = useAuthStore((state) => state.user);
 
   // Fetch logged-in admin's profile data dynamically
@@ -37,11 +39,12 @@ export function SidebarUserCard({
 
   const cardContent = (
     <div
+      onClick={() => navigate("/profile")}
       className={cn(
-        "flex items-center select-none",
+        "flex items-center select-none cursor-pointer hover:bg-white/10 rounded-lg transition-colors",
         {
-          "justify-center py-1": isCollapsed,
-          "gap-3 px-3 py-2": !isCollapsed,
+          "justify-center py-1.5": isCollapsed,
+          "gap-3 px-3 py-2.5": !isCollapsed,
         },
         className,
       )}
@@ -49,7 +52,7 @@ export function SidebarUserCard({
       {/* Dynamic Initials Avatar */}
       <Avatar
         size={isCollapsed ? "sm" : "default"}
-        className="bg-avatar-emerald text-white"
+        className="bg-avatar-emerald text-white shrink-0"
       >
         <AvatarFallback>{initials}</AvatarFallback>
       </Avatar>
@@ -79,7 +82,7 @@ export function SidebarUserCard({
       <Tooltip>
         <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
         <TooltipContent side="right">
-          {fullName} ({roleText})
+          {fullName} ({roleText}) - View Profile
         </TooltipContent>
       </Tooltip>
     );
