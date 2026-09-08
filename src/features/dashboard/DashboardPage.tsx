@@ -15,10 +15,10 @@ import type { PaginatedProductsResponse } from "@/features/products/products.typ
 
 export default function DashboardPage() {
   // 1. Fetch Users Query
-  const { data: usersResponse, isLoading: isUsersLoading } = useGetUsers({
-    pageNumber: 1,
-    pageSize: 50,
-  });
+  const { data: usersResponse, isLoading: isUsersLoading } = useGetUsers(
+    { pageNumber: 1, pageSize: 50 },
+    { enabled: true },
+  );
 
   // 2. Fetch Categories Query
   const { data: categoriesResponse, isLoading: isCategoriesLoading } =
@@ -28,15 +28,15 @@ export default function DashboardPage() {
   const { data: activitiesResponse, isLoading: isActivitiesLoading } =
     useGetUserActivities();
 
-  // 4 Query full catalog with 30s fresh cache
+  // 4. Fetch Products Catalog (100 items with 30s cache)
   const { data: productsResponse, isLoading: isProductsLoading } =
     useQuery<PaginatedProductsResponse>({
       queryKey: ["dashboard-catalog-products"],
       queryFn: () => getProductsApi(100) as Promise<PaginatedProductsResponse>,
-      staleTime: 30 * 1000, // 👈 30 seconds ensures live stock updates show up fast
+      staleTime: 30 * 1000,
     });
 
-  // User Stats & Growth Calculation
+  // User Stats
   const { totalUsersCount, activeUsersCount, inactiveUsersCount, growthData } =
     useMemo(() => {
       const userList = usersResponse?.data?.data ?? [];
@@ -55,7 +55,7 @@ export default function DashboardPage() {
 
   const totalCategoriesCount = categoriesResponse?.data?.data?.length ?? 0;
 
-  // Products & Inventory Calculation
+  // Products
   const products = useMemo(() => {
     return productsResponse?.data?.data ?? [];
   }, [productsResponse]);
@@ -69,65 +69,43 @@ export default function DashboardPage() {
     };
   }, [products]);
 
-  // 🪄 Activity Classification Logic
-  const {
-    ordersPlacedCount,
-    addToCartCount,
-    addToFavoritesCount,
-    removeFromCartCount,
-    removeFromFavoritesCount,
-  } = useMemo(() => {
-    const activityList = activitiesResponse?.data?.data ?? [];
+  // Activity Calculations (Orders, Add to Cart, Remove from Cart Only)
+  const { ordersPlacedCount, addToCartCount, removeFromCartCount } =
+    useMemo(() => {
+      const activityList = activitiesResponse?.data?.data ?? [];
 
-    let orders = 0;
-    let addCart = 0;
-    let addFav = 0;
-    let removeCart = 0;
-    let removeFav = 0;
+      let orders = 0;
+      let addCart = 0;
+      let removeCart = 0;
 
-    for (const item of activityList) {
-      // Normalize to lowercase plain letters
-      const act = String(item.actionType || "")
-        .toLowerCase()
-        .replace(/[^a-z]/g, "");
+      for (const item of activityList) {
+        const act = String(item.actionType || "")
+          .toLowerCase()
+          .replace(/[^a-z]/g, "");
 
-      // 1. Check for Orders
-      if (act.includes("order")) {
-        orders++;
-      }
-      // 2. Check for "Add To" -> Cart vs. Favorite
-      else if (act.includes("add")) {
-        if (act.includes("cart")) {
-          addCart++;
-        } else if (act.includes("fav")) {
-          addFav++;
+        // 1. Orders
+        if (act.includes("order")) {
+          orders++;
+        }
+        // 2. Cart Actions
+        else if (act.includes("cart")) {
+          if (act.includes("remov")) {
+            removeCart++;
+          } else {
+            addCart++;
+          }
         }
       }
-      // 3. Check for "Remove From" -> Cart vs. Favorite
-      else if (act.includes("remov")) {
-        if (act.includes("cart")) {
-          removeCart++;
-        } else if (act.includes("fav")) {
-          removeFav++;
-        }
-      }
-    }
 
-    return {
-      ordersPlacedCount: orders,
-      addToCartCount: addCart,
-      addToFavoritesCount: addFav,
-      removeFromCartCount: removeCart,
-      removeFromFavoritesCount: removeFav,
-    };
-  }, [activitiesResponse]);
+      return {
+        ordersPlacedCount: orders,
+        addToCartCount: addCart,
+        removeFromCartCount: removeCart,
+      };
+    }, [activitiesResponse]);
 
   const totalCartActions =
-    ordersPlacedCount +
-    addToCartCount +
-    addToFavoritesCount +
-    removeFromCartCount +
-    removeFromFavoritesCount;
+    ordersPlacedCount + addToCartCount + removeFromCartCount;
 
   const isLoadingAny =
     isUsersLoading ||
@@ -178,9 +156,7 @@ export default function DashboardPage() {
       <CartActivityBarChart
         ordersPlacedCount={ordersPlacedCount}
         addToCartCount={addToCartCount}
-        addToFavoritesCount={addToFavoritesCount}
         removeFromCartCount={removeFromCartCount}
-        removeFromFavoritesCount={removeFromFavoritesCount}
       />
 
       {/* 4. Complete Catalog Low Stock Watchlist */}

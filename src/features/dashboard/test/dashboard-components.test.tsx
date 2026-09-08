@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import { DashboardKpiCards } from "../components/DashboardKpiCards";
 import { UserGrowthChart } from "../components/UserGrowthChart";
 import { UserStatusDonutChart } from "../components/UserStatusDonutChart";
 import { CartActivityBarChart } from "../components/CartActivityBarChart";
+import { LowStockWatchCard } from "../components/LowStockWatchCard";
+import type { Product } from "@/features/products/products.types";
 
 vi.mock("recharts", () => ({
   Area: () => null,
@@ -40,7 +43,7 @@ vi.mock("@/components/ui/chart", () => ({
 }));
 
 describe("DashboardKpiCards", () => {
-  it("renders KPI values and computes the active-user percentage", () => {
+  it("renders KPI values and inventory health", () => {
     render(
       <DashboardKpiCards
         totalUsers={8}
@@ -113,7 +116,6 @@ describe("dashboard charts", () => {
       <CartActivityBarChart
         ordersPlacedCount={3}
         addToCartCount={9}
-        addToFavoritesCount={4}
         removeFromCartCount={2}
       />,
     );
@@ -126,5 +128,89 @@ describe("dashboard charts", () => {
       "data-chart",
       expect.stringContaining('"count":2'),
     );
+  });
+
+  it("renders the empty states for charts without data", () => {
+    render(
+      <>
+        <UserGrowthChart totalUsers={0} data={[]} />
+        <UserStatusDonutChart
+          totalUsers={0}
+          activeUsers={0}
+          inactiveUsers={0}
+        />
+        <CartActivityBarChart
+          ordersPlacedCount={0}
+          addToCartCount={0}
+          removeFromCartCount={0}
+        />
+      </>,
+    );
+    expect(
+      screen.getByText("No registration history available."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("No user accounts found.")).toBeInTheDocument();
+    expect(
+      screen.getByText("No customer activity recorded in the timeline yet."),
+    ).toBeInTheDocument();
+  });
+});
+
+const product = (slug: string, stockQuantity: number): Product => ({
+  name: slug === "sold-out" ? "Sold Out" : "Low Stock",
+  slug,
+  description: "Test product",
+  price: 5,
+  stockQuantity,
+  isFavorited: false,
+  creationDate: "2026-09-01T00:00:00Z",
+  categorySlug: "fruit",
+  tags: [],
+});
+
+describe("LowStockWatchCard", () => {
+  it("renders loading and healthy inventory states", () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <LowStockWatchCard products={[]} isLoading />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByText("Checking inventory levels..."),
+    ).toBeInTheDocument();
+    rerender(
+      <MemoryRouter>
+        <LowStockWatchCard products={[product("healthy", 11)]} />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByText("All inventory levels are healthy"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows critical products and navigates to product details", () => {
+    render(
+      <MemoryRouter initialEntries={["/dashboard"]}>
+        <Routes>
+          <Route
+            path="/dashboard"
+            element={
+              <LowStockWatchCard
+                products={[product("low", 7), product("sold-out", 0)]}
+              />
+            }
+          />
+          <Route
+            path="/products/:slug"
+            element={<div>Product destination</div>}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("2 Items Critical")).toBeInTheDocument();
+    expect(screen.getByText("Out of Stock (0)")).toBeInTheDocument();
+    expect(screen.getByText("7 units left")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Sold Out"));
+    expect(screen.getByText("Product destination")).toBeInTheDocument();
   });
 });

@@ -93,7 +93,10 @@ describe("DashboardPage", () => {
     expect(
       screen.getByRole("heading", { name: "Admin Dashboard" }),
     ).toBeInTheDocument();
-    expect(usersHook).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 50 });
+    expect(usersHook).toHaveBeenCalledWith(
+      { pageNumber: 1, pageSize: 50 },
+      { enabled: true },
+    );
     expect(categoriesHook).toHaveBeenCalledWith({ limit: 50 });
     expect(activitiesHook).toHaveBeenCalledWith();
     expect(screen.getByTestId("kpis")).toHaveTextContent(
@@ -123,9 +126,7 @@ describe("DashboardPage", () => {
       JSON.stringify({
         ordersPlacedCount: 0,
         addToCartCount: 2,
-        addToFavoritesCount: 0,
         removeFromCartCount: 1,
-        removeFromFavoritesCount: 0,
       }),
     );
   });
@@ -178,9 +179,7 @@ describe("DashboardPage", () => {
       JSON.stringify({
         ordersPlacedCount: 0,
         addToCartCount: 1,
-        addToFavoritesCount: 0,
         removeFromCartCount: 0,
-        removeFromFavoritesCount: 0,
       }),
     );
   });

@@ -50,7 +50,6 @@ export function DashboardKpiCards({
           >
             {isLoading ? "—" : totalUsers}
           </Typography>
-          {/* 🪄 100% Real API Subtext: Active vs Inactive breakdown */}
           <div className="text-[11px] text-text-secondary font-medium">
             <span className="text-brand-primary font-semibold">
               {activeUsers} active
@@ -86,7 +85,8 @@ export function DashboardKpiCards({
             Catalog categories
           </Typography>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-soft border border-border text-sidebar-bg flex items-center justify-center shrink-0">
+        {/* Unified Brand Green Icon Container */}
+        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <Layers className="w-6 h-6" />
         </div>
       </div>
@@ -106,7 +106,6 @@ export function DashboardKpiCards({
           >
             {isLoading ? "—" : totalProducts}
           </Typography>
-          {/* 🪄 100% Real API Subtext: Shows real critical items count */}
           <div className="text-[11px] font-medium flex items-center gap-1">
             {criticalProductsCount > 0 ? (
               <span className="text-status-danger-text font-semibold flex items-center gap-1">
@@ -121,7 +120,8 @@ export function DashboardKpiCards({
             )}
           </div>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-soft border border-border text-sidebar-bg flex items-center justify-center shrink-0">
+        {/* Unified Brand Green Icon Container */}
+        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <Package className="w-6 h-6" />
         </div>
       </div>
@@ -141,7 +141,6 @@ export function DashboardKpiCards({
           >
             {isLoading ? "—" : totalCartActions}
           </Typography>
-          {/* 🪄 100% Real API Subtext: Add vs Remove breakdown */}
           <div className="text-[11px] text-text-secondary font-medium">
             <span className="text-brand-primary font-semibold">
               +{addToCartCount} added
