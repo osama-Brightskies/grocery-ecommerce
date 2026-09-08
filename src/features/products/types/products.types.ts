@@ -1,46 +1,37 @@
-export type ProductItem = {
-  id: number;
-  title: string;
+// The core Product model
+export interface Product {
+  name: string;
+  slug: string;
   description: string;
-  category: string;
   price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
+  stockQuantity: number;
+  productImageUrl?: string;
+  isFavorited: boolean;
+  altText?: string;
+  creationDate: string;
+  categorySlug: string;
   tags: string[];
-  brand?: string;
-  sku: string;
-  weight: number;
-  dimensions: {
-    width: number;
-    height: number;
-    depth: number;
-  };
-  warrantyInformation: string;
-  shippingInformation: string;
-  availabilityStatus: string;
-  reviews: Array<{
-    rating: number;
-    comment: string;
-    date: string;
-    reviewerName: string;
-    reviewerEmail: string;
-  }>;
-  returnPolicy: string;
-  minimumOrderQuantity: number;
-  meta: {
-    createdAt: string;
-    updatedAt: string;
-    barcode: string;
-    qrCode: string;
-  };
-  thumbnail: string;
-  images: string[];
-};
+  updatedAt?: string; // <-- ADDED THIS!
+}
 
-export type Product = {
-  products: ProductItem[];
-  total: number;
-  skip: number;
-  limit: number;
-};
+export interface PaginationMetadata {
+  hasNext: boolean;
+  nextCursor: string | null;
+}
+
+export interface SingleProductResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: Product;
+}
+
+export interface PaginatedProductsResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    data: Product[];
+    pagination: PaginationMetadata;
+  };
+}

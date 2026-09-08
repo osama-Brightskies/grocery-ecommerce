@@ -2,13 +2,12 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
-
 import { useProductDetails } from "../hooks/useProductDetails";
 import { ProductFormSheet } from "../components/ProductFormSheet";
 import { ProductDeleteModal } from "../components/ProductDeleteModal";
 import PageHeader from "@/components/ui/shared/page-header";
-import { getImageUrl } from "@/lib/utils"; // <-- ADDED IMPORT
-import type { Product } from "../products.types";
+import { getImageUrl } from "@/lib/utils";
+import type { Product } from "../types/products.types";
 
 export default function ProductDetailsPage() {
   const { slug } = useParams<{ slug: string }>();

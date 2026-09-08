@@ -19,7 +19,6 @@ export async function getProductsApi(
   const params: Record<string, string | number | boolean | string[]> = {
     Limit: limit,
     ...(cursor ? { Cursor: cursor } : {}),
-    _t: Date.now(), // <-- BUSTS AGGRESSIVE BROWSER CACHE!
   };
 
   if (filters) {

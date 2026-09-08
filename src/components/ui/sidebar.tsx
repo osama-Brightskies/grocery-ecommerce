@@ -40,11 +40,10 @@ export function Sidebar({
         )}
       >
         <div className="space-y-8">
-          {/* Brand Header & Toggle Trigger */}
           <div
-            className={cn("flex items-center pt-2", {
-              "justify-center": isCollapsed,
-              "justify-between px-3": !isCollapsed,
+            className={cn("flex pt-2", {
+              "flex-col items-center gap-4 justify-center": isCollapsed,
+              "items-center justify-between px-3": !isCollapsed,
             })}
           >
             {!isCollapsed ? (
@@ -81,24 +80,30 @@ export function Sidebar({
                 )}
               </>
             ) : (
-              onToggleCollapse && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      onClick={onToggleCollapse}
-                      className="text-text-subtle hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">Expand Sidebar</TooltipContent>
-                </Tooltip>
-              )
+              <>
+                <img
+                  src="/IMG-20260908-WA0046.jpg"
+                  alt="Brand Logo"
+                  className="w-12 h-12 object-contain drop-shadow-md transition-transform hover:scale-105"
+                />
+                {onToggleCollapse && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        onClick={onToggleCollapse}
+                        className="text-text-subtle hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Expand Sidebar</TooltipContent>
+                  </Tooltip>
+                )}
+              </>
             )}
           </div>
 
-          {/* Nav Items */}
           <nav className="space-y-1.5">
             {navItems.map((item) => (
               <SidebarNavItem
@@ -112,7 +117,6 @@ export function Sidebar({
           </nav>
         </div>
 
-        {/* Footer / User & Logout */}
         <div className="space-y-3 pt-4 border-t border-white/10">
           <SidebarUserCard isCollapsed={isCollapsed} />
           <SidebarLogoutButton isCollapsed={isCollapsed} />

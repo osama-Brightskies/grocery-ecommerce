@@ -7,7 +7,7 @@ import { createProductApi } from "../api/createProduct";
 import { updateProductApi } from "../api/updateProduct";
 import { deleteProductApi } from "../api/deleteProduct";
 import { getCategoriesApi } from "@/features/categories/api/getCategories";
-import type { Product } from "../products.types";
+import type { Product } from "../types/products.types";
 import { getTagsApi } from "@/features/tags/api/get-tags.api";
 
 // Clean helpers to safely extract data wrappers

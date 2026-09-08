@@ -15,13 +15,12 @@ import {
 } from "@/components/ui/sheet";
 import { cn, getImageUrl } from "@/lib/utils";
 
-import type { Product } from "../products.types";
+import type { Product } from "../types/products.types";
 import { FormTextarea } from "@/components/ui/form-fields/FormTextarea";
 import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormSelect } from "@/components/ui/form-fields/FormSelect";
 import { FormImageUploader } from "@/components/ui/form-fields/FormImageUploader";
 
-// 1. Strict Zod Schema with imageFile validation
 const productSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
 

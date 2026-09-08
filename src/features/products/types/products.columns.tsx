@@ -1,0 +1,129 @@
+import { Package as PackageIcon, ChevronRight } from "lucide-react";
+import { Typography } from "@/components/ui/shared/Typography";
+import { getImageUrl } from "@/lib/utils";
+import type { Product } from "./products.types";
+
+export const getProductsColumns = (productsMethods: {
+  viewDetails: (slug: string) => void;
+}) => [
+  {
+    accessorKey: "productImageUrl",
+    header: "IMAGE",
+    cell: ({ row }: { row: { original: Product } }) => {
+      const p = row.original;
+      const productName = p.name?.trim() ? p.name : p.slug;
+      const imageUrl = getImageUrl(p.productImageUrl, p.updatedAt);
+
+      return (
+        <div className="flex items-center justify-center py-1">
+          <div className="w-10 h-10 rounded-lg bg-surface-soft border border-border-input overflow-hidden flex items-center justify-center shrink-0">
+            {p.productImageUrl ? (
+              <img
+                src={imageUrl}
+                alt={productName}
+                className="w-full h-full object-cover mix-blend-multiply"
+              />
+            ) : (
+              <PackageIcon className="w-5 h-5 text-text-subtle" />
+            )}
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "name",
+    header: "PRODUCT INFO",
+    cell: ({ row }: { row: { original: Product } }) => {
+      const p = row.original;
+      const productName = p.name?.trim() ? p.name : p.slug;
+      return (
+        <div className="flex flex-col items-center text-center justify-center py-1 w-full max-w-62.5 mx-auto">
+          <Typography
+            variant="body"
+            className="font-semibold text-sidebar-bg truncate w-full"
+          >
+            {productName}
+          </Typography>
+          <Typography variant="muted" className="text-xs truncate w-full">
+            Slug: {p.slug}
+          </Typography>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "categorySlug",
+    header: "CATEGORY",
+    cell: ({ row }: { row: { original: Product } }) => {
+      const p = row.original;
+      return (
+        <Typography
+          variant="body"
+          className="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-mint text-xs font-medium text-brand-primary uppercase tracking-wider"
+        >
+          {p.categorySlug ?? "—"}
+        </Typography>
+      );
+    },
+  },
+  {
+    accessorKey: "price",
+    header: "PRICE",
+    cell: ({ row }: { row: { original: Product } }) => {
+      const p = row.original;
+      return (
+        <Typography variant="body" className="font-bold text-sidebar-bg">
+          {typeof p.price === "number" ? `$${p.price.toFixed(2)}` : "—"}
+        </Typography>
+      );
+    },
+  },
+  {
+    accessorKey: "stockQuantity",
+    header: "STOCK",
+    cell: ({ row }: { row: { original: Product } }) => {
+      const p = row.original;
+      const stockQuantity = p.stockQuantity ?? 0;
+
+      if (stockQuantity <= 0) {
+        return (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-status-danger-bg text-xs font-medium text-status-danger-text uppercase tracking-wider whitespace-nowrap">
+            Out of stock
+          </span>
+        );
+      }
+
+      const isLowStock = stockQuantity < 10;
+      return (
+        <Typography
+          variant="body"
+          className={`font-semibold ${
+            isLowStock ? "text-status-danger-text" : "text-sidebar-bg"
+          }`}
+        >
+          {stockQuantity} {stockQuantity === 1 ? "unit" : "units"}
+        </Typography>
+      );
+    },
+  },
+  {
+    id: "actions",
+    header: "ACTIONS",
+    cell: ({ row }: { row: { original: Product } }) => {
+      const p = row.original;
+      return (
+        <div className="flex items-center justify-center">
+          <button
+            type="button"
+            aria-label="View details"
+            onClick={() => productsMethods.viewDetails(p.slug)}
+            className="text-text-secondary hover:text-sidebar-bg transition-colors p-1.5 cursor-pointer rounded-md"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      );
+    },
+  },
+];
