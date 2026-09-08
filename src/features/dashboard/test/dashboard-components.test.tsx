@@ -12,9 +12,9 @@ import type { Product } from "@/features/products/products.types";
 vi.mock("recharts", () => ({
   Area: () => null,
   AreaChart: ({ data, children }: { data: unknown; children: ReactNode }) => (
-    <div data-testid="area-chart" data-chart={JSON.stringify(data)}>
+    <svg data-testid="area-chart" data-chart={JSON.stringify(data)}>
       {children}
-    </div>
+    </svg>
   ),
   Bar: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   BarChart: ({ data, children }: { data: unknown; children: ReactNode }) => (

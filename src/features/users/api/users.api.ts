@@ -25,11 +25,8 @@ export const updateUserApi = (userId: string, payload: UpdateUserPayload) => {
   return http.put<UpdateUserResponse>(`/api/users/${userId}`, payload);
 };
 
-export const getUserActivitiesApi = (userId?: string, limit: number = 100) => {
+export const getUserActivitiesApi = (userId?: string) => {
   return http.get<GetUserActivitiesResponse>("/api/user-activities", {
-    params: {
-      Limit: limit,
-      ...(userId ? { userId } : {}),
-    },
+    params: userId ? { userId } : undefined,
   });
 };
