@@ -23,12 +23,14 @@ type EditUserSheetProps = {
   isOpen: boolean;
   onClose: () => void;
   user: User;
+  title?: string;
 };
 
 export default function EditUserSheet({
   isOpen,
   onClose,
   user,
+  title = "Edit user",
 }: EditUserSheetProps) {
   // 1. Initialize Form
   const methods = useForm<UpdateUserFormValues>({
@@ -90,7 +92,7 @@ export default function EditUserSheet({
           {/* Header */}
           <SheetHeader className="space-y-1 p-0 text-left">
             <SheetTitle className="text-2xl font-bold text-sidebar-bg">
-              Edit user
+              {title}
             </SheetTitle>
             <SheetDescription className="text-sm text-text-secondary">
               Update {fullName || "user"}&apos;s profile information.

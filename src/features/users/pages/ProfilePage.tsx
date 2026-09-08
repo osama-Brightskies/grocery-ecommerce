@@ -7,10 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { useAuthStore } from "@/store/useAuthStore";
 import { UserRole } from "@/store/types/authStore.types";
 import { useGetUserDetail } from "../hooks/useGetUserDetail";
-import { useGetUserActivities } from "../hooks/useGetUserActivities";
 
 import UserProfileInfo from "../components/UserProfileInfo";
-import UserActivityTimeline from "../components/UserActivityTimeline";
 import UserNotFoundState from "../components/UserNotFoundState";
 import EditUserSheet from "../components/EditUserSheet";
 import PageHeader from "@/components/ui/shared/page-header";
@@ -27,11 +25,7 @@ export default function ProfilePage() {
     isError,
   } = useGetUserDetail(userId);
 
-  const { data: activitiesResponse, isLoading: isActivitiesLoading } =
-    useGetUserActivities(userId);
-
   const user = userResponse?.data;
-  const activities = activitiesResponse?.data?.data ?? [];
 
   if (isUserLoading) {
     return (
@@ -69,7 +63,6 @@ export default function ProfilePage() {
               {fullName}
             </Typography>
 
-            {/* Role Badge */}
             {user.role === UserRole.Admin ? (
               <Badge className="bg-role-admin-bg text-role-admin-text border-role-admin-text/15">
                 Admin
@@ -80,7 +73,6 @@ export default function ProfilePage() {
               </Badge>
             )}
 
-            {/* Status Badge */}
             <Badge variant={user.isActive ? "primary" : "danger"}>
               {user.isActive ? "Active" : "Inactive"}
             </Badge>
@@ -109,15 +101,11 @@ export default function ProfilePage() {
 
       <UserProfileInfo user={user} />
 
-      <UserActivityTimeline
-        activities={activities}
-        isLoading={isActivitiesLoading}
-      />
-
       <EditUserSheet
         isOpen={isEditSheetOpen}
         onClose={() => setIsEditSheetOpen(false)}
         user={user}
+        title="Edit Profile"
       />
     </div>
   );
