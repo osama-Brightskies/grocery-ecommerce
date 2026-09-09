@@ -12,7 +12,11 @@ describe("products API contracts", () => {
     vi.spyOn(http, "get").mockResolvedValue(undefined);
     await getProductsApi(20, "next");
     expect(http.get).toHaveBeenCalledWith("/api/products", {
-      params: { Limit: 20, Cursor: "next" },
+      params: {
+        Limit: 20,
+        Cursor: "next",
+        _t: expect.any(Number),
+      },
     });
   });
   it("gets, creates, updates and deletes products", async () => {

@@ -16,8 +16,19 @@ export default function ProductsListPage() {
   const productsMethods = useProductsPage();
 
   const columns = useMemo(
-    () => getProductsColumns({ viewDetails: productsMethods.viewDetails }),
-    [productsMethods.viewDetails],
+    () =>
+      getProductsColumns({
+        viewDetails: productsMethods.viewDetails,
+        openEdit: productsMethods.openEdit,
+        setActiveProduct: productsMethods.setActiveProduct,
+        setIsDeleteOpen: productsMethods.setIsDeleteOpen,
+      }),
+    [
+      productsMethods.viewDetails,
+      productsMethods.openEdit,
+      productsMethods.setActiveProduct,
+      productsMethods.setIsDeleteOpen,
+    ],
   );
 
   return (

@@ -1,11 +1,16 @@
-import { Package as PackageIcon, ChevronRight } from "lucide-react";
+import { Edit2, Trash2, Eye, Package as PackageIcon } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
 import { getImageUrl } from "@/lib/utils";
 import type { Product } from "./products.types";
 
-export const getProductsColumns = (productsMethods: {
+interface ProductActionMethods {
   viewDetails: (slug: string) => void;
-}) => [
+  openEdit: (product: Product) => void;
+  setActiveProduct: (product: Product) => void;
+  setIsDeleteOpen: (isOpen: boolean) => void;
+}
+
+export const getProductsColumns = (methods: ProductActionMethods) => [
   {
     accessorKey: "productImageUrl",
     header: "IMAGE",
@@ -86,6 +91,7 @@ export const getProductsColumns = (productsMethods: {
       const p = row.original;
       const stockQuantity = p.stockQuantity ?? 0;
 
+      // LABEL OUT OF STOCK
       if (stockQuantity <= 0) {
         return (
           <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-status-danger-bg text-xs font-medium text-status-danger-text uppercase tracking-wider whitespace-nowrap">
@@ -94,6 +100,7 @@ export const getProductsColumns = (productsMethods: {
         );
       }
 
+      // REGULAR STOCK COUNT
       const isLowStock = stockQuantity < 10;
       return (
         <Typography
@@ -113,14 +120,33 @@ export const getProductsColumns = (productsMethods: {
     cell: ({ row }: { row: { original: Product } }) => {
       const p = row.original;
       return (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center gap-3">
           <button
             type="button"
             aria-label="View details"
-            onClick={() => productsMethods.viewDetails(p.slug)}
-            className="text-text-secondary hover:text-sidebar-bg transition-colors p-1.5 cursor-pointer rounded-md"
+            onClick={() => methods.viewDetails(p.slug)}
+            className="text-brand-primary hover:text-brand-medium transition-colors p-1 cursor-pointer"
           >
-            <ChevronRight className="w-5 h-5" />
+            <Eye className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Edit item"
+            onClick={() => methods.openEdit(p)}
+            className="text-emerald-700 hover:text-emerald-900 transition-colors p-1 cursor-pointer"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Delete item"
+            onClick={() => {
+              methods.setActiveProduct(p);
+              methods.setIsDeleteOpen(true);
+            }}
+            className="text-red-600 hover:text-red-800 transition-colors p-1 cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4" />
           </button>
         </div>
       );
