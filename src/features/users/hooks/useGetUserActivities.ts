@@ -8,12 +8,12 @@ export type UseGetUserActivitiesOptions = {
 };
 
 export function useGetUserActivities(
-  userId?: string,
+  userId: string,
   options?: UseGetUserActivitiesOptions,
 ) {
   return useQuery<GetUserActivitiesResponse, ApiError>({
     queryKey: ["user-activities", userId],
     queryFn: () => getUserActivitiesApi(userId),
-    enabled: options?.enabled ?? true,
+    enabled: options?.enabled ?? Boolean(userId),
   });
 }

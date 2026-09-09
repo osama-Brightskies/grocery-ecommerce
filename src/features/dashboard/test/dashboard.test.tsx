@@ -2,10 +2,18 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardPage from "../DashboardPage";
 
-const { usersHook, categoriesHook, activitiesHook } = vi.hoisted(() => ({
-  usersHook: vi.fn(),
-  categoriesHook: vi.fn(),
-  activitiesHook: vi.fn(),
+const { usersHook, categoriesHook, activitiesHook, productsQuery } = vi.hoisted(
+  () => ({
+    usersHook: vi.fn(),
+    categoriesHook: vi.fn(),
+    activitiesHook: vi.fn(),
+    productsQuery: vi.fn(),
+  }),
+);
+
+vi.mock("@tanstack/react-query", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@tanstack/react-query")>()),
+  useQuery: productsQuery,
 }));
 
 vi.mock("@/features/users/hooks/useGetUsers", () => ({
@@ -14,8 +22,8 @@ vi.mock("@/features/users/hooks/useGetUsers", () => ({
 vi.mock("@/features/categories/hooks/useGetCategories", () => ({
   useGetCategories: categoriesHook,
 }));
-vi.mock("@/features/users/hooks/useGetUserActivities", () => ({
-  useGetUserActivities: activitiesHook,
+vi.mock("@/features/users/hooks/useGetAllUsersActivities", () => ({
+  useGetAllUserActivities: activitiesHook,
 }));
 vi.mock("../components/DashboardKpiCards", () => ({
   DashboardKpiCards: (props: object) => (
@@ -37,9 +45,20 @@ vi.mock("../components/CartActivityBarChart", () => ({
     <div data-testid="cart">{JSON.stringify(props)}</div>
   ),
 }));
+vi.mock("../components/LowStockWatchCard", () => ({
+  LowStockWatchCard: (props: object) => (
+    <div data-testid="low-stock">{JSON.stringify(props)}</div>
+  ),
+}));
 
 describe("DashboardPage", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    productsQuery.mockReturnValue({
+      data: { data: { data: [] } },
+      isLoading: false,
+    });
+  });
 
   it("maps endpoint data to the dashboard metrics and charts", () => {
     usersHook.mockReturnValue({
@@ -74,21 +93,24 @@ describe("DashboardPage", () => {
     expect(
       screen.getByRole("heading", { name: "Admin Dashboard" }),
     ).toBeInTheDocument();
-    expect(usersHook).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 50 });
+    expect(usersHook).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 600 });
     expect(categoriesHook).toHaveBeenCalledWith({ limit: 50 });
-    expect(activitiesHook).toHaveBeenCalledWith();
+    expect(activitiesHook).toHaveBeenCalledWith(100);
     expect(screen.getByTestId("kpis")).toHaveTextContent(
       JSON.stringify({
         totalUsers: 5,
-        totalCategories: 2,
         activeUsers: 2,
+        totalCategories: 2,
+        totalProducts: 0,
+        criticalProductsCount: 0,
         totalCartActions: 3,
+        positiveActionsCount: 2,
+        negativeActionsCount: 1,
         isLoading: false,
       }),
     );
-    expect(screen.getByTestId("growth")).toHaveTextContent(
-      JSON.stringify({ totalUsers: 5 }),
-    );
+    expect(screen.getByTestId("growth")).toHaveTextContent(/"totalUsers":5/);
+    expect(screen.getByTestId("growth")).toHaveTextContent(/"data":\[/);
     expect(screen.getByTestId("status")).toHaveTextContent(
       JSON.stringify({
         totalUsers: 5,
@@ -98,8 +120,11 @@ describe("DashboardPage", () => {
     );
     expect(screen.getByTestId("cart")).toHaveTextContent(
       JSON.stringify({
+        ordersPlacedCount: 0,
         addToCartCount: 2,
         removeFromCartCount: 1,
+        addToFavoritesCount: 0,
+        removeFromFavoritesCount: 0,
       }),
     );
   });
@@ -114,9 +139,13 @@ describe("DashboardPage", () => {
     expect(screen.getByTestId("kpis")).toHaveTextContent(
       JSON.stringify({
         totalUsers: 0,
-        totalCategories: 0,
         activeUsers: 0,
-        totalCartActions: 20,
+        totalCategories: 0,
+        totalProducts: 0,
+        criticalProductsCount: 0,
+        totalCartActions: 0,
+        positiveActionsCount: 0,
+        negativeActionsCount: 0,
         isLoading: true,
       }),
     );
@@ -145,7 +174,13 @@ describe("DashboardPage", () => {
       JSON.stringify({ totalUsers: 2, activeUsers: 1, inactiveUsers: 1 }),
     );
     expect(screen.getByTestId("cart")).toHaveTextContent(
-      JSON.stringify({ addToCartCount: 1, removeFromCartCount: 8 }),
+      JSON.stringify({
+        ordersPlacedCount: 0,
+        addToCartCount: 1,
+        removeFromCartCount: 0,
+        addToFavoritesCount: 0,
+        removeFromFavoritesCount: 0,
+      }),
     );
   });
 });

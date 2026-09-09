@@ -1,28 +1,37 @@
 import {
   Users,
   Layers,
-  Activity,
+  Package,
   ShoppingCart,
-  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
 
 export type DashboardKpiCardsProps = {
   totalUsers: number;
-  totalCategories: number;
   activeUsers: number;
+  totalCategories: number;
+  totalProducts: number;
+  criticalProductsCount: number;
   totalCartActions: number;
+  positiveActionsCount: number;
+  negativeActionsCount: number;
   isLoading?: boolean;
 };
 
 export function DashboardKpiCards({
   totalUsers,
-  totalCategories,
   activeUsers,
+  totalCategories,
+  totalProducts,
+  criticalProductsCount,
   totalCartActions,
+  positiveActionsCount,
+  negativeActionsCount,
   isLoading = false,
 }: DashboardKpiCardsProps) {
-  const activePercentage = Math.round((activeUsers / (totalUsers || 1)) * 100);
+  const inactiveUsers = Math.max(0, totalUsers - activeUsers);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -41,11 +50,15 @@ export function DashboardKpiCards({
           >
             {isLoading ? "—" : totalUsers}
           </Typography>
-          <span className="text-[11px] text-brand-primary font-semibold flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5" /> +12% this month
-          </span>
+          <div className="text-[11px] text-text-secondary font-medium">
+            <span className="text-brand-primary font-semibold">
+              {activeUsers} active
+            </span>
+            <span className="mx-1">•</span>
+            <span>{inactiveUsers} inactive</span>
+          </div>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <Users className="w-6 h-6" />
         </div>
       </div>
@@ -65,47 +78,60 @@ export function DashboardKpiCards({
           >
             {isLoading ? "—" : totalCategories}
           </Typography>
-          <span className="text-[11px] text-text-secondary">
-            Active in catalog
-          </span>
+          <Typography
+            variant="muted"
+            className="text-[11px] text-text-secondary"
+          >
+            Catalog categories
+          </Typography>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-soft border border-border text-sidebar-bg flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <Layers className="w-6 h-6" />
         </div>
       </div>
 
-      {/* 3. Active Ratio */}
+      {/* 3. Catalog Products */}
       <div className="bg-card rounded-2xl border border-border p-6 shadow-xs flex items-center justify-between">
         <div className="space-y-1">
           <Typography
             variant="muted"
             className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
           >
-            Active Ratio
+            Catalog Products
           </Typography>
           <Typography
             variant="h1"
             className="text-3xl font-bold text-sidebar-bg font-mono"
           >
-            {isLoading ? "—" : `${activePercentage}%`}
+            {isLoading ? "—" : totalProducts}
           </Typography>
-          <span className="text-[11px] text-brand-primary font-semibold">
-            {activeUsers} accounts active
-          </span>
+          <div className="text-[11px] font-medium flex items-center gap-1">
+            {criticalProductsCount > 0 ? (
+              <span className="text-status-danger-text font-semibold flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                {criticalProductsCount} low / out of stock
+              </span>
+            ) : (
+              <span className="text-brand-primary font-semibold flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                Inventory healthy
+              </span>
+            )}
+          </div>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center">
-          <Activity className="w-6 h-6" />
+        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
+          <Package className="w-6 h-6" />
         </div>
       </div>
 
-      {/* 4. Cart Actions */}
+      {/* 4. Store Actions */}
       <div className="bg-card rounded-2xl border border-border p-6 shadow-xs flex items-center justify-between">
         <div className="space-y-1">
           <Typography
             variant="muted"
             className="text-xs font-semibold uppercase tracking-wider text-text-secondary"
           >
-            Cart Actions
+            Store Actions
           </Typography>
           <Typography
             variant="h1"
@@ -113,11 +139,17 @@ export function DashboardKpiCards({
           >
             {isLoading ? "—" : totalCartActions}
           </Typography>
-          <span className="text-[11px] text-text-secondary">
-            Logged in timeline
-          </span>
+          <div className="text-[11px] text-text-secondary font-medium">
+            <span className="text-brand-primary font-semibold">
+              +{positiveActionsCount} added
+            </span>
+            <span className="mx-1">•</span>
+            <span className="text-status-warning-text font-semibold">
+              -{negativeActionsCount} removed
+            </span>
+          </div>
         </div>
-        <div className="w-12 h-12 rounded-xl bg-surface-soft border border-border text-sidebar-bg flex items-center justify-center">
+        <div className="w-12 h-12 rounded-xl bg-surface-mint text-brand-primary flex items-center justify-center shrink-0">
           <ShoppingCart className="w-6 h-6" />
         </div>
       </div>
