@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Users as UsersIcon, ChevronRight } from "lucide-react";
+import { Users as UsersIcon, Eye, Edit2 } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { PaginationBar } from "@/components/ui/pagination";
 import { Typography } from "@/components/ui/shared/Typography";
@@ -17,6 +17,7 @@ import { UserRole } from "@/store/types/authStore.types";
 import { formatDate, getInitials, cn } from "@/lib/utils";
 import type { User } from "../types/users.types";
 import { AppTable, type DefaultTableFeatures } from "@/components/ui/AppTable";
+import EditUserSheet from "../components/EditUserSheet";
 
 const AVATAR_COLORS = [
   "bg-avatar-emerald text-white",
@@ -33,6 +34,10 @@ export default function UsersListPage() {
   const navigate = useNavigate();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  // State for the edit sheet
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [activeUser, setActiveUser] = useState<User | null>(null);
 
   // 1. Logged-in admin user ID from Zustand store
   const currentUser = useAuthStore((state) => state.user);
@@ -164,7 +169,7 @@ export default function UsersListPage() {
           ),
         }),
 
-        // 6. Action Button: Disabled with Tooltip if it is the current user
+        // 6. Action Buttons (View and Edit)
         columnHelper.display({
           id: "actions",
           header: "ACTIONS",
@@ -173,13 +178,19 @@ export default function UsersListPage() {
               currentUserId && row.original.guid === currentUserId,
             );
 
+            // Disabled state for current logged-in user (prevents accidental self-edits here)
             if (isCurrentUser) {
               return (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="p-2 inline-flex text-text-secondary/40 cursor-not-allowed select-none">
-                      <ChevronRight className="w-5 h-5 opacity-30" />
-                    </span>
+                    <div className="flex items-center justify-center gap-3 opacity-40 cursor-not-allowed select-none">
+                      <span className="p-1 text-text-secondary">
+                        <Eye className="w-4 h-4" />
+                      </span>
+                      <span className="p-1 text-text-secondary">
+                        <Edit2 className="w-4 h-4" />
+                      </span>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent side="left">
                     Manage your account in Profile settings
@@ -188,15 +199,29 @@ export default function UsersListPage() {
               );
             }
 
+            // Normal active actions
             return (
-              <button
-                type="button"
-                onClick={() => navigate(`/users/${row.original.guid}`)}
-                className="p-2 rounded-lg text-text-secondary hover:text-brand-primary hover:bg-surface-mint transition-colors cursor-pointer"
-                title="View user details"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate(`/users/${row.original.guid}`)}
+                  className="text-brand-primary hover:text-brand-medium transition-colors p-1 cursor-pointer"
+                  title="View user details"
+                >
+                  <Eye className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveUser(row.original);
+                    setIsEditSheetOpen(true);
+                  }}
+                  className="text-emerald-700 hover:text-emerald-900 transition-colors p-1 cursor-pointer"
+                  title="Edit user"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+              </div>
             );
           },
         }),
@@ -244,6 +269,19 @@ export default function UsersListPage() {
           />
         }
       />
+
+      {/* Edit User Sheet */}
+      {activeUser && (
+        <EditUserSheet
+          isOpen={isEditSheetOpen}
+          onClose={() => {
+            setIsEditSheetOpen(false);
+            // Optional: reset active user after exit animation ends
+            setTimeout(() => setActiveUser(null), 300);
+          }}
+          user={activeUser}
+        />
+      )}
     </div>
   );
 }
