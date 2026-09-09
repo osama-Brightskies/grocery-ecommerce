@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Typography } from "@/components/ui/shared/Typography";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ export function CategoryProductsTable({
   isFetchingMore = false,
   onLoadMore,
 }: CategoryProductsTableProps) {
+  const navigate = useNavigate();
+
   const columns = useMemo(
     () =>
       columnHelper.columns([
@@ -78,7 +81,6 @@ export function CategoryProductsTable({
           cell: (info) => {
             const stock = info.getValue() ?? 0;
 
-            // Out of stock
             if (stock === 0) {
               return (
                 <Badge variant="danger" className="text-xs">
@@ -87,7 +89,6 @@ export function CategoryProductsTable({
               );
             }
 
-            // Low stock
             if (stock <= 10) {
               return (
                 <Badge variant="warning" className="text-xs">
@@ -96,7 +97,6 @@ export function CategoryProductsTable({
               );
             }
 
-            // Normal stock
             return (
               <Typography
                 variant="body"
@@ -108,25 +108,23 @@ export function CategoryProductsTable({
           },
         }),
 
-        // 4. ACTIONS
+        // 4. ACTIONS (Navigates to /products/:slug)
         columnHelper.display({
           id: "actions",
           header: "ACTIONS",
           cell: ({ row }) => (
             <button
               type="button"
-              onClick={() =>
-                console.log("View product detail:", row.original.slug)
-              }
+              onClick={() => navigate(`/products/${row.original.slug}`)}
               className="p-2 rounded-lg text-text-secondary hover:text-brand-primary hover:bg-surface-mint transition-colors cursor-pointer"
-              title="View product"
+              title="View product details"
             >
               <Eye className="w-4 h-4" />
             </button>
           ),
         }),
       ]),
-    [],
+    [navigate],
   );
 
   return (

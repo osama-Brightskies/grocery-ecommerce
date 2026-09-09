@@ -6,7 +6,13 @@ import { PaginationBar } from "@/components/ui/pagination";
 import { Typography } from "@/components/ui/shared/Typography";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 import { useGetUsers } from "../hooks/useGetUsers";
+import { useAuthStore } from "@/store/useAuthStore";
 import { UserRole } from "@/store/types/authStore.types";
 import { formatDate, getInitials, cn } from "@/lib/utils";
 import type { User } from "../types/users.types";
@@ -21,7 +27,6 @@ const AVATAR_COLORS = [
   "bg-avatar-pink text-white",
 ];
 
-// Initialize Column Helper using the shared table features type
 const columnHelper = createColumnHelper<DefaultTableFeatures, User>();
 
 export default function UsersListPage() {
@@ -29,7 +34,11 @@ export default function UsersListPage() {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // TanStack Query Hook
+  // 1. Logged-in admin user ID from Zustand store
+  const currentUser = useAuthStore((state) => state.user);
+  const currentUserId = currentUser?.userId;
+
+  // 2. Fetch Users Query
   const { data: response, isLoading } = useGetUsers({
     pageNumber,
     pageSize,
@@ -40,16 +49,19 @@ export default function UsersListPage() {
   const totalCount = pagination?.totalCount ?? 0;
   const totalPages = pagination?.totalPages ?? 1;
 
-  // TanStack Table Column Definitions
+  // 3. TanStack Table Column Definitions
   const columns = useMemo(
     () =>
       columnHelper.columns([
-        // 1. User Avatar + Name + Email
+        // 1. User Avatar + Name + (You) Badge + Email
         columnHelper.accessor("firstName", {
           id: "user",
           header: "USER",
           cell: ({ row }) => {
             const user = row.original;
+            const isCurrentUser = Boolean(
+              currentUserId && user.guid === currentUserId,
+            );
             const initials = getInitials(
               user.firstName,
               user.lastName,
@@ -72,12 +84,24 @@ export default function UsersListPage() {
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0">
-                  <Typography
-                    variant="body"
-                    className="font-bold text-sidebar-bg truncate"
-                  >
-                    {fullName}
-                  </Typography>
+                  <div className="flex items-center gap-2">
+                    <Typography
+                      variant="body"
+                      className="font-bold text-sidebar-bg truncate"
+                    >
+                      {fullName}
+                    </Typography>
+
+                    {/* 🪄 Highlight current logged-in user */}
+                    {isCurrentUser && (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] h-4 px-1.5 py-0 border-brand-primary/40 text-brand-primary bg-surface-mint/60 font-semibold select-none"
+                      >
+                        You
+                      </Badge>
+                    )}
+                  </div>
                   <Typography
                     variant="muted"
                     className="text-xs text-text-secondary truncate"
@@ -140,23 +164,44 @@ export default function UsersListPage() {
           ),
         }),
 
-        // 6. Action Button (Chevron Link)
+        // 6. Action Button: Disabled with Tooltip if it is the current user
         columnHelper.display({
           id: "actions",
           header: "ACTIONS",
-          cell: ({ row }) => (
-            <button
-              type="button"
-              onClick={() => navigate(`/users/${row.original.guid}`)}
-              className="p-2 rounded-lg text-text-secondary hover:text-brand-primary hover:bg-surface-mint transition-colors cursor-pointer"
-              title="View user details"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          ),
+          cell: ({ row }) => {
+            const isCurrentUser = Boolean(
+              currentUserId && row.original.guid === currentUserId,
+            );
+
+            if (isCurrentUser) {
+              return (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="p-2 inline-flex text-text-secondary/40 cursor-not-allowed select-none">
+                      <ChevronRight className="w-5 h-5 opacity-30" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    Manage your account in Profile settings
+                  </TooltipContent>
+                </Tooltip>
+              );
+            }
+
+            return (
+              <button
+                type="button"
+                onClick={() => navigate(`/users/${row.original.guid}`)}
+                className="p-2 rounded-lg text-text-secondary hover:text-brand-primary hover:bg-surface-mint transition-colors cursor-pointer"
+                title="View user details"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            );
+          },
         }),
       ]),
-    [navigate],
+    [navigate, currentUserId],
   );
 
   return (
