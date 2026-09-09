@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Mail, Pencil } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { useAuthStore } from "@/store/useAuthStore";
@@ -47,59 +46,45 @@ export default function ProfilePage() {
     "No name provided";
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 py-8 space-y-6">
+    <div className="w-full mx-auto px-6 py-8 space-y-6">
       <PageHeader
         title="My Profile"
         description="View and manage your personal account details"
       />
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-3 flex-wrap">
-            <Typography
-              variant="h1"
-              className="text-2xl md:text-3xl font-bold text-sidebar-bg"
-            >
-              {fullName}
-            </Typography>
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-3 flex-wrap">
+          <Typography
+            variant="h1"
+            className="text-2xl md:text-3xl font-bold text-sidebar-bg"
+          >
+            {fullName}
+          </Typography>
 
-            {user.role === UserRole.Admin ? (
-              <Badge className="bg-role-admin-bg text-role-admin-text border-role-admin-text/15">
-                Admin
-              </Badge>
-            ) : (
-              <Badge className="bg-role-user-bg text-role-user-text border-role-user-text/15">
-                User
-              </Badge>
-            )}
-
-            <Badge variant={user.isActive ? "primary" : "danger"}>
-              {user.isActive ? "Active" : "Inactive"}
+          {user.role === UserRole.Admin ? (
+            <Badge className="bg-role-admin-bg text-role-admin-text border-role-admin-text/15">
+              Admin
             </Badge>
-          </div>
+          ) : (
+            <Badge className="bg-role-user-bg text-role-user-text border-role-user-text/15">
+              User
+            </Badge>
+          )}
 
-          <div className="flex items-center gap-2 text-text-secondary">
-            <Mail className="w-4 h-4" />
-            <Typography variant="muted" className="text-sm">
-              {user.email}
-            </Typography>
-          </div>
+          <Badge variant={user.isActive ? "primary" : "danger"}>
+            {user.isActive ? "Active" : "Inactive"}
+          </Badge>
         </div>
 
-        <Button
-          variant="primary"
-          size="default"
-          onClick={() => setIsEditSheetOpen(true)}
-          className="font-semibold shadow-xs cursor-pointer"
-        >
-          <Pencil className="w-4 h-4 mr-1.5" />
-          <Typography variant="body" className="font-semibold text-white">
-            Edit profile
+        <div className="flex items-center gap-2 text-text-secondary">
+          <Mail className="w-4 h-4" />
+          <Typography variant="muted" className="text-sm">
+            {user.email}
           </Typography>
-        </Button>
+        </div>
       </div>
 
-      <UserProfileInfo user={user} />
+      <UserProfileInfo user={user} onEdit={() => setIsEditSheetOpen(true)} />
 
       <EditUserSheet
         isOpen={isEditSheetOpen}

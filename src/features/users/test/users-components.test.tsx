@@ -1,5 +1,5 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { UserRole } from "@/store/types/authStore.types";
 import { UserActivityTimeline } from "../components/UserActivityTimeline";
 import { UserProfileInfo } from "../components/UserProfileInfo";
@@ -74,35 +74,20 @@ describe("UserActivityTimeline", () => {
 });
 
 describe("UserProfileInfo", () => {
-  beforeEach(() => {
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: { writeText: vi.fn().mockResolvedValue(undefined) },
-    });
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it("renders profile values, role, and inactive status", () => {
-    render(<UserProfileInfo user={user} />);
+  it("renders profile values and inactive status", () => {
+    render(<UserProfileInfo user={user} onEdit={vi.fn()} />);
 
     expect(screen.getByText("Mona")).toBeInTheDocument();
     expect(screen.getByText("Ali")).toBeInTheDocument();
     expect(screen.getByText("mona@example.com")).toBeInTheDocument();
-    expect(screen.getByText("Admin")).toBeInTheDocument();
     expect(screen.getByText("Inactive")).toBeInTheDocument();
-    expect(screen.getByText("12345678...789012")).toBeInTheDocument();
+    expect(screen.getByText("+201234567890")).toBeInTheDocument();
   });
 
-  it("copies the complete user id", () => {
-    vi.useFakeTimers();
-    render(<UserProfileInfo user={user} />);
-
-    fireEvent.click(screen.getByText("12345678...789012"));
-
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(user.guid);
-    act(() => vi.advanceTimersByTime(2000));
+  it("calls the edit handler", () => {
+    const onEdit = vi.fn();
+    render(<UserProfileInfo user={user} onEdit={onEdit} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit user/i }));
+    expect(onEdit).toHaveBeenCalledOnce();
   });
 });

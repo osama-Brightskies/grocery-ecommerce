@@ -1,5 +1,5 @@
-import AuthLayout from "@/features/auth/layout/AuthLayout";
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import AuthLayout from "@/features/auth/layout/AuthLayout";
 import { publicAuthGuard } from "./guards/publicAuthGuard";
 import LoginPage from "@/features/auth/login/LoginPage";
 import ForgotPasswordPage from "@/features/auth/forgot-password/ForgotPasswordPage";
@@ -13,12 +13,15 @@ import UserDetailPage from "@/features/users/pages/UserDetailPage";
 import ProfilePage from "@/features/users/pages/ProfilePage";
 import CategoriesListPage from "@/features/categories/pages/CategoriesListPage";
 import CategoryDetailPage from "@/features/categories/pages/CategoryDetailPage";
-import NotFoundRedirect from "./components/NotFoundRedirect";
 import ProductsListPage from "@/features/products/pages/ProductsListPage";
 import ProductDetailsPage from "@/features/products/pages/ProductDetailsPage";
 import TagListPage from "@/features/tags/pages/TagListPage";
+import OrdersListPage from "@/features/orders/pages/OrdersListPage";
+import OrderDetailPage from "@/features/orders/pages/OrderDetailPage";
+import NotFoundRedirect from "./components/NotFoundRedirect";
 
 export const router = createBrowserRouter([
+  // 1. PUBLIC AUTH ROUTES
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -32,6 +35,7 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // 2. PROTECTED APP ROUTES
   {
     path: "/",
     element: <AppLayout />,
@@ -47,6 +51,8 @@ export const router = createBrowserRouter([
       { path: "tags", element: <TagListPage /> },
       { path: "products", element: <ProductsListPage /> },
       { path: "products/:slug", element: <ProductDetailsPage /> },
+      { path: "orders", element: <OrdersListPage /> },
+      { path: "orders/:guid", element: <OrderDetailPage /> },
     ],
   },
 

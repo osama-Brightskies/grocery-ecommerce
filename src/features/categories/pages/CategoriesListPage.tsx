@@ -49,7 +49,7 @@ export default function CategoriesListPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-7xl pb-16">
+    <div className="space-y-8 w-full pb-16">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
