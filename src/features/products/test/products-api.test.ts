@@ -15,7 +15,6 @@ describe("products API contracts", () => {
       params: {
         Limit: 20,
         Cursor: "next",
-        _t: expect.any(Number),
       },
     });
   });
