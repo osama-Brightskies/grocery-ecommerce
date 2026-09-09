@@ -7,7 +7,7 @@ import { UserGrowthChart } from "../components/UserGrowthChart";
 import { UserStatusDonutChart } from "../components/UserStatusDonutChart";
 import { CartActivityBarChart } from "../components/CartActivityBarChart";
 import { LowStockWatchCard } from "../components/LowStockWatchCard";
-import type { Product } from "@/features/products/products.types";
+import type { Product } from "@/features/products/types/products.types";
 
 vi.mock("recharts", () => ({
   Area: () => null,

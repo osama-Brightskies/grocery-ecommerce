@@ -10,8 +10,8 @@ import { UserGrowthChart } from "./components/UserGrowthChart";
 import { UserStatusDonutChart } from "./components/UserStatusDonutChart";
 import { CartActivityBarChart } from "./components/CartActivityBarChart";
 import { LowStockWatchCard } from "./components/LowStockWatchCard";
-import type { PaginatedProductsResponse } from "@/features/products/products.types";
 import { useGetAllUserActivities } from "../users/hooks/useGetAllUsersActivities";
+import type { PaginatedProductsResponse } from "../products/types/products.types";
 
 // 🪄 Self-contained Action Classifier
 type ActionCategory =
