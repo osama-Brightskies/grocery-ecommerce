@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
-import type { Product } from "../products.types";
+import type { Product } from "../types/products.types";
 
 export function ProductDeleteModal({
   isOpen,

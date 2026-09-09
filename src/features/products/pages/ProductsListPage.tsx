@@ -1,162 +1,24 @@
-import { Edit2, Plus, Trash2, Eye, Package as PackageIcon } from "lucide-react";
+import { Plus, Search, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
 import PaginationBar from "@/components/ui/pagination";
 
-import type { Product } from "../products.types";
 import { useProductsPage } from "../hooks/useProductsPage";
 import { ProductFormSheet } from "../components/ProductFormSheet";
 import { ProductDeleteModal } from "../components/ProductDeleteModal";
 import AppTable from "@/components/ui/AppTable";
 import PageHeader from "@/components/ui/shared/page-header";
+import { AppSelect } from "@/components/ui/AppSelect";
+import { getProductsColumns } from "../types/products.columns";
+import { useMemo } from "react";
 
 export default function ProductsListPage() {
-  const hook = useProductsPage();
+  const productsMethods = useProductsPage();
 
-  const columns = [
-    {
-      accessorKey: "productImageUrl",
-      header: "IMAGE",
-      cell: ({ row }: { row: { original: Product } }) => {
-        const p = row.original as Product & { name?: string; slug: string };
-        const productName =
-          typeof p.name === "string" && p.name.trim() ? p.name : p.slug;
-
-        const imagePath =
-          "productImageUrl" in p && typeof p.productImageUrl === "string"
-            ? p.productImageUrl
-            : undefined;
-        const normalizedPath = imagePath
-          ?.replace(/\\/g, "/")
-          .replace(/^\/+/, "");
-        const s3BaseUrl =
-          "https://ecommerce-interns-bucket.s3.eu-central-1.amazonaws.com";
-        const imageUrl = normalizedPath
-          ? `${s3BaseUrl}/${normalizedPath}`
-          : undefined;
-
-        return (
-          <div className="flex items-center justify-center py-1">
-            <div className="w-10 h-10 rounded-lg bg-surface-soft border border-border-input overflow-hidden flex items-center justify-center shrink-0">
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt={productName}
-                  className="w-full h-full object-cover mix-blend-multiply"
-                />
-              ) : (
-                <PackageIcon className="w-5 h-5 text-text-subtle" />
-              )}
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "name",
-      header: "PRODUCT INFO",
-      cell: ({ row }: { row: { original: Product } }) => {
-        const p = row.original as Product & { name?: string; slug: string };
-        const productName =
-          typeof p.name === "string" && p.name.trim() ? p.name : p.slug;
-        return (
-          <div className="flex flex-col items-center text-center justify-center py-1 w-full max-w-62.5 mx-auto">
-            <Typography
-              variant="body"
-              className="font-semibold text-sidebar-bg truncate w-full"
-            >
-              {productName}
-            </Typography>
-            <Typography variant="muted" className="text-xs truncate w-full">
-              Slug: {p.slug}
-            </Typography>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "categorySlug",
-      header: "CATEGORY",
-      cell: ({ row }: { row: { original: Product } }) => {
-        const p = row.original as Product & { categorySlug?: string };
-        return (
-          <Typography
-            variant="body"
-            className="inline-flex items-center px-2.5 py-1 rounded-md bg-surface-mint text-xs font-medium text-brand-primary uppercase tracking-wider"
-          >
-            {p.categorySlug ?? "—"}
-          </Typography>
-        );
-      },
-    },
-    {
-      accessorKey: "price",
-      header: "PRICE",
-      cell: ({ row }: { row: { original: Product } }) => {
-        const p = row.original as Product & { price?: number };
-        return (
-          <Typography variant="body" className="font-bold text-sidebar-bg">
-            {typeof p.price === "number" ? `$${p.price.toFixed(2)}` : "—"}
-          </Typography>
-        );
-      },
-    },
-    {
-      accessorKey: "stockQuantity",
-      header: "STOCK",
-      cell: ({ row }: { row: { original: Product } }) => {
-        const p = row.original as Product & { stockQuantity?: number };
-        const stockQuantity = p.stockQuantity ?? 0;
-        const isLowStock = stockQuantity < 10;
-        return (
-          <Typography
-            variant="body"
-            className={`font-semibold ${isLowStock ? "text-status-danger-text" : "text-sidebar-bg"}`}
-          >
-            {stockQuantity}
-          </Typography>
-        );
-      },
-    },
-    {
-      id: "actions",
-      header: "ACTIONS",
-      cell: ({ row }: { row: { original: Product } }) => {
-        const p = row.original as Product & { slug: string };
-        return (
-          <div className="flex items-center justify-center gap-3">
-            <button
-              type="button"
-              aria-label="View details"
-              onClick={() => hook.viewDetails(p.slug)}
-              className="text-brand-primary hover:text-brand-medium transition-colors p-1 cursor-pointer"
-            >
-              <Eye className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              aria-label="Edit item"
-              onClick={() => hook.openEdit(p)}
-              className="text-emerald-700 hover:text-emerald-900 transition-colors p-1 cursor-pointer"
-            >
-              <Edit2 className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              aria-label="Delete item"
-              onClick={() => {
-                hook.setActiveProduct(p);
-                hook.setIsDeleteOpen(true);
-              }}
-              className="text-red-600 hover:text-red-800 transition-colors p-1 cursor-pointer"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        );
-      },
-    },
-  ];
+  const columns = useMemo(
+    () => getProductsColumns({ viewDetails: productsMethods.viewDetails }),
+    [productsMethods.viewDetails],
+  );
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-8 space-y-6">
@@ -164,66 +26,154 @@ export default function ProductsListPage() {
         <PageHeader title="Products" description="Manage your catalog" />
         <Button
           variant="primary"
-          onClick={hook.openCreate}
-          className="h-11 px-5 bg-brand-primary hover:opacity-90 text-white font-semibold shadow-sm rounded-lg flex items-center shrink-0 mt-1"
+          onClick={productsMethods.openCreate}
+          className="h-11 px-5 bg-brand-primary hover:opacity-90 text-white font-semibold shadow-sm rounded-lg flex items-center shrink-0 mt-1 cursor-pointer"
         >
           <Plus className="w-4 h-4 mr-2" /> Add Product
         </Button>
       </div>
-      {hook.isError ? (
+
+      {/* FILTER BAR */}
+      <div className="bg-white p-4 rounded-xl border border-border-input shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+        {/* Search */}
+        <div className="relative w-full lg:w-1/3">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-subtle" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={productsMethods.filters.Search}
+            onChange={(e) =>
+              productsMethods.handleFilterChange("Search", e.target.value)
+            }
+            className="w-full pl-9 pr-4 h-10 rounded-lg border border-border-input text-sm focus:outline-none focus:ring-1 focus:ring-brand-primary focus:border-brand-primary transition-shadow"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-4 flex-1">
+          <AppSelect
+            value={productsMethods.filters.CategorySlug || "all"}
+            onChange={(val) =>
+              productsMethods.handleFilterChange(
+                "CategorySlug",
+                val === "all" ? "" : val,
+              )
+            }
+            options={[
+              { label: "All Categories", value: "all" },
+              ...productsMethods.categoryOptions,
+            ]}
+            className="min-w-35 flex-1 h-10!"
+          />
+
+          <AppSelect
+            value={
+              productsMethods.filters.InStock === "" ||
+              productsMethods.filters.InStock === undefined
+                ? "all"
+                : productsMethods.filters.InStock.toString()
+            }
+            onChange={(val) => {
+              let stockVal: boolean | "" = "";
+              if (val === "true") stockVal = true;
+              if (val === "false") stockVal = false;
+              productsMethods.handleFilterChange("InStock", stockVal);
+            }}
+            options={[
+              { label: "All Stock", value: "all" },
+              { label: "In Stock", value: "true" },
+              { label: "Out of Stock", value: "false" },
+            ]}
+            className="min-w-30 flex-1 h-10!"
+          />
+
+          <AppSelect
+            value={
+              !productsMethods.filters.SortBy
+                ? "all"
+                : `${productsMethods.filters.SortBy}-${productsMethods.filters.SortDir}`
+            }
+            onChange={(val) => {
+              if (val === "all") {
+                productsMethods.handleFilterChange("SortBy", "");
+                productsMethods.handleFilterChange("SortDir", "");
+              } else {
+                const [sortBy, sortDir] = val.split("-");
+                productsMethods.handleFilterChange("SortBy", sortBy || "");
+                productsMethods.handleFilterChange("SortDir", sortDir || "");
+              }
+            }}
+            options={[
+              { label: "Sort by...", value: "all" },
+              { label: "Name (A-Z)", value: "name-asc" },
+              { label: "Name (Z-A)", value: "name-desc" },
+              { label: "Price (Low to High)", value: "price-asc" },
+              { label: "Price (High to Low)", value: "price-desc" },
+            ]}
+            className="min-w-37.5 flex-1 h-10!"
+          />
+
+          <button
+            onClick={productsMethods.clearFilters}
+            className="h-10 px-3 flex items-center justify-center rounded-[7px] border border-border-input text-text-secondary hover:bg-surface-soft hover:text-status-danger-text transition-colors shrink-0 cursor-pointer"
+            title="Clear Filters"
+          >
+            <FilterX className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {productsMethods.isError ? (
         <div className="p-12 text-center text-status-danger-text bg-white rounded-xl border border-border-input shadow-xs">
           <Typography variant="body" className="inline">
             Failed to load products.
           </Typography>
           <Button
             variant="outline"
-            onClick={() => hook.refetch()}
-            className="ml-4"
+            onClick={() => productsMethods.refetch()}
+            className="ml-4 cursor-pointer"
           >
             Retry
           </Button>
         </div>
       ) : (
         <AppTable
-          data={hook.products}
+          data={productsMethods.products}
           columns={columns}
-          isLoading={hook.isLoading}
-          emptyMessage="No products yet - create your first one."
+          isLoading={productsMethods.isLoading}
+          emptyMessage="No products found matching your filters."
           paginationBar={
             <PaginationBar
-              currentPage={hook.page}
-              totalPages={hook.totalPages}
-              onPageChange={hook.handlePageChange}
-              pageSize={hook.pageSize}
-              onPageSizeChange={hook.handlePageSizeChange}
+              currentPage={productsMethods.page}
+              totalPages={productsMethods.totalPages}
+              onPageChange={productsMethods.handlePageChange}
+              pageSize={productsMethods.pageSize}
+              onPageSizeChange={productsMethods.handlePageSizeChange}
               showPageSizeSelect={true}
               isCurrentPaginationInfoVisible={false}
-              pageSizeOptions={[10, 20, 50, 100]}
+              pageSizeOptions={[5, 10, 20, 50]}
             />
           }
         />
       )}
       <ProductFormSheet
-        isOpen={hook.isSheetOpen}
-        onClose={() => hook.setIsSheetOpen(false)}
-        activeProduct={hook.activeProduct}
-        onSubmit={hook.handleFormSubmit}
-        isSubmitting={hook.isCreating || hook.isUpdating}
-        categoryOptions={hook.categoryOptions}
-        availableTags={hook.availableTags}
-      />{" "}
+        isOpen={productsMethods.isSheetOpen}
+        onClose={() => productsMethods.setIsSheetOpen(false)}
+        activeProduct={productsMethods.activeProduct}
+        onSubmit={productsMethods.handleFormSubmit}
+        isSubmitting={productsMethods.isCreating || productsMethods.isUpdating}
+        categoryOptions={productsMethods.categoryOptions}
+        availableTags={productsMethods.availableTags}
+      />
       <ProductDeleteModal
-        isOpen={hook.isDeleteOpen}
-        onClose={() => hook.setIsDeleteOpen(false)}
-        activeProduct={hook.activeProduct}
+        isOpen={productsMethods.isDeleteOpen}
+        onClose={() => productsMethods.setIsDeleteOpen(false)}
+        activeProduct={productsMethods.activeProduct}
         onConfirm={() => {
-          if (hook.activeProduct) {
-            hook.deleteProduct(
-              (hook.activeProduct as Product & { slug: string }).slug,
-            );
+          if (productsMethods.activeProduct) {
+            productsMethods.deleteProduct(productsMethods.activeProduct.slug);
           }
         }}
-        isDeleting={hook.isDeleting}
+        isDeleting={productsMethods.isDeleting}
       />
     </div>
   );

@@ -1,14 +1,36 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProductsApi } from "../api/getProducts";
-import { getProductApi } from "../api/getProduct"; // Added import for full product details
+import { getProductsApi, type ProductFilters } from "../api/getProducts";
+import { getProductApi } from "../api/getProduct";
 import { createProductApi } from "../api/createProduct";
 import { updateProductApi } from "../api/updateProduct";
 import { deleteProductApi } from "../api/deleteProduct";
 import { getCategoriesApi } from "@/features/categories/api/getCategories";
-import type { Product } from "../products.types";
+import type { Product } from "../types/products.types";
 import { getTagsApi } from "@/features/tags/api/get-tags.api";
+
+// Clean helpers to safely extract data wrappers
+const extractSlug = (response: unknown): string | undefined => {
+  const res = response as {
+    data?: { data?: { slug?: string }; slug?: string };
+    slug?: string;
+  };
+  return res?.data?.data?.slug || res?.data?.slug || res?.slug;
+};
+
+const extractTags = (tagsData: unknown): string[] => {
+  const res = tagsData as {
+    data?:
+      | { data?: { name: string }[]; items?: { name: string }[] }
+      | { name: string }[];
+  };
+  const target = res?.data;
+  if (Array.isArray(target)) return target.map((t) => t.name);
+  if (Array.isArray(target?.data)) return target.data.map((t) => t.name);
+  if (Array.isArray(target?.items)) return target.items.map((t) => t.name);
+  return [];
+};
 
 export function useProductsPage() {
   const navigate = useNavigate();
@@ -20,11 +42,31 @@ export function useProductsPage() {
     1: null,
   });
 
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [activeProduct, setActiveProduct] = useState<Product | null>(null);
+  const [filters, setFilters] = useState<ProductFilters>({
+    Search: "",
+    CategorySlug: "",
+    SortBy: "",
+    SortDir: "",
+    InStock: "",
+  });
+
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.Search);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(filters.Search);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [filters.Search]);
 
   const currentCursor = cursors[page] || null;
+
+  const activeFilters = useMemo(
+    () => ({
+      ...filters,
+      Search: debouncedSearch,
+    }),
+    [filters, debouncedSearch],
+  );
 
   const {
     data: productsData,
@@ -32,8 +74,9 @@ export function useProductsPage() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["products", page, pageSize, currentCursor],
-    queryFn: () => getProductsApi(pageSize, currentCursor ?? undefined),
+    queryKey: ["products", page, pageSize, currentCursor, activeFilters],
+    queryFn: () =>
+      getProductsApi(pageSize, currentCursor ?? undefined, activeFilters),
   });
 
   const { data: categoriesData } = useQuery({
@@ -46,37 +89,66 @@ export function useProductsPage() {
     queryFn: () => getTagsApi(1, 100),
   });
 
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [activeProduct, setActiveProduct] = useState<Product | null>(null);
+
   const createMutation = useMutation({
     mutationFn: createProductApi,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["products"] });
+      await refetch();
       setIsSheetOpen(false);
     },
   });
 
   const updateMutation = useMutation({
     mutationFn: updateProductApi,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
+    onSuccess: async (response, variables) => {
+      const newSlug = extractSlug(response) || variables.slug;
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({
+          queryKey: ["product", variables.slug],
+        }),
+        ...(newSlug && newSlug !== variables.slug
+          ? [queryClient.invalidateQueries({ queryKey: ["product", newSlug] })]
+          : []),
+      ]);
+
+      await refetch();
       setIsSheetOpen(false);
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteProductApi,
-    onSuccess: async () => {
+    onSuccess: async (_, deletedSlug) => {
+      queryClient.removeQueries({ queryKey: ["product", deletedSlug] });
       await queryClient.invalidateQueries({ queryKey: ["products"] });
+
+      await refetch();
       setIsDeleteOpen(false);
       setActiveProduct(null);
     },
   });
 
-  const products: Product[] = useMemo(
-    () =>
+  // FRONTEND FALLBACK: Force the Out of Stock filter to work even if the backend ignores it
+  const products: Product[] = useMemo(() => {
+    let items =
       (productsData as { data?: { data?: Product[] } } | undefined)?.data
-        ?.data ?? [],
-    [productsData],
-  );
+        ?.data ?? [];
+
+    if (filters.InStock === true) {
+      items = items.filter((p) => (p.stockQuantity ?? 0) > 0);
+    } else if (filters.InStock === false) {
+      items = items.filter((p) => (p.stockQuantity ?? 0) <= 0);
+    }
+
+    return items;
+  }, [productsData, filters.InStock]);
+
   const totalPages = (
     productsData as
       { data?: { pagination?: { hasNext?: boolean } } } | undefined
@@ -85,27 +157,34 @@ export function useProductsPage() {
     : page;
 
   const categoryOptions = useMemo(() => {
-    return (
-      categoriesData?.data?.data?.map((c) => ({
-        label: c.name,
-        value: c.slug,
-      })) || []
-    );
+    const categories = (
+      categoriesData as { data?: { data?: { name: string; slug: string }[] } }
+    )?.data?.data;
+    return categories?.map((c) => ({ label: c.name, value: c.slug })) || [];
   }, [categoriesData]);
 
-  const availableTags = useMemo(() => {
-    const rawTags = tagsData as unknown as {
-      data?:
-        | { data?: { name: string }[]; items?: { name: string }[] }
-        | { name: string }[];
-    };
-    if (Array.isArray(rawTags?.data)) return rawTags.data.map((t) => t.name);
-    if (Array.isArray(rawTags?.data?.data))
-      return rawTags.data.data.map((t) => t.name);
-    if (Array.isArray(rawTags?.data?.items))
-      return rawTags.data.items.map((t) => t.name);
-    return [];
-  }, [tagsData]);
+  const availableTags = useMemo(() => extractTags(tagsData), [tagsData]);
+
+  const handleFilterChange = (
+    key: keyof ProductFilters,
+    value: ProductFilters[keyof ProductFilters],
+  ) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setPage(1);
+    setCursors({ 1: null });
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      Search: "",
+      CategorySlug: "",
+      SortBy: "",
+      SortDir: "",
+      InStock: "",
+    });
+    setPage(1);
+    setCursors({ 1: null });
+  };
 
   const openCreate = () => {
     setActiveProduct(null);
@@ -115,7 +194,6 @@ export function useProductsPage() {
   const openEdit = async (product: Product) => {
     setActiveProduct(product);
     setIsSheetOpen(true);
-
     try {
       const response = await queryClient.fetchQuery({
         queryKey: ["product", product.slug],
@@ -151,6 +229,7 @@ export function useProductsPage() {
   };
 
   const deleteProduct = (slug: string) => deleteMutation.mutate(slug);
+
   const handlePageChange = (newPage: number) => {
     const pagination = (
       productsData as
@@ -164,11 +243,13 @@ export function useProductsPage() {
     }
     setPage(newPage);
   };
+
   const handlePageSizeChange = (newPageSize: number) => {
     setPageSize(newPageSize);
     setPage(1);
     setCursors({ 1: null });
   };
+
   const viewDetails = (slug: string) => navigate(`/products/${slug}`);
 
   return {
@@ -180,6 +261,9 @@ export function useProductsPage() {
     totalPages,
     categoryOptions,
     availableTags,
+    filters,
+    handleFilterChange,
+    clearFilters,
     handlePageChange,
     handlePageSizeChange,
     isSheetOpen,

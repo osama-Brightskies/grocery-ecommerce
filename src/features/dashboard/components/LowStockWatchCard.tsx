@@ -4,7 +4,7 @@ import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
 import { Badge } from "@/components/ui/badge";
 import { getImageUrl, cn } from "@/lib/utils";
-import type { Product } from "@/features/products/products.types";
+import type { Product } from "@/features/products/types/products.types";
 
 const LOW_STOCK_THRESHOLD = 10;
 const CRITICAL_DANGER_THRESHOLD = 5;

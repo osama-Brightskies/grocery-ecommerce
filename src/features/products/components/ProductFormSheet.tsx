@@ -13,14 +13,14 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { cn, getImageUrl } from "@/lib/utils";
 
-import type { Product } from "../products.types";
+import type { Product } from "../types/products.types";
 import { FormTextarea } from "@/components/ui/form-fields/FormTextarea";
 import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormSelect } from "@/components/ui/form-fields/FormSelect";
+import { FormImageUploader } from "@/components/ui/form-fields/FormImageUploader";
 
-// 1. Strict Zod Schema with manually defined error states
 const productSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
 
@@ -48,7 +48,7 @@ const productSchema = z.object({
   description: z.string().trim().min(1, "Description is required"),
   altText: z.string().optional(),
   tags: z.array(z.string()).default([]),
-  imageFile: z.any().optional(), // Added for React Hook Form integration
+  imageFile: z.any().optional(),
 });
 
 type ProductFormValues = z.infer<typeof productSchema>;
@@ -62,6 +62,7 @@ const EMPTY_PRODUCT_FORM: ProductFormInput = {
   categorySlug: "",
   altText: "",
   tags: [],
+  imageFile: undefined,
 };
 
 type SelectOption = {
@@ -104,16 +105,21 @@ export function ProductFormSheet({
             categorySlug: activeProduct.categorySlug,
             altText: activeProduct.altText ?? "",
             tags: activeProduct.tags,
+            imageFile: undefined,
           }
         : EMPTY_PRODUCT_FORM,
     );
   }, [activeProduct, isOpen, methods]);
 
   const handleSubmitWrapper = (values: ProductFormValues) => {
-    const fileInput = document.getElementById(
-      "product-image",
-    ) as HTMLInputElement;
-    const file = fileInput?.files?.[0];
+    // Check if image is required for new products
+    if (!activeProduct && !values.imageFile) {
+      methods.setError("imageFile", {
+        type: "manual",
+        message: "An image is required for new products.",
+      });
+      return;
+    }
 
     const formData = new FormData();
     formData.append("Name", values.name);
@@ -125,21 +131,25 @@ export function ProductFormSheet({
 
     values.tags.forEach((tag, index) => {
       formData.append("TagNames", tag);
-      formData.append("tagNames", tag); // 2. CamelCase fallback
-      formData.append("Tags", tag); // 3. Exact Model property fallback
-      formData.append(`TagNames[${index}]`, tag); // 4. Indexed array fallback
+      formData.append("tagNames", tag);
+      formData.append("Tags", tag);
+      formData.append(`TagNames[${index}]`, tag);
     });
 
-    if (file) {
-      formData.append("Image", file);
+    if (values.imageFile instanceof File) {
+      formData.append("Image", values.imageFile);
     }
-
-    console.log("Submitting Tags:", values.tags);
 
     onSubmit(formData);
   };
 
-  const imageError = methods.formState.errors.imageFile;
+  // Build existing image URL using the centralized getImageUrl utility
+  const existingImageUrl = activeProduct?.productImageUrl
+    ? getImageUrl(
+        activeProduct.productImageUrl,
+        (activeProduct as Product & { updatedAt?: string }).updatedAt,
+      )
+    : undefined;
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -262,55 +272,28 @@ export function ProductFormSheet({
                 )}
               />
 
-              <div className="space-y-1.5">
-                <Typography
-                  variant="label"
-                  as="label"
-                  className="text-text-secondary ml-0.5"
-                >
-                  Product Image {activeProduct ? "(Optional)" : "*"}
-                </Typography>
-                <input
-                  id="product-image"
-                  type="file"
-                  accept="image/*"
-                  {...methods.register("imageFile", {
-                    required: !activeProduct
-                      ? "An image is required for new products."
-                      : false,
-                  })}
-                  className={cn(
-                    "w-full h-11 px-3 py-2 rounded-lg border text-sm text-sidebar-bg focus:outline-none focus:ring-2 focus:ring-brand-primary file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-surface-mint file:text-brand-primary hover:file:bg-surface-mint/80 transition-all cursor-pointer bg-white",
-                    imageError
-                      ? "border-status-danger-text focus:ring-status-danger-text"
-                      : "border-border-input",
-                  )}
-                />
-                {imageError && (
-                  <Typography
-                    variant="muted"
-                    className="text-status-danger-text text-[12px] ml-0.5 mt-0.5 animate-in fade-in slide-in-from-top-1"
-                  >
-                    {imageError.message as string}
-                  </Typography>
-                )}
-              </div>
+              <FormImageUploader
+                name="imageFile"
+                label="Product Image"
+                required={!activeProduct}
+                existingImageUrl={existingImageUrl}
+              />
             </div>
 
-            <SheetFooter className="px-6 py-5 border-t border-border-input bg-white flex justify-end gap-3 sm:justify-end">
+            <SheetFooter className="px-6 py-5 border-t border-border-input bg-white flex flex-row justify-end gap-3">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="bg-surface-mint text-brand-primary hover:bg-surface-mint/80 font-semibold px-6 border-transparent"
+                className="bg-surface-mint text-brand-primary hover:bg-surface-mint/80 font-semibold px-4 border-transparent"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-brand-medium text-white hover:bg-brand-primary font-semibold px-6"
+                className="bg-brand-medium text-white hover:bg-brand-primary font-semibold px-4"
               >
                 {isSubmitting ? "Saving..." : "Save changes"}
               </Button>

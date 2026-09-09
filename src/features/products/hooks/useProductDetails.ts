@@ -7,6 +7,30 @@ import { deleteProductApi } from "../api/deleteProduct";
 import { getCategoriesApi } from "@/features/categories/api/getCategories";
 import { getTagsApi } from "@/features/tags/api/get-tags.api";
 
+// Clean helper to safely extract a slug from various response wrapper shapes
+const extractSlug = (response: unknown): string | undefined => {
+  const res = response as {
+    data?: { data?: { slug?: string }; slug?: string };
+    slug?: string;
+  };
+  return res?.data?.data?.slug || res?.data?.slug || res?.slug;
+};
+
+// Clean helper to extract tag names regardless of pagination/wrapping
+const extractTags = (tagsData: unknown): string[] => {
+  const res = tagsData as {
+    data?:
+      | { data?: { name: string }[]; items?: { name: string }[] }
+      | { name: string }[];
+  };
+  const target = res?.data;
+
+  if (Array.isArray(target)) return target.map((t) => t.name);
+  if (Array.isArray(target?.data)) return target.data.map((t) => t.name);
+  if (Array.isArray(target?.items)) return target.items.map((t) => t.name);
+  return [];
+};
+
 export function useProductDetails(slug: string) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -29,29 +53,27 @@ export function useProductDetails(slug: string) {
     queryKey: ["tags", 1, 100],
     queryFn: () => getTagsApi(1, 100),
   });
-  console.log("🚀 ~ useProductDetails ~ tagsData:", tagsData);
 
   const product = (data as { data?: unknown } | undefined)?.data;
 
   const updateMutation = useMutation({
     mutationFn: updateProductApi,
     onSuccess: async (response) => {
-      await queryClient.invalidateQueries({ queryKey: ["products"] });
-      setIsSheetOpen(false);
+      const newSlug = extractSlug(response);
 
-      const updateResponse = response as {
-        data?: { data?: { slug?: string }; slug?: string };
-        slug?: string;
-      };
-      const newSlug =
-        updateResponse.data?.data?.slug ||
-        updateResponse.data?.slug ||
-        updateResponse.slug;
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: ["product", slug] }),
+        ...(newSlug && newSlug !== slug
+          ? [queryClient.invalidateQueries({ queryKey: ["product", newSlug] })]
+          : []),
+      ]);
+
+      await refetch();
+      setIsSheetOpen(false);
 
       if (newSlug && newSlug !== slug) {
         navigate(`/products/${newSlug}`, { replace: true });
-      } else {
-        await queryClient.invalidateQueries({ queryKey: ["product", slug] });
       }
     },
   });
@@ -59,37 +81,22 @@ export function useProductDetails(slug: string) {
   const deleteMutation = useMutation({
     mutationFn: deleteProductApi,
     onSuccess: async () => {
-      // 1. Await the refresh FIRST
+      queryClient.removeQueries({ queryKey: ["product", slug] });
       await queryClient.invalidateQueries({ queryKey: ["products"] });
 
-      // 2. THEN close the modal and navigate
       setIsDeleteOpen(false);
       navigate("/products", { replace: true });
     },
   });
 
   const categoryOptions = useMemo(() => {
-    return (
-      categoriesData?.data?.data?.map((c) => ({
-        label: c.name,
-        value: c.slug,
-      })) || []
-    );
+    const categories = (
+      categoriesData as { data?: { data?: { name: string; slug: string }[] } }
+    )?.data?.data;
+    return categories?.map((c) => ({ label: c.name, value: c.slug })) || [];
   }, [categoriesData]);
 
-  const availableTags = useMemo(() => {
-    const rawTags = tagsData as unknown as {
-      data?:
-        | { data?: { name: string }[]; items?: { name: string }[] }
-        | { name: string }[];
-    };
-    if (Array.isArray(rawTags?.data)) return rawTags.data.map((t) => t.name);
-    if (Array.isArray(rawTags?.data?.data))
-      return rawTags.data.data.map((t) => t.name);
-    if (Array.isArray(rawTags?.data?.items))
-      return rawTags.data.items.map((t) => t.name);
-    return [];
-  }, [tagsData]);
+  const availableTags = useMemo(() => extractTags(tagsData), [tagsData]);
 
   const handleFormSubmit = (formData: FormData) =>
     updateMutation.mutate({ slug, formData });
