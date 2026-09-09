@@ -29,6 +29,23 @@ describe("category components", () => {
     ).toHaveAttribute("src", expect.stringContaining("?v="));
   });
 
+  it("triggers onEdit and onDelete callbacks from CategoryCard", () => {
+    const onEdit = vi.fn();
+    const onDelete = vi.fn();
+
+    render(
+      <MemoryRouter>
+        <CategoryCard category={category} onEdit={onEdit} onDelete={onDelete} />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByTitle("Edit category"));
+    expect(onEdit).toHaveBeenCalledWith(category);
+
+    fireEvent.click(screen.getByTitle("Delete category"));
+    expect(onDelete).toHaveBeenCalledWith(category);
+  });
+
   it("renders product prices and stock states and loads more", () => {
     const onLoadMore = vi.fn();
     render(
