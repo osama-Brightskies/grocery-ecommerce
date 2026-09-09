@@ -10,6 +10,7 @@ import { protectedGuard } from "./guards/protectedGuard";
 import DashboardPage from "@/features/dashboard/DashboardPage";
 import UsersListPage from "@/features/users/pages/UsersListPage";
 import UserDetailPage from "@/features/users/pages/UserDetailPage";
+import ProfilePage from "@/features/users/pages/ProfilePage";
 import CategoriesListPage from "@/features/categories/pages/CategoriesListPage";
 import CategoryDetailPage from "@/features/categories/pages/CategoryDetailPage";
 import NotFoundRedirect from "./components/NotFoundRedirect";
@@ -38,6 +39,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: "dashboard", element: <DashboardPage /> },
+      { path: "profile", element: <ProfilePage /> },
       { path: "users", element: <UsersListPage /> },
       { path: "users/:userId", element: <UserDetailPage /> },
       { path: "categories", element: <CategoriesListPage /> },
