@@ -1,6 +1,7 @@
 import { Typography } from "@/components/ui/shared/Typography";
 import { STATUS_FILTER_OPTIONS } from "../constants/orders.constants";
 import type { OrderStatus } from "../types/orders.types";
+import AppSelect from "@/components/ui/AppSelect";
 
 export type OrdersStatusFilterProps = {
   selectedStatus: OrderStatus | "All";
@@ -13,26 +14,20 @@ export function OrdersStatusFilter({
 }: OrdersStatusFilterProps) {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 w-48">
         <Typography
           variant="caption"
           className="text-xs font-semibold text-text-secondary"
         >
           Filter by status
         </Typography>
-        <select
+        <AppSelect
           value={selectedStatus}
-          onChange={(e) =>
-            onStatusChange(e.target.value as OrderStatus | "All")
-          }
-          className="h-10 px-3.5 pr-8 rounded-xl border border-border bg-card text-xs font-semibold text-sidebar-bg focus:outline-none focus:ring-1 focus:ring-brand-primary shadow-xs cursor-pointer hover:border-border-input transition-colors"
-        >
-          {STATUS_FILTER_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          onChange={(val) => onStatusChange(val as OrderStatus | "All")}
+          options={STATUS_FILTER_OPTIONS}
+          placeholder="Filter by status"
+          className="h-10 rounded-xl bg-card border-border hover:border-brand-primary/40 text-xs font-semibold"
+        />
       </div>
     </div>
   );

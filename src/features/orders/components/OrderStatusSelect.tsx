@@ -1,7 +1,6 @@
-import * as React from "react";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { OrderStatus } from "../types/orders.types";
+import AppSelect, { type SelectOption } from "@/components/ui/AppSelect";
 
 export type OrderStatusSelectProps = {
   currentStatus: OrderStatus;
@@ -19,45 +18,35 @@ export function OrderStatusSelect({
   isPending = false,
   className,
 }: OrderStatusSelectProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const nextStatus = e.target.value as OrderStatus;
-    if (nextStatus) {
-      onSelectStatus(nextStatus);
-    } else {
-      onCancel();
-    }
-  };
+  const options: SelectOption[] = allowedStatuses.map((st) => ({
+    label: `Mark as ${st}`,
+    value: st,
+  }));
 
   return (
     <div
-      className={cn("relative inline-flex items-center gap-1.5", className)}
+      className="relative inline-flex items-center w-40"
       onClick={(e) => e.stopPropagation()}
     >
-      <select
-        autoFocus
-        defaultValue=""
+      <AppSelect
+        defaultOpen={true}
+        onOpenChange={(isOpen) => {
+          if (!isOpen && !isPending) {
+            onCancel();
+          }
+        }}
+        onChange={(val) => onSelectStatus(val as OrderStatus)}
+        options={options}
+        placeholder="Select status..."
         disabled={isPending}
-        onChange={handleChange}
-        onBlur={onCancel}
-        className={cn(
-          "h-8 px-2.5 pr-7 rounded-lg border border-brand-primary bg-card text-xs font-semibold text-sidebar-bg",
-          "focus:outline-none focus:ring-1 focus:ring-brand-primary shadow-xs cursor-pointer",
-          "disabled:opacity-50 disabled:cursor-not-allowed transition-all",
-        )}
-      >
-        <option value="" disabled>
-          Select status...
-        </option>
-        {allowedStatuses.map((status) => (
-          <option key={status} value={status}>
-            Mark as {status}
-          </option>
-        ))}
-      </select>
+        className={
+          className ||
+          "h-8 px-2.5 rounded-lg border-brand-primary bg-card text-xs font-semibold text-sidebar-bg"
+        }
+      />
 
-      {/* Loading Spinner during status change */}
       {isPending && (
-        <div className="absolute right-2 pointer-events-none">
+        <div className="absolute right-8 pointer-events-none z-50">
           <Loader2 className="w-3.5 h-3.5 text-brand-primary animate-spin" />
         </div>
       )}

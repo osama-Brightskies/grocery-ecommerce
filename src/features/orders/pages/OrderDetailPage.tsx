@@ -99,22 +99,22 @@ export default function OrderDetailPage() {
         return {
           label: "Mark as placed",
           nextStatus: "Placed" as OrderStatus,
-          icon: <CheckCircle2 className="w-4 h-4 mr-1.5" />,
+          icon: <CheckCircle2 className="w-4 h-4 mr-1.5 text-brand-primary" />,
         };
       case "Placed":
         return {
           label: "Mark as shipped",
           nextStatus: "Shipped" as OrderStatus,
-          icon: <Truck className="w-4 h-4 mr-1.5" />,
+          icon: <Truck className="w-4 h-4 mr-1.5 text-brand-primary" />,
         };
       case "Shipped":
         return {
           label: "Mark as delivered",
           nextStatus: "Delivered" as OrderStatus,
-          icon: <PackageCheck className="w-4 h-4 mr-1.5" />,
+          icon: <PackageCheck className="w-4 h-4 mr-1.5 text-brand-primary" />,
         };
       default:
-        return null; // Delivered or Cancelled orders cannot be advanced
+        return null;
     }
   };
 
@@ -136,7 +136,7 @@ export default function OrderDetailPage() {
         </Typography>
       </button>
 
-      {/* 2. Header Bar: Title + Status Badge + Dynamic Action Buttons */}
+      {/* 2. Header Bar: Title + Status Badge + Symmetrical Styled Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -174,10 +174,11 @@ export default function OrderDetailPage() {
 
         {/* Action CTAs */}
         <div className="flex items-center gap-3 self-end sm:self-auto">
-          {/* Sequential Advance Button */}
+          {/* 🪄 Sequential Advance Button styled in matching light mint/green theme */}
           {nextAction && (
             <Button
-              variant="primary"
+              type="button"
+              variant="outline"
               size="default"
               disabled={isPending}
               onClick={() =>
@@ -186,18 +187,19 @@ export default function OrderDetailPage() {
                   payload: { status: nextAction.nextStatus },
                 })
               }
-              className="font-semibold shadow-xs cursor-pointer"
+              className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer"
             >
               {nextAction.icon}
-              <Typography variant="body" className="font-semibold text-white">
+              <Typography variant="body" className="font-semibold text-inherit">
                 {isPending ? "Updating..." : nextAction.label}
               </Typography>
             </Button>
           )}
 
-          {/* Cancel Order Button (Strictly visible only during Pending & Placed) */}
+          {/* Cancel Order Button (Strictly visible only during Placed) */}
           {canCancel && (
             <Button
+              type="button"
               variant="danger"
               size="default"
               disabled={isPending}
@@ -207,7 +209,7 @@ export default function OrderDetailPage() {
                   payload: { status: "Cancelled" },
                 })
               }
-              className="font-semibold cursor-pointer shadow-xs"
+              className="font-semibold cursor-pointer shadow-2xs"
             >
               <Ban className="w-4 h-4 mr-1.5" />
               <span>Cancel order</span>

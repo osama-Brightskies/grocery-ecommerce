@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { OrderStatusCell } from "../components/OrderStatusCell";
 import { OrdersStatusFilter } from "../components/OrderStatusFilter";
 import { OrderStatusStepper } from "../components/OrderStatusStepper";
@@ -18,6 +18,10 @@ const order = {
   status: "Placed" as const,
 };
 
+beforeAll(() => {
+  Element.prototype.scrollIntoView = vi.fn();
+});
+
 describe("order components", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -27,7 +31,7 @@ describe("order components", () => {
     } as unknown as ReturnType<typeof useUpdateOrderStatus>);
   });
 
-  it("changes the selected status filter", () => {
+  it("changes the selected status filter", async () => {
     const onStatusChange = vi.fn();
     render(
       <OrdersStatusFilter
@@ -35,22 +39,20 @@ describe("order components", () => {
         onStatusChange={onStatusChange}
       />,
     );
-    fireEvent.change(screen.getByRole("combobox"), {
-      target: { value: "Shipped" },
-    });
+    fireEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(await screen.findByRole("option", { name: "Shipped" }));
     expect(onStatusChange).toHaveBeenCalledWith("Shipped");
   });
 
-  it("allows placed orders to ship or cancel", () => {
+  it("allows placed orders to ship or cancel", async () => {
     render(<OrderStatusCell order={order} isEditing onStopEditing={vi.fn()} />);
-    const select = screen.getByRole("combobox");
     expect(
-      screen.getByRole("option", { name: "Mark as Shipped" }),
+      await screen.findByRole("option", { name: "Mark as Shipped" }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("option", { name: "Mark as Cancelled" }),
     ).toBeInTheDocument();
-    fireEvent.change(select, { target: { value: "Cancelled" } });
+    fireEvent.click(screen.getByRole("option", { name: "Mark as Cancelled" }));
     expect(mutate).toHaveBeenCalledWith({
       guid: "order-1",
       payload: { status: "Cancelled" },

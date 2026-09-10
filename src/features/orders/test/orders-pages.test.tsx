@@ -1,5 +1,5 @@
 import { fireEvent, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import OrdersListPage from "../pages/OrdersListPage";
 import OrderDetailPage from "../pages/OrderDetailPage";
 import { useGetOrders } from "../hooks/useGetOrders";
@@ -27,6 +27,10 @@ const order = {
   status: "Placed" as const,
 };
 
+beforeAll(() => {
+  Element.prototype.scrollIntoView = vi.fn();
+});
+
 describe("orders pages", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -36,7 +40,7 @@ describe("orders pages", () => {
     } as unknown as ReturnType<typeof useUpdateOrderStatus>);
   });
 
-  it("renders orders, filters them, and navigates to details", () => {
+  it("renders orders, filters them, and navigates to details", async () => {
     vi.mocked(useGetOrders).mockReturnValue({
       data: { data: { data: [order], pagination: { hasNext: false } } },
       isLoading: false,
@@ -46,9 +50,8 @@ describe("orders pages", () => {
     expect(screen.getByRole("heading", { name: "Orders" })).toBeInTheDocument();
     expect(screen.getByText("Mona Ali")).toBeInTheDocument();
     expect(screen.getByText("$25.00")).toBeInTheDocument();
-    fireEvent.change(screen.getByRole("combobox"), {
-      target: { value: "Shipped" },
-    });
+    fireEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(await screen.findByRole("option", { name: "Shipped" }));
     expect(useGetOrders).toHaveBeenLastCalledWith({
       status: "Shipped",
       limit: 10,
@@ -56,6 +59,38 @@ describe("orders pages", () => {
     });
     fireEvent.click(screen.getByTitle("View order details"));
     expect(screen.getByText("Order destination")).toBeInTheDocument();
+  });
+
+  it("loads the next page and keeps existing orders", () => {
+    vi.mocked(useGetOrders).mockImplementation(
+      (params) =>
+        ({
+          data: {
+            data: {
+              data: params?.cursor
+                ? [{ ...order, guid: "order-2", orderNumber: "1002" }]
+                : [order],
+              pagination: params?.cursor
+                ? { hasNext: false }
+                : { hasNext: true, nextCursor: "page-2" },
+            },
+          },
+          isLoading: false,
+          isFetching: false,
+        }) as ReturnType<typeof useGetOrders>,
+    );
+
+    renderOrdersPage(<OrdersListPage />);
+    fireEvent.click(screen.getByRole("button", { name: /load more orders/i }));
+
+    expect(useGetOrders).toHaveBeenLastCalledWith({
+      status: undefined,
+      limit: 10,
+      cursor: "page-2",
+    });
+    expect(screen.getByText("#1001")).toBeInTheDocument();
+    expect(screen.getByText("#1002")).toBeInTheDocument();
+    expect(screen.getByText("Showing 2 orders")).toBeInTheDocument();
   });
 
   it("renders list loading and empty states", () => {
@@ -120,5 +155,23 @@ describe("orders pages", () => {
       guid: "order-1",
       payload: { status: "Cancelled" },
     });
+  });
+
+  it("navigates back and hides actions for a delivered order", () => {
+    vi.mocked(useGetOrderDetail).mockReturnValue({
+      data: { data: { ...order, status: "Delivered" } },
+      isLoading: false,
+      isError: false,
+    } as ReturnType<typeof useGetOrderDetail>);
+    renderOrdersPage(<OrderDetailPage />, "/orders/order-1", "/orders/:guid");
+
+    expect(
+      screen.queryByRole("button", { name: /mark as/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /cancel order/i }),
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /back to orders/i }));
+    expect(screen.getByText("Orders destination")).toBeInTheDocument();
   });
 });
