@@ -132,4 +132,16 @@
   --color-chart-3: #f59e0b;
   --color-chart-4: #8b5cf6;
   --color-chart-5: #0284c7;
+
+  /* 10. ORDER STATUS BADGES */
+  --color-order-placed-bg: #e0f2fe;
+  --color-order-placed-text: #0369a1;
+  --color-order-shipped-bg: #f3e8ff;
+  --color-order-shipped-text: #7e22ce;
+  --color-order-delivered-bg: #e8f7eb;
+  --color-order-delivered-text: #1f7d47;
+  --color-order-pending-bg: #fff0d4;
+  --color-order-pending-text: #e57a1f;
+  --color-order-cancelled-bg: #ffe5e5;
+  --color-order-cancelled-text: #c7332e;
 }
