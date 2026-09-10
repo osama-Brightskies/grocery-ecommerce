@@ -83,10 +83,10 @@ export default function CategoriesListPage() {
 
         {/* Primary CTA Button */}
         <Button
-          variant="primary"
+          variant="outline"
           size="default"
           onClick={() => setIsCreateSheetOpen(true)}
-          className="font-semibold shadow-xs cursor-pointer self-start sm:self-auto"
+          className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
         >
           <Plus className="w-4 h-4 mr-1.5" />
           <span>Add category</span>
@@ -125,10 +125,10 @@ export default function CategoriesListPage() {
           </Typography>
           <div className="pt-2">
             <Button
-              variant="primary"
+              variant="outline"
               size="default"
               onClick={() => setIsCreateSheetOpen(true)}
-              className="font-semibold cursor-pointer"
+              className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
             >
               <Plus className="w-4 h-4 mr-1.5" />
               <span>Create category</span>

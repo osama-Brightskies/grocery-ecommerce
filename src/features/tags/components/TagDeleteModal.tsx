@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
 import type { Tag } from "@/features/tags/types/tags.types";
-import { X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 
 export function TagDeleteModal({
   isOpen,
@@ -57,19 +57,25 @@ export function TagDeleteModal({
 
         <div className="grid grid-cols-2 gap-3 pt-6 mt-6 border-t border-border-input">
           <Button
-            variant="outline"
+            type="button"
+            variant="danger"
+            size="default"
             onClick={onClose}
             disabled={isDeleting}
-            className="h-11 border-border-input text-sidebar-bg hover:bg-surface-soft font-semibold"
+            className="font-semibold cursor-pointer shadow-2xs"
           >
+            <X className="w-4 h-4 mr-1.5" />
             Cancel
           </Button>
           <Button
+            type="button"
             variant="danger"
+            size="default"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="h-11 font-semibold"
+            className="font-semibold cursor-pointer shadow-2xs"
           >
+            <Trash2 className="w-4 h-4 mr-1.5" />
             {isDeleting ? "Deleting..." : "Confirm"}
           </Button>
         </div>

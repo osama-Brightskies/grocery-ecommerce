@@ -63,19 +63,20 @@ export function useProductDetails(slug: string) {
   const updateMutation = useMutation({
     mutationFn: updateProductApi,
     onSuccess: async (response) => {
-      const newSlug = extractSlug(response);
+      const newSlug = extractSlug(response) || slug;
 
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["products"] }),
-        queryClient.invalidateQueries({ queryKey: ["product", slug] }),
-        ...(newSlug && newSlug !== slug
-          ? [queryClient.invalidateQueries({ queryKey: ["product", newSlug] })]
-          : []),
-      ]);
+      if (newSlug !== slug) {
+        queryClient.removeQueries({ queryKey: ["product", slug], exact: true });
+      }
+      queryClient.setQueryData<SingleProductResponse>(
+        ["product", newSlug],
+        response as SingleProductResponse,
+      );
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
 
       setIsSheetOpen(false);
 
-      if (newSlug && newSlug !== slug) {
+      if (newSlug !== slug) {
         navigate(`/products/${newSlug}`, { replace: true });
       }
     },
@@ -84,7 +85,7 @@ export function useProductDetails(slug: string) {
   const deleteMutation = useMutation({
     mutationFn: deleteProductApi,
     onSuccess: async () => {
-      queryClient.removeQueries({ queryKey: ["product", slug] });
+      queryClient.removeQueries({ queryKey: ["product", slug], exact: true });
       await queryClient.invalidateQueries({ queryKey: ["products"] });
 
       setIsDeleteOpen(false);

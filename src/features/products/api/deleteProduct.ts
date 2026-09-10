@@ -10,7 +10,11 @@ export function useDeleteProduct(options?: { onSuccess?: () => void }) {
 
   return useMutation({
     mutationFn: deleteProductApi,
-    onSuccess: () => {
+    onSuccess: (_, slug) => {
+      queryClient.removeQueries({
+        queryKey: ["product", slug],
+        exact: true,
+      });
       queryClient.invalidateQueries({ queryKey: ["products"] });
       options?.onSuccess?.();
     },

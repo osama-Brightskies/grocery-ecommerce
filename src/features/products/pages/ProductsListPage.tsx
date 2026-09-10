@@ -41,9 +41,9 @@ export default function ProductsListPage() {
           variant="outline"
           size="default"
           onClick={productsMethods.openCreate}
-          className="cursor-pointer shrink-0 mt-1"
+          className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
         >
-          <Plus />
+          <Plus className="w-4 h-4 mr-1.5" />
           <span>Add Product</span>
         </Button>
       </div>

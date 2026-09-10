@@ -20,6 +20,7 @@ import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormSelect } from "@/components/ui/form-fields/FormSelect";
 import { FormImageUploader } from "@/components/ui/form-fields/FormImageUploader";
 import type { Product } from "../types/products.types";
+import { X } from "lucide-react";
 
 const productSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
@@ -274,20 +275,21 @@ export function ProductFormSheet({
             <SheetFooter className="px-6 py-5 border-t border-border-input bg-white flex flex-row justify-end gap-3">
               <Button
                 type="button"
-                variant="outline"
+                variant="danger"
                 size="default"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="bg-surface-mint text-sidebar-bg border-none hover:bg-surface-mint/80 font-semibold cursor-pointer"
+                className="font-semibold cursor-pointer shadow-2xs"
               >
+                <X className="w-4 h-4 mr-1.5" />
                 Cancel
               </Button>
               <Button
                 type="submit"
-                variant="primary"
+                variant="outline"
                 size="default"
                 disabled={isSubmitting}
-                className="font-semibold cursor-pointer shadow-xs"
+                className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
               >
                 {isSubmitting ? "Saving..." : "Save changes"}
               </Button>

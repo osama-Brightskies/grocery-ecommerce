@@ -34,7 +34,7 @@ export function CategoryDetailHeader({
           variant="outline"
           size="default"
           onClick={onEdit}
-          className="border-border hover:border-brand-primary text-sidebar-bg font-semibold cursor-pointer"
+          className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
         >
           <Pencil className="w-4 h-4 mr-1.5" />
           <span>Edit category</span>
@@ -44,7 +44,7 @@ export function CategoryDetailHeader({
           variant="danger"
           size="default"
           onClick={onDelete}
-          className="font-semibold cursor-pointer"
+          className="font-semibold cursor-pointer shadow-2xs"
         >
           <Trash2 className="w-4 h-4 mr-1.5" />
           <span>Delete category</span>

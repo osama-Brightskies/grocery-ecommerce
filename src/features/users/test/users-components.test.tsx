@@ -1,8 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import { UserRole } from "@/store/types/authStore.types";
 import { UserActivityTimeline } from "../components/UserActivityTimeline";
+import { UserOrderHistoryCard } from "../components/UserOrderHistoryCard";
 import { UserProfileInfo } from "../components/UserProfileInfo";
+import { useGetUserOrders } from "@/features/orders/hooks/useGetUserOrders";
+
+vi.mock("@/features/orders/hooks/useGetUserOrders", () => ({
+  useGetUserOrders: vi.fn(),
+}));
 
 const user = {
   guid: "12345678-abcd-efgh-ijkl-123456789012",
@@ -89,5 +96,50 @@ describe("UserProfileInfo", () => {
     render(<UserProfileInfo user={user} onEdit={onEdit} />);
     fireEvent.click(screen.getByRole("button", { name: /edit user/i }));
     expect(onEdit).toHaveBeenCalledOnce();
+  });
+});
+
+describe("UserOrderHistoryCard", () => {
+  it("renders user orders without the removed view-all action", () => {
+    vi.mocked(useGetUserOrders).mockReturnValue({
+      data: {
+        success: true,
+        statusCode: 200,
+        message: "ok",
+        data: {
+          data: [
+            {
+              guid: "order-1",
+              orderNumber: "1001",
+              totalAmount: 25,
+              totalItems: 2,
+              address: "Cairo",
+              creationDate: "2026-09-01T10:00:00Z",
+              deliveryTime: null,
+              status: "Placed",
+            },
+          ],
+          pagination: {
+            hasNext: false,
+            nextCursor: null,
+            pageSize: 10,
+          },
+        },
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetUserOrders>);
+
+    render(
+      <MemoryRouter>
+        <UserOrderHistoryCard userGuid="user-1" />
+      </MemoryRouter>,
+    );
+
+    expect(useGetUserOrders).toHaveBeenCalledWith("user-1", { limit: 20 });
+    expect(screen.getByText("#1001")).toBeInTheDocument();
+    expect(screen.getByText("2 items")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /view all orders/i }),
+    ).not.toBeInTheDocument();
   });
 });

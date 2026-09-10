@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import type { Tag } from "../types/tags.types";
 import { useGetTags } from "./useGetTags";
 import { useCreateTag } from "./useCreateTag";
@@ -7,8 +6,6 @@ import { useUpdateTag } from "./useUpdateTag";
 import { useDeleteTag } from "./useDeleteTag";
 
 export function useTagsPage() {
-  const queryClient = useQueryClient();
-
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -26,14 +23,12 @@ export function useTagsPage() {
   const createMutation = useCreateTag({
     onSuccess: () => {
       setIsSheetOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });
 
   const updateMutation = useUpdateTag({
     onSuccess: () => {
       setIsSheetOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });
 
@@ -41,7 +36,6 @@ export function useTagsPage() {
     onSuccess: () => {
       setIsDeleteOpen(false);
       setActiveTag(null);
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
     },
   });
 

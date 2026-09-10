@@ -42,9 +42,9 @@ export function UserProfileInfo({ user, onEdit }: UserProfileInfoProps) {
           variant="outline"
           size="default"
           onClick={onEdit}
-          className="border-border hover:border-brand-primary text-sidebar-bg font-semibold text-xs cursor-pointer self-start sm:self-auto shadow-2xs"
+          className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
         >
-          <Pencil className="w-3.5 h-3.5 mr-1.5" />
+          <Pencil className="w-4 h-4 mr-1.5" />
           <span>Edit user</span>
         </Button>
       </div>

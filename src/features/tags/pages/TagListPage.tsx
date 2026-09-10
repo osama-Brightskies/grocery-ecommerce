@@ -116,11 +116,12 @@ export default function TagListPage() {
           </div>
         </div>
         <Button
-          variant="primary"
+          variant="outline"
+          size="default"
           onClick={openCreate}
-          className="h-11 px-5 bg-brand-primary hover:opacity-90 text-white font-semibold shadow-sm rounded-lg flex items-center shrink-0 mt-1"
+          className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
         >
-          <Plus className="w-4 h-4 mr-2" /> Create tag
+          <Plus className="w-4 h-4 mr-1.5" /> Create tag
         </Button>
       </div>
 

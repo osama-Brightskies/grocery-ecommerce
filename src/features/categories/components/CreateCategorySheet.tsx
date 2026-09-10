@@ -12,6 +12,7 @@ import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormImageUploader } from "@/components/ui/form-fields/FormImageUploader";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
+import { Plus, X } from "lucide-react";
 
 import { useCreateCategory } from "../hooks/useCreateCategory";
 import {
@@ -98,24 +99,26 @@ export default function CreateCategorySheet({
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-border mt-auto">
           <Button
             type="button"
-            variant="outline"
+            variant="danger"
             size="default"
             onClick={handleClose}
             disabled={isPending}
-            className="bg-surface-mint text-sidebar-bg border-none hover:bg-surface-mint/80 font-semibold cursor-pointer"
+            className="font-semibold cursor-pointer shadow-2xs"
           >
+            <X className="w-4 h-4 mr-1.5" />
             Cancel
           </Button>
 
           <Button
             type="submit"
             form="create-category-form"
-            variant="primary"
+            variant="outline"
             size="default"
             disabled={isPending}
-            className="font-semibold cursor-pointer shadow-xs"
+            className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
           >
-            <Typography variant="body" className="font-semibold text-white">
+            <Plus className="w-4 h-4 mr-1.5" />
+            <Typography variant="body" className="font-semibold text-inherit">
               {isPending ? "Creating..." : "Create category"}
             </Typography>
           </Button>
