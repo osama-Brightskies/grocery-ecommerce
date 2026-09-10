@@ -28,9 +28,7 @@ describe("products API contracts", () => {
     await createProductApi(data);
     await updateProductApi({ slug: "apple", formData: data });
     await deleteProductApi("apple");
-    expect(http.get).toHaveBeenCalledWith("/api/products/apple", {
-      params: { _t: expect.any(Number) },
-    });
+    expect(http.get).toHaveBeenCalledWith("/api/products/apple");
     expect(http.post).toHaveBeenCalledWith(
       "/api/products",
       data,
