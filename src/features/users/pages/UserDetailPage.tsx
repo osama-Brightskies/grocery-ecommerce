@@ -52,7 +52,7 @@ export default function UserDetailPage() {
     "No name provided";
 
   return (
-    <div className="space-y-6 max-w-5xl pb-12">
+    <div className="w-full max-w-5xl mx-auto px-6 pb-12 space-y-6">
       {/* Back Button */}
       <div>
         <button
