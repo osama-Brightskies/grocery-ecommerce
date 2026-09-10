@@ -80,7 +80,7 @@ export default function CategoryDetailPage() {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-6 space-y-8 pb-16 pt-4">
+    <div className="space-y-8 w-full pb-16">
       {/* 1. Top Navigation & Action Buttons */}
       <CategoryDetailHeader
         onEdit={() => setIsEditOpen(true)}

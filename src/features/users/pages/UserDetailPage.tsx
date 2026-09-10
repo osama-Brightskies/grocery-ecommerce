@@ -1,36 +1,37 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, Pencil } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGetUserDetail } from "../hooks/useGetUserDetail";
 import { useGetUserActivities } from "../hooks/useGetUserActivities";
-import { UserRole } from "@/store/types/authStore.types";
-import UserProfileInfo from "../components/UserProfileInfo";
-import UserActivityTimeline from "../components/UserActivityTimeline";
-import UserNotFoundState from "../components/UserNotFoundState";
+import { UserProfileInfo } from "../components/UserProfileInfo";
+import { UserActivityTimeline } from "../components/UserActivityTimeline";
+import { UserOrderHistoryCard } from "../components/UserOrderHistoryCard";
+import { UserNotFoundState } from "../components/UserNotFoundState";
 import EditUserSheet from "../components/EditUserSheet";
+import { cn } from "@/lib/utils";
 
 export default function UserDetailPage() {
   const { userId = "" } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
 
-  // 1. Queries
+  // 1. Fetch User Profile
   const {
     data: userResponse,
     isLoading: isUserLoading,
     isError,
   } = useGetUserDetail(userId);
 
+  // 2. Fetch User Activities
   const { data: activitiesResponse, isLoading: isActivitiesLoading } =
     useGetUserActivities(userId);
 
   const user = userResponse?.data;
   const activities = activitiesResponse?.data?.data ?? [];
 
-  // 2. Loading State
+  // Loading State
   if (isUserLoading) {
     return (
       <div className="flex items-center justify-center min-h-100">
@@ -42,7 +43,7 @@ export default function UserDetailPage() {
     );
   }
 
-  // 3. In-Page 404 Not Found State
+  // 404 State
   if (isError || !user) {
     return <UserNotFoundState />;
   }
@@ -52,8 +53,8 @@ export default function UserDetailPage() {
     "No name provided";
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 pb-12 space-y-6">
-      {/* Back Button */}
+    <div className="space-y-6 w-full pb-16">
+      {/* Back Link */}
       <div>
         <button
           type="button"
@@ -67,66 +68,59 @@ export default function UserDetailPage() {
         </button>
       </div>
 
-      {/* Header Profile Title + Badges + Edit Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-3 flex-wrap">
-            <Typography
-              variant="h1"
-              className="text-2xl md:text-3xl font-bold text-sidebar-bg"
-            >
-              {fullName}
-            </Typography>
+      {/* Page Title & Status Header */}
+      <div className="space-y-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <Typography
+            variant="h1"
+            className="text-2xl md:text-3xl font-bold text-sidebar-bg"
+          >
+            {fullName}
+          </Typography>
 
-            {/* Role Badge */}
-            {user.role === UserRole.Admin ? (
-              <Badge className="bg-role-admin-bg text-role-admin-text border-role-admin-text/15">
-                Admin
-              </Badge>
-            ) : (
-              <Badge className="bg-role-user-bg text-role-user-text border-role-user-text/15">
-                User
-              </Badge>
+          <Badge
+            variant="outline"
+            className={cn(
+              "px-2.5 py-0.5 text-xs font-semibold border inline-flex items-center gap-1.5 select-none",
+              user.isActive
+                ? "bg-surface-mint text-brand-primary border-brand-primary/20"
+                : "bg-status-danger-bg text-status-danger-text border-status-danger-text/20",
             )}
-
-            {/* Status Badge */}
-            <Badge variant={user.isActive ? "primary" : "danger"}>
-              {user.isActive ? "Active" : "Inactive"}
-            </Badge>
-          </div>
-
-          <div className="flex items-center gap-2 text-text-secondary">
-            <Mail className="w-4 h-4" />
-            <Typography variant="muted" className="text-sm">
-              {user.email}
-            </Typography>
-          </div>
+          >
+            <span
+              className={cn(
+                "w-1.5 h-1.5 rounded-full shrink-0",
+                user.isActive ? "bg-brand-primary" : "bg-status-danger-text",
+              )}
+            />
+            <span>{user.isActive ? "Active" : "Inactive"}</span>
+          </Badge>
         </div>
 
-        {/* Edit Action Button */}
-        <Button
-          variant="primary"
-          size="default"
-          onClick={() => setIsEditSheetOpen(true)}
-          className="font-semibold shadow-xs cursor-pointer"
-        >
-          <Pencil className="w-4 h-4 mr-1.5" />
-          <Typography variant="body" className="font-semibold text-white">
-            Edit user
+        <div className="flex items-center gap-2 text-text-secondary">
+          <Mail className="w-4 h-4" />
+          <Typography variant="muted" className="text-sm">
+            {user.email}
           </Typography>
-        </Button>
+        </div>
       </div>
 
-      {/* Profile Information Sub-component */}
-      <UserProfileInfo user={user} />
+      {/* 1. Top Section: Profile Information Card (With Edit User Button) */}
+      <UserProfileInfo user={user} onEdit={() => setIsEditSheetOpen(true)} />
 
-      {/* Activity Timeline Sub-component (Real API Data Only) */}
-      <UserActivityTimeline
-        activities={activities}
-        isLoading={isActivitiesLoading}
-      />
+      {/* 2. Bottom Section: 2-Column Split (Activity on Left, Orders on Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* Left Column: Recent Activity Timeline */}
+        <UserActivityTimeline
+          activities={activities}
+          isLoading={isActivitiesLoading}
+        />
 
-      {/* Edit Slide-over Drawer */}
+        {/* Right Column: Order History Card with Collapsible */}
+        <UserOrderHistoryCard userGuid={user.guid} />
+      </div>
+
+      {/* Edit Drawer */}
       <EditUserSheet
         isOpen={isEditSheetOpen}
         onClose={() => setIsEditSheetOpen(false)}

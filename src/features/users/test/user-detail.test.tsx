@@ -91,7 +91,6 @@ describe("UserDetailPage", () => {
     expect(
       screen.getByRole("heading", { name: "Mona Ali" }),
     ).toBeInTheDocument();
-    expect(screen.getAllByText("User").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Active").length).toBeGreaterThan(0);
     expect(screen.getByText("Viewed product")).toBeInTheDocument();
     expect(screen.getByText("Organic Apples")).toBeInTheDocument();

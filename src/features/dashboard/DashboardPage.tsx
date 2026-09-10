@@ -144,7 +144,7 @@ export default function DashboardPage() {
     isProductsLoading;
 
   return (
-    <div className="space-y-8 max-w-7xl pb-16">
+    <div className="space-y-8 w-full pb-16">
       {/* Header */}
       <div className="space-y-1">
         <Typography
