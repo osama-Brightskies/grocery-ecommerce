@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -35,6 +35,7 @@ export default function EditCategorySheet({
   category,
 }: EditCategorySheetProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const methods = useForm<UpdateCategoryFormValues>({
     resolver: zodResolver(updateCategorySchema),
@@ -63,7 +64,12 @@ export default function EditCategorySheet({
       onClose();
 
       const newSlug = response?.data?.slug;
-      if (newSlug && newSlug !== category.slug) {
+
+      // ONLY replace the URL if the slug changed AND we are currently on the details page
+      const isOnDetailsPage = location.pathname.includes(
+        `/categories/${category.slug}`,
+      );
+      if (newSlug && newSlug !== category.slug && isOnDetailsPage) {
         navigate(`/categories/${newSlug}`, { replace: true });
       }
     },

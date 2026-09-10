@@ -23,12 +23,14 @@ vi.mock("../api/categories.api", () => ({
   deleteCategoryApi: vi.fn(),
 }));
 
+// Hoisted QueryClient so we can spy on it
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+});
+
 function wrapper() {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
   return ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
 
@@ -47,7 +49,10 @@ const response = {
 };
 
 describe("category query hooks", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    queryClient.clear();
+  });
 
   it("loads categories and category products with their parameters", async () => {
     vi.mocked(api.getCategoriesApi).mockResolvedValue({
@@ -87,10 +92,18 @@ describe("category query hooks", () => {
 });
 
 describe("category mutation hooks", () => {
-  it("passes create, update, and delete inputs to their APIs", async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    queryClient.clear();
+  });
+
+  it("passes create, update, and delete inputs to their APIs and invalidates cache", async () => {
+    const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
+
     vi.mocked(api.createCategoryApi).mockResolvedValue(response);
     vi.mocked(api.updateCategoryApi).mockResolvedValue(response);
     vi.mocked(api.deleteCategoryApi).mockResolvedValue(undefined);
+
     const formData = new FormData();
     const { result } = renderHook(
       () => ({
@@ -100,11 +113,13 @@ describe("category mutation hooks", () => {
       }),
       { wrapper: wrapper() },
     );
+
     act(() => {
       result.current.create.mutate(formData);
       result.current.update.mutate({ slug: "fresh-fruit", formData });
       result.current.remove.mutate("fresh-fruit");
     });
+
     await waitFor(() =>
       expect(
         result.current.create.isSuccess &&
@@ -112,9 +127,16 @@ describe("category mutation hooks", () => {
           result.current.remove.isSuccess,
       ).toBe(true),
     );
+
     expect(api.createCategoryApi).toHaveBeenCalledWith(formData);
     expect(api.updateCategoryApi).toHaveBeenCalledWith("fresh-fruit", formData);
     expect(api.deleteCategoryApi).toHaveBeenCalledWith("fresh-fruit");
+
+    // Assert that the general list and detail caches are invalidated correctly upon edit
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["categories"] });
+    expect(invalidateSpy).toHaveBeenCalledWith({
+      queryKey: ["category-detail", "fresh-fruit"],
+    });
   });
 });
 
