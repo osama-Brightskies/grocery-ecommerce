@@ -36,6 +36,7 @@ describe("CategoryDetailPage", () => {
       isFetching: false,
     } as unknown as ReturnType<typeof useGetCategoryProducts>);
   });
+
   it("renders loading and not-found states", () => {
     vi.mocked(useGetCategoryDetail).mockReturnValue({
       data: undefined,
@@ -49,6 +50,7 @@ describe("CategoryDetailPage", () => {
     );
     expect(screen.getByText("Loading category details...")).toBeInTheDocument();
     view.unmount();
+
     vi.mocked(useGetCategoryDetail).mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -63,6 +65,7 @@ describe("CategoryDetailPage", () => {
       screen.getByRole("heading", { name: "Category not found" }),
     ).toBeInTheDocument();
   });
+
   it("renders category products and opens edit and delete controls", () => {
     vi.mocked(useGetCategoryDetail).mockReturnValue({
       data: { data: category },
@@ -88,18 +91,22 @@ describe("CategoryDetailPage", () => {
       isLoading: false,
       isFetching: false,
     } as unknown as ReturnType<typeof useGetCategoryProducts>);
+
     renderCategoriesPage(
       <CategoryDetailPage />,
       "/categories/fresh-fruit",
       "/categories/:slug",
     );
+
     expect(
       screen.getByRole("heading", { name: "Fresh Fruit" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Apple")).toBeInTheDocument();
     expect(screen.getByText("1 Product")).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole("button", { name: /edit category/i }));
     fireEvent.click(screen.getByRole("button", { name: /delete category/i }));
+
     expect(screen.getByText("Edit category sheet")).toBeInTheDocument();
     expect(screen.getByText("Delete category dialog")).toBeInTheDocument();
   });

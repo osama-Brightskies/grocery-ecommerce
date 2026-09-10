@@ -9,6 +9,15 @@ vi.mock("../components/CreateCategorySheet", () => ({
   default: ({ isOpen }: { isOpen: boolean }) =>
     isOpen ? <div>Create category sheet</div> : null,
 }));
+vi.mock("../components/EditCategorySheet", () => ({
+  default: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div>Edit category sheet</div> : null,
+}));
+vi.mock("../components/DeleteCategoryDialog", () => ({
+  default: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div>Delete category dialog</div> : null,
+}));
+
 const category = {
   name: "Fresh Fruit",
   slug: "fresh-fruit",
@@ -19,6 +28,7 @@ const category = {
 
 describe("CategoriesListPage", () => {
   beforeEach(() => vi.clearAllMocks());
+
   it("renders categories and navigates to a selected category", () => {
     vi.mocked(useGetCategories).mockReturnValue({
       data: { data: { data: [category], pagination: { hasNext: false } } },
@@ -26,14 +36,18 @@ describe("CategoriesListPage", () => {
       isFetching: false,
     } as ReturnType<typeof useGetCategories>);
     renderCategoriesPage(<CategoriesListPage />);
+
     expect(
       screen.getByRole("heading", { name: "Categories" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Fresh Fruit")).toBeInTheDocument();
     expect(screen.getByText("Showing 1 categories")).toBeInTheDocument();
+
+    // Clicking the text navigates to the details page
     fireEvent.click(screen.getByText("Fresh Fruit"));
     expect(screen.getByText("Category detail destination")).toBeInTheDocument();
   });
+
   it("renders loading and empty states", () => {
     vi.mocked(useGetCategories).mockReturnValue({
       data: undefined,
@@ -43,6 +57,7 @@ describe("CategoriesListPage", () => {
     const view = renderCategoriesPage(<CategoriesListPage />);
     expect(view.container.querySelectorAll(".animate-pulse")).toHaveLength(8);
     view.unmount();
+
     vi.mocked(useGetCategories).mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -51,6 +66,7 @@ describe("CategoriesListPage", () => {
     renderCategoriesPage(<CategoriesListPage />);
     expect(screen.getByText("No categories yet")).toBeInTheDocument();
   });
+
   it("opens the create category sheet", () => {
     vi.mocked(useGetCategories).mockReturnValue({
       data: undefined,
@@ -60,5 +76,21 @@ describe("CategoriesListPage", () => {
     renderCategoriesPage(<CategoriesListPage />);
     fireEvent.click(screen.getByRole("button", { name: "Add category" }));
     expect(screen.getByText("Create category sheet")).toBeInTheDocument();
+  });
+
+  it("opens edit and delete modals from the category cards", () => {
+    vi.mocked(useGetCategories).mockReturnValue({
+      data: { data: { data: [category], pagination: { hasNext: false } } },
+      isLoading: false,
+      isFetching: false,
+    } as ReturnType<typeof useGetCategories>);
+
+    renderCategoriesPage(<CategoriesListPage />);
+
+    fireEvent.click(screen.getByTitle("Edit category"));
+    expect(screen.getByText("Edit category sheet")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTitle("Delete category"));
+    expect(screen.getByText("Delete category dialog")).toBeInTheDocument();
   });
 });

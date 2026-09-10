@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Edit2, Trash2 } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
 import { getImageUrl } from "@/lib/utils";
 import type { Category } from "../types/categories.types";
@@ -6,9 +7,16 @@ import type { Category } from "../types/categories.types";
 export type CategoryCardProps = {
   category: Category;
   productCount?: number;
+  onEdit?: (category: Category) => void;
+  onDelete?: (category: Category) => void;
 };
 
-export function CategoryCard({ category, productCount }: CategoryCardProps) {
+export function CategoryCard({
+  category,
+  productCount,
+  onEdit,
+  onDelete,
+}: CategoryCardProps) {
   const navigate = useNavigate();
 
   return (
@@ -25,29 +33,57 @@ export function CategoryCard({ category, productCount }: CategoryCardProps) {
         />
       </div>
 
-      <div className="space-y-1">
-        <Typography
-          variant="h3"
-          className="text-base font-bold text-sidebar-bg group-hover:text-brand-primary transition-colors truncate"
-        >
-          {category.name}
-        </Typography>
+      <div className="flex items-start justify-between gap-2">
+        <div className="space-y-1 min-w-0">
+          <Typography
+            variant="h3"
+            className="text-base font-bold text-sidebar-bg group-hover:text-brand-primary transition-colors truncate"
+          >
+            {category.name}
+          </Typography>
 
-        <Typography
-          variant="muted"
-          className="text-xs text-text-secondary truncate font-mono"
-        >
-          {category.slug}
-        </Typography>
-
-        {productCount !== undefined && (
           <Typography
             variant="muted"
-            className="text-xs text-text-secondary pt-1 font-medium"
+            className="text-xs text-text-secondary truncate font-mono"
           >
-            {productCount} products
+            {category.slug}
           </Typography>
-        )}
+
+          {productCount !== undefined && (
+            <Typography
+              variant="muted"
+              className="text-xs text-text-secondary pt-1 font-medium"
+            >
+              {productCount} products
+            </Typography>
+          )}
+        </div>
+
+        {/* Actions Container */}
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents navigating to the details page
+              onEdit?.(category);
+            }}
+            className="p-1.5 text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 rounded-md transition-colors"
+            title="Edit category"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevents navigating to the details page
+              onDelete?.(category);
+            }}
+            className="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors"
+            title="Delete category"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

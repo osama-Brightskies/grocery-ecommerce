@@ -1,156 +1,153 @@
-import { useState } from "react";
-import { User as UserIcon, Copy, Check } from "lucide-react";
+import { Calendar, Pencil } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
-import { UserRole } from "@/store/types/authStore.types";
-import { formatDateTime } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { formatDate, getInitials, cn } from "@/lib/utils";
 import type { User } from "../types/users.types";
-import { toast } from "sonner";
 
 export type UserProfileInfoProps = {
   user: User;
+  onEdit: () => void;
 };
 
-export function UserProfileInfo({ user }: UserProfileInfoProps) {
-  const [isCopied, setIsCopied] = useState(false);
-
-  const handleCopyGuid = () => {
-    if (!user.guid) return;
-    navigator.clipboard.writeText(user.guid);
-    setIsCopied(true);
-    toast.success("User ID copied to clipboard");
-    setTimeout(() => setIsCopied(false), 2000);
-  };
+export function UserProfileInfo({ user, onEdit }: UserProfileInfoProps) {
+  const initials = getInitials(user.firstName, user.lastName, user.email);
 
   return (
     <div className="bg-card rounded-2xl border border-border p-6 shadow-xs space-y-6">
-      {/* Card Header */}
-      <div className="flex items-center gap-2.5 border-b border-border pb-4">
-        <UserIcon className="w-5 h-5 text-sidebar-bg" />
-        <Typography variant="h3" className="font-semibold text-sidebar-bg">
-          Profile information
-        </Typography>
-      </div>
-
-      {/* Grid Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 text-sm">
-        {/* First name */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            First name
-          </Typography>
-          <Typography variant="body" className="font-medium text-sidebar-bg">
-            {user.firstName || "—"}
-          </Typography>
-        </div>
-
-        {/* Last name */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            Last name
-          </Typography>
-          <Typography variant="body" className="font-medium text-sidebar-bg">
-            {user.lastName || "—"}
-          </Typography>
-        </div>
-
-        {/* Email */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            Email
-          </Typography>
-          <Typography variant="body" className="font-medium text-sidebar-bg">
-            {user.email}
-          </Typography>
-        </div>
-
-        {/* Phone number */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            Phone number
-          </Typography>
-          <Typography variant="body" className="font-medium text-sidebar-bg">
-            {user.phoneNumber || "—"}
-          </Typography>
-        </div>
-
-        {/* Role */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            Role
-          </Typography>
+      {/* 1. Header: Avatar + Title + Subtitle + Top-Right "Edit user" Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
+        <div className="flex items-center gap-3.5">
+          <Avatar
+            size="default"
+            className="bg-surface-mint text-brand-primary border border-brand-primary/20"
+          >
+            <AvatarFallback className="font-bold text-brand-primary bg-surface-mint text-sm">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
           <div>
-            {user.role === UserRole.Admin ? (
-              <Badge className="bg-role-admin-bg text-role-admin-text border-role-admin-text/15">
-                Admin
-              </Badge>
-            ) : (
-              <Badge className="bg-role-user-bg text-role-user-text border-role-user-text/15">
-                User
-              </Badge>
-            )}
+            <Typography variant="h3" className="font-bold text-sidebar-bg">
+              Profile information
+            </Typography>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              User details and account information
+            </Typography>
           </div>
         </div>
 
-        {/* User ID with Shadcn Tooltip */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            User ID
-          </Typography>
+        {/* Edit User Button inside the Card Header */}
+        <Button
+          variant="outline"
+          size="default"
+          onClick={onEdit}
+          className="border-border hover:border-brand-primary text-sidebar-bg font-semibold text-xs cursor-pointer self-start sm:self-auto shadow-2xs"
+        >
+          <Pencil className="w-3.5 h-3.5 mr-1.5" />
+          <span>Edit user</span>
+        </Button>
+      </div>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={handleCopyGuid}
-                className="flex items-center gap-1.5 cursor-pointer group"
-              >
-                <Typography
-                  variant="body"
-                  className="font-mono text-xs text-text-secondary group-hover:text-sidebar-bg transition-colors"
-                >
-                  {user.guid.slice(0, 8)}...{user.guid.slice(-6)}
-                </Typography>
-                {isCopied ? (
-                  <Check className="w-3.5 h-3.5 text-brand-primary shrink-0" />
-                ) : (
-                  <Copy className="w-3.5 h-3.5 text-text-secondary group-hover:text-sidebar-bg transition-colors shrink-0" />
-                )}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <span className="font-mono text-surface-mint">{user.guid}</span>
-              <span className="text-[10px] text-text-secondary border-l border-white/20 pl-1.5 ml-1.5">
-                Click to copy
-              </span>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-
-        {/* Joined Date */}
-        <div className="flex items-center justify-between py-2 border-b border-border/50">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            Joined
-          </Typography>
-          <Typography variant="body" className="font-medium text-sidebar-bg">
-            {formatDateTime(user.createdAt)}
-          </Typography>
-        </div>
-
-        {/* Status */}
-        <div className="flex items-center justify-between py-2">
-          <Typography variant="muted" className="w-36 text-text-secondary">
-            Status
-          </Typography>
+      {/* 2. 3-Column Fields Grid matching Figma */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-8 text-sm">
+        {/* Column 1: Names */}
+        <div className="space-y-4">
           <div>
-            <Badge variant={user.isActive ? "primary" : "danger"}>
-              {user.isActive ? "Active" : "Inactive"}
-            </Badge>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              First name
+            </Typography>
+            <Typography
+              variant="body"
+              className="font-bold text-sidebar-bg text-sm mt-0.5"
+            >
+              {user.firstName || "—"}
+            </Typography>
+          </div>
+
+          <div>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              Last name
+            </Typography>
+            <Typography
+              variant="body"
+              className="font-bold text-sidebar-bg text-sm mt-0.5"
+            >
+              {user.lastName || "—"}
+            </Typography>
+          </div>
+        </div>
+
+        {/* Column 2: Contacts */}
+        <div className="space-y-4">
+          <div>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              Email address
+            </Typography>
+            <Typography
+              variant="body"
+              className="font-bold text-sidebar-bg text-sm mt-0.5 truncate"
+              title={user.email}
+            >
+              {user.email}
+            </Typography>
+          </div>
+
+          <div>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              Phone number
+            </Typography>
+            <Typography
+              variant="body"
+              className="font-bold text-sidebar-bg text-sm mt-0.5 font-mono"
+            >
+              {user.phoneNumber || "—"}
+            </Typography>
+          </div>
+        </div>
+
+        {/* Column 3: Dates & Status */}
+        <div className="space-y-4">
+          <div>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              Joined date
+            </Typography>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <Calendar className="w-3.5 h-3.5 text-text-secondary" />
+              <Typography
+                variant="body"
+                className="font-bold text-sidebar-bg text-sm"
+              >
+                {formatDate(user.createdAt)}
+              </Typography>
+            </div>
+          </div>
+
+          <div>
+            <Typography variant="muted" className="text-xs text-text-secondary">
+              Status
+            </Typography>
+            <div className="mt-1">
+              <Badge
+                variant="outline"
+                className={cn(
+                  "px-2.5 py-0.5 text-xs font-semibold border inline-flex items-center gap-1.5 select-none",
+                  user.isActive
+                    ? "bg-surface-mint text-brand-primary border-brand-primary/20"
+                    : "bg-status-danger-bg text-status-danger-text border-status-danger-text/20",
+                )}
+              >
+                <span
+                  className={cn(
+                    "w-1.5 h-1.5 rounded-full shrink-0",
+                    user.isActive
+                      ? "bg-brand-primary"
+                      : "bg-status-danger-text",
+                  )}
+                />
+                <span>{user.isActive ? "Active" : "Inactive"}</span>
+              </Badge>
+            </div>
           </div>
         </div>
       </div>

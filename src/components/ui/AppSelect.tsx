@@ -13,14 +13,17 @@ export type SelectOption = {
   value: string;
 };
 
-export interface AppSelectProps {
+export type AppSelectProps = {
   value?: string;
   onChange?: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
   className?: string;
   disabled?: boolean;
-}
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
 
 export function AppSelect({
   value,
@@ -29,16 +32,26 @@ export function AppSelect({
   placeholder = "Select an option",
   className,
   disabled,
+  open,
+  defaultOpen,
+  onOpenChange,
 }: AppSelectProps) {
   return (
-    <Select value={value} onValueChange={onChange} disabled={disabled}>
+    <Select
+      value={value}
+      onValueChange={onChange}
+      disabled={disabled}
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+    >
       <SelectTrigger
         className={cn(
           "h-10 w-full bg-white px-4 flex justify-between items-center",
           "rounded-[7px] border-border-input",
           "text-sidebar-bg font-normal text-sm placeholder:text-text-subtle",
           "focus:ring-1 focus:ring-brand-primary focus:border-brand-primary",
-          "transition-all duration-200 shadow-none outline-none",
+          "transition-all duration-200 shadow-none outline-none cursor-pointer",
           className,
         )}
       >
@@ -82,3 +95,5 @@ export function AppSelect({
     </Select>
   );
 }
+
+export default AppSelect;
