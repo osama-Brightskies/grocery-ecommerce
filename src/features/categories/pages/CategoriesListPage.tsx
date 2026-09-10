@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useGetCategories } from "../hooks/useGetCategories";
 import { CategoryCard } from "../components/CategoryCard";
 import CreateCategorySheet from "../components/CreateCategorySheet";
+import EditCategorySheet from "../components/EditCategorySheet";
+import DeleteCategoryDialog from "../components/DeleteCategoryDialog";
 import type { Category } from "../types/categories.types";
 
 export default function CategoriesListPage() {
@@ -15,6 +17,11 @@ export default function CategoriesListPage() {
   const [accumulatedCategories, setAccumulatedCategories] = useState<
     Category[]
   >([]);
+
+  // States for Edit and Delete modals
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // 1. Fetch Categories Query
   const {
@@ -46,6 +53,16 @@ export default function CategoriesListPage() {
       setAccumulatedCategories(allCategories);
       setCurrentCursor(nextCursor);
     }
+  };
+
+  const handleEdit = (category: Category) => {
+    setActiveCategory(category);
+    setIsEditSheetOpen(true);
+  };
+
+  const handleDelete = (category: Category) => {
+    setActiveCategory(category);
+    setIsDeleteDialogOpen(true);
   };
 
   return (
@@ -122,7 +139,12 @@ export default function CategoriesListPage() {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {allCategories.map((category) => (
-              <CategoryCard key={category.slug} category={category} />
+              <CategoryCard
+                key={category.slug}
+                category={category}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
 
@@ -149,11 +171,33 @@ export default function CategoriesListPage() {
         </>
       )}
 
-      {/* Slide-over Sheet */}
+      {/* Create Sheet */}
       <CreateCategorySheet
         isOpen={isCreateSheetOpen}
         onClose={() => setIsCreateSheetOpen(false)}
       />
+
+      {/* Edit and Delete Modals for the individual cards */}
+      {activeCategory && (
+        <>
+          <EditCategorySheet
+            isOpen={isEditSheetOpen}
+            onClose={() => {
+              setIsEditSheetOpen(false);
+              setTimeout(() => setActiveCategory(null), 300);
+            }}
+            category={activeCategory}
+          />
+          <DeleteCategoryDialog
+            isOpen={isDeleteDialogOpen}
+            onClose={() => {
+              setIsDeleteDialogOpen(false);
+              setTimeout(() => setActiveCategory(null), 300);
+            }}
+            category={activeCategory}
+          />
+        </>
+      )}
     </div>
   );
 }
