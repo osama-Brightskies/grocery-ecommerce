@@ -25,6 +25,14 @@ const order = {
   creationDate: "2026-09-01T10:00:00Z",
   deliveryTime: null,
   status: "Placed" as const,
+  items: [
+    {
+      name: "Green Tea",
+      slug: "green-tea",
+      quantity: 2,
+      unitPrice: 3.5,
+    },
+  ],
 };
 
 beforeAll(() => {
@@ -145,6 +153,14 @@ describe("orders pages", () => {
     expect(
       screen.getByRole("heading", { name: "Order #1001" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Order items" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /green tea/i })).toHaveAttribute(
+      "href",
+      "/products/green-tea",
+    );
+    expect(screen.getByText("$7.00")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /mark as shipped/i }));
     fireEvent.click(screen.getByRole("button", { name: /cancel order/i }));
     expect(mutate).toHaveBeenNthCalledWith(1, {

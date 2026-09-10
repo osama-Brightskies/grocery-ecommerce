@@ -56,6 +56,20 @@ export function OrderInformationCard({ order }: OrderInformationCardProps) {
   const statusCfg = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.Pending;
   const amount = order.totalAmount ?? order.total ?? 0;
 
+  // 🔑 Calculated fallback: sums quantities from order.items when order.totalItems is not returned
+  const computedTotalItems =
+    order.totalItems ??
+    (Array.isArray(order.items)
+      ? order.items.reduce(
+          (sum: number, item) => sum + (Number(item?.quantity) || 1),
+          0,
+        )
+      : 0);
+
+  // 🔑 Guard against uninitialized "0001-01-01" default timestamps
+  const isValidDeliveryTime =
+    order.deliveryTime && !order.deliveryTime.startsWith("0001-01-01");
+
   const handleCopyGuid = () => {
     navigator.clipboard.writeText(order.guid);
     setIsCopied(true);
@@ -160,22 +174,24 @@ export function OrderInformationCard({ order }: OrderInformationCardProps) {
           </Tooltip>
         </div>
 
+        {/* Total items */}
         <div className="space-y-1">
           <Typography variant="muted" className="text-xs text-text-secondary">
             Total items
           </Typography>
           <Typography variant="body" className="font-medium text-sidebar-bg">
-            {order.totalItems ?? 0}
+            {computedTotalItems} {computedTotalItems === 1 ? "item" : "items"}
           </Typography>
         </div>
 
+        {/* Delivery time */}
         <div className="space-y-1">
           <Typography variant="muted" className="text-xs text-text-secondary">
             Delivery time
           </Typography>
           <Typography variant="body" className="font-medium text-sidebar-bg">
-            {order.deliveryTime
-              ? formatDateTime(order.deliveryTime)
+            {isValidDeliveryTime
+              ? formatDateTime(order.deliveryTime!)
               : "Not scheduled yet"}
           </Typography>
         </div>

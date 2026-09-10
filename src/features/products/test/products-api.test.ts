@@ -12,7 +12,10 @@ describe("products API contracts", () => {
     vi.spyOn(http, "get").mockResolvedValue(undefined);
     await getProductsApi(20, "next");
     expect(http.get).toHaveBeenCalledWith("/api/products", {
-      params: { Limit: 20, Cursor: "next" },
+      params: {
+        Limit: 20,
+        Cursor: "next",
+      },
     });
   });
   it("gets, creates, updates and deletes products", async () => {
@@ -25,9 +28,7 @@ describe("products API contracts", () => {
     await createProductApi(data);
     await updateProductApi({ slug: "apple", formData: data });
     await deleteProductApi("apple");
-    expect(http.get).toHaveBeenCalledWith("/api/products/apple", {
-      params: { _t: expect.any(Number) },
-    });
+    expect(http.get).toHaveBeenCalledWith("/api/products/apple");
     expect(http.post).toHaveBeenCalledWith(
       "/api/products",
       data,
