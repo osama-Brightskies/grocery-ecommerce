@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { useGetOrderDetail } from "../hooks/useGetOrderDetail";
 import { useUpdateOrderStatus } from "../hooks/useUpdateOrderStatus";
 import { OrderInformationCard } from "../components/OrderInformationCard";
+import { OrderItemsCard } from "../components/OrderItemsCard";
 import { OrderStatusStepper } from "../components/OrderStatusStepper";
 import { OrderNotFoundState } from "../components/OrderNotFoundState";
 import type { OrderStatus } from "../types/orders.types";
@@ -119,7 +120,6 @@ export default function OrderDetailPage() {
   };
 
   const nextAction = getNextAction();
-  // Cancel is allowed only before shipping (during Placed)
   const canCancel = order.status === "Placed";
 
   return (
@@ -136,7 +136,7 @@ export default function OrderDetailPage() {
         </Typography>
       </button>
 
-      {/* 2. Header Bar: Title + Status Badge + Symmetrical Styled Action Buttons */}
+      {/* 2. Header Bar: Title + Status Badge + Action Buttons */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -174,7 +174,6 @@ export default function OrderDetailPage() {
 
         {/* Action CTAs */}
         <div className="flex items-center gap-3 self-end sm:self-auto">
-          {/* 🪄 Sequential Advance Button styled in matching light mint/green theme */}
           {nextAction && (
             <Button
               type="button"
@@ -196,7 +195,6 @@ export default function OrderDetailPage() {
             </Button>
           )}
 
-          {/* Cancel Order Button (Strictly visible only during Placed) */}
           {canCancel && (
             <Button
               type="button"
@@ -221,11 +219,14 @@ export default function OrderDetailPage() {
       {/* 3. Section 1: Order Information Card */}
       <OrderInformationCard order={order} />
 
-      {/* 4. Section 2: Animated Order Status Stepper Card */}
+      {/* 4. Section 2: Animated Order Status Stepper Card (Now Above Items) */}
       <OrderStatusStepper
         status={order.status}
         creationDate={order.creationDate}
       />
+
+      {/* 5. Section 3: Order Items Card */}
+      <OrderItemsCard items={order.items} />
     </div>
   );
 }

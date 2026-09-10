@@ -1,6 +1,16 @@
 export type OrderStatus =
   "Pending" | "Placed" | "Shipped" | "Delivered" | "Cancelled";
 
+export type OrderItem = {
+  name: string;
+  slug: string;
+  quantity: number;
+  unitPrice: number;
+  productImage?: string;
+  altText?: string;
+  description?: string;
+};
+
 export type Order = {
   guid: string;
   orderNumber: string;
@@ -14,7 +24,7 @@ export type Order = {
   lastName?: string;
   totalItems?: number;
   status: OrderStatus;
-  items?: unknown[];
+  items?: OrderItem[];
 };
 
 export type CursorPaginationMeta = {
