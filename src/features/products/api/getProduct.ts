@@ -1,9 +1,6 @@
-import { http } from "@/api/http";
+import { http } from "@/api";
+import type { SingleProductResponse } from "../types/products.types";
 
-export async function getProductApi(slug: string) {
-  return await http.get(`/api/products/${slug}`, {
-    params: {
-      _t: Date.now(),
-    },
-  });
+export function getProductApi(slug: string) {
+  return http.get<SingleProductResponse>(`/api/products/${slug}`);
 }

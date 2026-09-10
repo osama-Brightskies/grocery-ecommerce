@@ -33,14 +33,18 @@ export default function ProductsListPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-8 space-y-6">
+      {/* Top Header & Reusable Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <PageHeader title="Products" description="Manage your catalog" />
         <Button
-          variant="primary"
+          type="button"
+          variant="outline"
+          size="default"
           onClick={productsMethods.openCreate}
-          className="h-11 px-5 bg-brand-primary hover:opacity-90 text-white font-semibold shadow-sm rounded-lg flex items-center shrink-0 mt-1 cursor-pointer"
+          className="cursor-pointer shrink-0 mt-1"
         >
-          <Plus className="w-4 h-4 mr-2" /> Add Product
+          <Plus />
+          <span>Add Product</span>
         </Button>
       </div>
 
@@ -140,6 +144,7 @@ export default function ProductsListPage() {
           </Typography>
           <Button
             variant="outline"
+            size="md"
             onClick={() => productsMethods.refetch()}
             className="ml-4 cursor-pointer"
           >
@@ -160,12 +165,13 @@ export default function ProductsListPage() {
               pageSize={productsMethods.pageSize}
               onPageSizeChange={productsMethods.handlePageSizeChange}
               showPageSizeSelect={true}
-              isCurrentPaginationInfoVisible={false}
               pageSizeOptions={[5, 10, 20, 50]}
             />
           }
         />
       )}
+
+      {/* Slide-over Form Sheet */}
       <ProductFormSheet
         isOpen={productsMethods.isSheetOpen}
         onClose={() => productsMethods.setIsSheetOpen(false)}
@@ -175,6 +181,8 @@ export default function ProductsListPage() {
         categoryOptions={productsMethods.categoryOptions}
         availableTags={productsMethods.availableTags}
       />
+
+      {/* Delete Confirmation Modal */}
       <ProductDeleteModal
         isOpen={productsMethods.isDeleteOpen}
         onClose={() => productsMethods.setIsDeleteOpen(false)}

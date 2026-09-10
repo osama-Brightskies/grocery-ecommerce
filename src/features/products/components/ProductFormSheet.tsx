@@ -15,15 +15,14 @@ import {
 } from "@/components/ui/sheet";
 import { cn, getImageUrl } from "@/lib/utils";
 
-import type { Product } from "../types/products.types";
 import { FormTextarea } from "@/components/ui/form-fields/FormTextarea";
 import { FormInput } from "@/components/ui/form-fields/FormInput";
 import { FormSelect } from "@/components/ui/form-fields/FormSelect";
 import { FormImageUploader } from "@/components/ui/form-fields/FormImageUploader";
+import type { Product } from "../types/products.types";
 
 const productSchema = z.object({
   name: z.string().trim().min(1, "Product name is required"),
-
   price: z
     .union([z.string(), z.number()])
     .refine((val) => val !== "" && val !== undefined, {
@@ -32,7 +31,6 @@ const productSchema = z.object({
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val), { message: "Price must be a valid number" })
     .refine((val) => val >= 0, { message: "Price cannot be negative" }),
-
   stockQuantity: z
     .union([z.string(), z.number()])
     .refine((val) => val !== "" && val !== undefined, {
@@ -43,7 +41,6 @@ const productSchema = z.object({
       message: "Stock must be a whole number",
     })
     .refine((val) => val >= 0, { message: "Stock cannot be negative" }),
-
   categorySlug: z.string().trim().min(1, "Category is required"),
   description: z.string().trim().min(1, "Description is required"),
   altText: z.string().optional(),
@@ -112,7 +109,6 @@ export function ProductFormSheet({
   }, [activeProduct, isOpen, methods]);
 
   const handleSubmitWrapper = (values: ProductFormValues) => {
-    // Check if image is required for new products
     if (!activeProduct && !values.imageFile) {
       methods.setError("imageFile", {
         type: "manual",
@@ -129,11 +125,9 @@ export function ProductFormSheet({
     formData.append("CategorySlug", values.categorySlug);
     formData.append("AltText", values.altText || values.name);
 
-    values.tags.forEach((tag, index) => {
+    // 🪄 Clean TagNames append (Zero duplicate spam)
+    values.tags.forEach((tag) => {
       formData.append("TagNames", tag);
-      formData.append("tagNames", tag);
-      formData.append("Tags", tag);
-      formData.append(`TagNames[${index}]`, tag);
     });
 
     if (values.imageFile instanceof File) {
@@ -143,12 +137,8 @@ export function ProductFormSheet({
     onSubmit(formData);
   };
 
-  // Build existing image URL using the centralized getImageUrl utility
   const existingImageUrl = activeProduct?.productImageUrl
-    ? getImageUrl(
-        activeProduct.productImageUrl,
-        (activeProduct as Product & { updatedAt?: string }).updatedAt,
-      )
+    ? getImageUrl(activeProduct.productImageUrl, activeProduct.updatedAt)
     : undefined;
 
   return (
@@ -280,20 +270,24 @@ export function ProductFormSheet({
               />
             </div>
 
+            {/* Symmetrical Button Footer */}
             <SheetFooter className="px-6 py-5 border-t border-border-input bg-white flex flex-row justify-end gap-3">
               <Button
                 type="button"
                 variant="outline"
+                size="default"
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="bg-surface-mint text-brand-primary hover:bg-surface-mint/80 font-semibold px-4 border-transparent"
+                className="bg-surface-mint text-sidebar-bg border-none hover:bg-surface-mint/80 font-semibold cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
+                variant="primary"
+                size="default"
                 disabled={isSubmitting}
-                className="bg-brand-medium text-white hover:bg-brand-primary font-semibold px-4"
+                className="font-semibold cursor-pointer shadow-xs"
               >
                 {isSubmitting ? "Saving..." : "Save changes"}
               </Button>
