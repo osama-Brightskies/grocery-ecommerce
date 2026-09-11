@@ -22,6 +22,7 @@ import {
   type UpdateCategoryFormValues,
 } from "../schemas/categories.schema";
 import { getImageUrl } from "@/lib/utils";
+import { X } from "lucide-react";
 
 export type EditCategorySheetProps = {
   isOpen: boolean;
@@ -133,24 +134,25 @@ export default function EditCategorySheet({
         <div className="flex items-center justify-end gap-3 pt-6 border-t border-border mt-auto">
           <Button
             type="button"
-            variant="outline"
+            variant="danger"
             size="default"
             onClick={onClose}
             disabled={isPending}
-            className="bg-surface-mint text-sidebar-bg border-none hover:bg-surface-mint/80 font-semibold cursor-pointer"
+            className="font-semibold cursor-pointer shadow-2xs"
           >
+            <X className="w-4 h-4 mr-1.5" />
             Cancel
           </Button>
 
           <Button
             type="submit"
             form="edit-category-form"
-            variant="primary"
+            variant="outline"
             size="default"
             disabled={isPending || !isDirty}
-            className="font-semibold cursor-pointer shadow-xs disabled:opacity-50"
+            className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
           >
-            <Typography variant="body" className="font-semibold text-white">
+            <Typography variant="body" className="font-semibold text-inherit">
               {isPending ? "Saving..." : "Save changes"}
             </Typography>
           </Button>

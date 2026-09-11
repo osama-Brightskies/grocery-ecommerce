@@ -86,19 +86,23 @@ export function TagFormModal({
 
         <div className="grid grid-cols-2 gap-3 pt-6 mt-6 border-t border-border-input">
           <Button
-            variant="outline"
+            type="button"
+            variant="danger"
+            size="default"
             onClick={onClose}
             disabled={isSubmitting}
-            className="h-11 border-border-input text-sidebar-bg hover:bg-surface-soft font-semibold"
+            className="font-semibold cursor-pointer shadow-2xs"
           >
+            <X className="w-4 h-4 mr-1.5" />
             Cancel
           </Button>
           <Button
-            variant="primary"
+            variant="outline"
+            size="default"
             type="submit"
             form="tag-form-modal"
             disabled={isSubmitting}
-            className="h-11 font-semibold bg-brand-primary text-white"
+            className="bg-surface-mint text-brand-primary border-brand-primary/25 hover:bg-surface-mint/80 font-semibold shadow-2xs cursor-pointer transition-all"
           >
             {isSubmitting ? "Saving..." : "Save Tag"}
           </Button>

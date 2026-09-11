@@ -99,6 +99,7 @@ describe("category mutation hooks", () => {
 
   it("passes create, update, and delete inputs to their APIs and invalidates cache", async () => {
     const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
+    const setQueryDataSpy = vi.spyOn(queryClient, "setQueryData");
 
     vi.mocked(api.createCategoryApi).mockResolvedValue(response);
     vi.mocked(api.updateCategoryApi).mockResolvedValue(response);
@@ -132,11 +133,12 @@ describe("category mutation hooks", () => {
     expect(api.updateCategoryApi).toHaveBeenCalledWith("fresh-fruit", formData);
     expect(api.deleteCategoryApi).toHaveBeenCalledWith("fresh-fruit");
 
-    // Assert that the general list and detail caches are invalidated correctly upon edit
+    // Lists are invalidated once per mutation, while the update response seeds detail data.
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["categories"] });
-    expect(invalidateSpy).toHaveBeenCalledWith({
-      queryKey: ["category-detail", "fresh-fruit"],
-    });
+    expect(setQueryDataSpy).toHaveBeenCalledWith(
+      ["category-detail", "fresh-fruit"],
+      response,
+    );
   });
 });
 

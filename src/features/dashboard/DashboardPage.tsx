@@ -57,7 +57,7 @@ export default function DashboardPage() {
   // 4. Fetch Products Catalog (100 items)
   const { data: productsResponse, isLoading: isProductsLoading } =
     useQuery<PaginatedProductsResponse>({
-      queryKey: ["dashboard-catalog-products"],
+      queryKey: ["products", "dashboard-catalog"],
       queryFn: () => getProductsApi(100) as Promise<PaginatedProductsResponse>,
       staleTime: 30 * 1000,
     });

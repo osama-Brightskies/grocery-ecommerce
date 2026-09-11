@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TriangleAlert, CheckCircle2 } from "lucide-react";
+import { TriangleAlert, CheckCircle2, Trash2, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -116,12 +116,13 @@ export default function DeleteCategoryDialog({
             <div className="flex items-center justify-center gap-3 pt-3 w-full">
               <Button
                 type="button"
-                variant="outline"
+                variant="danger"
                 size="default"
                 onClick={onClose}
                 disabled={isPending}
-                className="flex-1 font-semibold border-border cursor-pointer"
+                className="font-semibold cursor-pointer shadow-2xs"
               >
+                <X className="w-4 h-4 mr-1.5" />
                 Cancel
               </Button>
 
@@ -131,8 +132,9 @@ export default function DeleteCategoryDialog({
                 size="default"
                 onClick={handleConfirmDelete}
                 disabled={isPending}
-                className="flex-1 bg-status-danger-text hover:bg-status-danger-text/90 text-white font-semibold cursor-pointer shadow-xs"
+                className="font-semibold cursor-pointer shadow-2xs"
               >
+                <Trash2 className="w-4 h-4 mr-1.5" />
                 <Typography variant="body" className="font-semibold text-white">
                   {isPending ? "Deleting..." : "Delete category"}
                 </Typography>

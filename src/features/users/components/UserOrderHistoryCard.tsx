@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import {
   ShoppingBag,
   Package,
-  ArrowRight,
   ChevronDown,
   ChevronRight,
   Inbox,
 } from "lucide-react";
 import { Typography } from "@/components/ui/shared/Typography";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Collapsible,
@@ -60,7 +58,7 @@ export function UserOrderHistoryCard({ userGuid }: UserOrderHistoryCardProps) {
   const [openOrderGuid, setOpenOrderGuid] = useState<string | null>(null);
 
   const { data: response, isLoading } = useGetUserOrders(userGuid, {
-    limit: 10,
+    limit: 20,
   });
 
   const orders = response?.data?.data ?? [];
@@ -68,7 +66,7 @@ export function UserOrderHistoryCard({ userGuid }: UserOrderHistoryCardProps) {
   return (
     <div className="bg-card rounded-2xl border border-border p-6 shadow-xs space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border pb-4">
+      <div className="flex items-center border-b border-border pb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-surface-soft border border-border flex items-center justify-center text-sidebar-bg shrink-0">
             <ShoppingBag className="w-5 h-5" />
@@ -82,17 +80,6 @@ export function UserOrderHistoryCard({ userGuid }: UserOrderHistoryCardProps) {
             </Typography>
           </div>
         </div>
-
-        {/* View All Orders CTA */}
-        <Button
-          variant="outline"
-          size="default"
-          onClick={() => navigate("/orders")}
-          className="border-border hover:border-brand-primary text-sidebar-bg font-semibold text-xs cursor-pointer shadow-2xs"
-        >
-          <span>View all orders</span>
-          <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-        </Button>
       </div>
 
       {/* Orders List / Collapsibles */}

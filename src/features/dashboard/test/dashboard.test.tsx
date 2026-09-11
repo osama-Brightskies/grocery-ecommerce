@@ -96,6 +96,12 @@ describe("DashboardPage", () => {
     expect(usersHook).toHaveBeenCalledWith({ pageNumber: 1, pageSize: 600 });
     expect(categoriesHook).toHaveBeenCalledWith({ limit: 50 });
     expect(activitiesHook).toHaveBeenCalledWith(100);
+    expect(productsQuery).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: ["products", "dashboard-catalog"],
+        staleTime: 30 * 1000,
+      }),
+    );
     expect(screen.getByTestId("kpis")).toHaveTextContent(
       JSON.stringify({
         totalUsers: 5,

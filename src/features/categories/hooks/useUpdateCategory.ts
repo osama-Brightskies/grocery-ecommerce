@@ -19,18 +19,17 @@ export function useUpdateCategory(options?: UseUpdateCategoryOptions) {
     mutationFn: ({ slug, formData }) => updateCategoryApi(slug, formData),
 
     onSuccess: async (data, variables) => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["categories"] }),
-        queryClient.invalidateQueries({
-          queryKey: ["category-detail", data.data.slug],
-        }),
-      ]);
-
       if (variables.slug !== data.data.slug) {
-        await queryClient.invalidateQueries({
+        queryClient.removeQueries({
           queryKey: ["category-detail", variables.slug],
+          exact: true,
+        });
+        queryClient.removeQueries({
+          queryKey: ["category-products", variables.slug],
         });
       }
+      queryClient.setQueryData(["category-detail", data.data.slug], data);
+      await queryClient.invalidateQueries({ queryKey: ["categories"] });
 
       options?.onSuccess?.(data);
     },

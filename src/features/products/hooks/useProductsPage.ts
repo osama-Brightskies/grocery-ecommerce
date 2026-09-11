@@ -97,7 +97,6 @@ export function useProductsPage() {
     mutationFn: createProductApi,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["products"] });
-      await refetch();
       setIsSheetOpen(false);
     },
   });
@@ -107,17 +106,17 @@ export function useProductsPage() {
     onSuccess: async (response, variables) => {
       const newSlug = extractSlug(response) || variables.slug;
 
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["products"] }),
-        queryClient.invalidateQueries({
-          queryKey: ["product", variables.slug],
-        }),
-        ...(newSlug && newSlug !== variables.slug
-          ? [queryClient.invalidateQueries({ queryKey: ["product", newSlug] })]
-          : []),
-      ]);
-
-      await refetch();
+      queryClient.removeQueries({
+        queryKey: ["product", variables.slug],
+        exact: true,
+      });
+      if (newSlug && newSlug !== variables.slug) {
+        queryClient.removeQueries({
+          queryKey: ["product", newSlug],
+          exact: true,
+        });
+      }
+      await queryClient.invalidateQueries({ queryKey: ["products"] });
       setIsSheetOpen(false);
     },
   });
@@ -125,10 +124,11 @@ export function useProductsPage() {
   const deleteMutation = useMutation({
     mutationFn: deleteProductApi,
     onSuccess: async (_, deletedSlug) => {
-      queryClient.removeQueries({ queryKey: ["product", deletedSlug] });
+      queryClient.removeQueries({
+        queryKey: ["product", deletedSlug],
+        exact: true,
+      });
       await queryClient.invalidateQueries({ queryKey: ["products"] });
-
-      await refetch();
       setIsDeleteOpen(false);
       setActiveProduct(null);
     },
