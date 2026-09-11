@@ -7,7 +7,7 @@ export default function AppLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
-    <TooltipProvider delayDuration={100}>
+    <TooltipProvider>
       <div className="flex min-h-screen bg-surface-soft font-sans antialiased">
         <Sidebar
           isCollapsed={isSidebarCollapsed}
