@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import type { Tag } from "../types/tags.types";
 import { useGetTags } from "./useGetTags";
 import { useCreateTag } from "./useCreateTag";
@@ -22,18 +23,31 @@ export function useTagsPage() {
 
   const createMutation = useCreateTag({
     onSuccess: () => {
+      toast.success("Tag created successfully");
       setIsSheetOpen(false);
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create tag",
+      );
     },
   });
 
   const updateMutation = useUpdateTag({
     onSuccess: () => {
+      toast.success("Tag updated successfully");
       setIsSheetOpen(false);
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update tag",
+      );
     },
   });
 
   const deleteMutation = useDeleteTag({
     onSuccess: () => {
+      toast.success("Tag deleted successfully");
       setIsDeleteOpen(false);
       setActiveTag(null);
     },
@@ -54,6 +68,19 @@ export function useTagsPage() {
   };
 
   const handleFormSubmit = (values: { name: string; description?: string }) => {
+    // 1. Prevent duplicate tags client-side
+    const isDuplicate = tags.some(
+      (t) =>
+        t.name.trim().toLowerCase() === values.name.trim().toLowerCase() &&
+        t.slug !== activeTag?.slug,
+    );
+
+    if (isDuplicate) {
+      toast.error("A tag with this name already exists.");
+      return;
+    }
+
+    // 2. Proceed with mutation if unique
     if (activeTag?.slug) {
       updateMutation.mutate({ slug: activeTag.slug, ...values });
     } else {

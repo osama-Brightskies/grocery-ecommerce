@@ -22,8 +22,9 @@ describe("tag components", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Save Tag" }));
     await waitFor(() =>
+      // The description field was removed from the schema and payload
       expect(onSubmit).toHaveBeenCalledWith(
-        { name: "Fresh", description: "" },
+        { name: "Fresh" },
         expect.anything(),
       ),
     );
