@@ -7,7 +7,10 @@ interface UpdateTagPayload {
   description?: string;
 }
 
-export const useUpdateTag = (options?: { onSuccess?: () => void }) => {
+export const useUpdateTag = (options?: {
+  onSuccess?: () => void;
+  onError?: (err: Error) => void;
+}) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -17,5 +20,6 @@ export const useUpdateTag = (options?: { onSuccess?: () => void }) => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       options?.onSuccess?.();
     },
+    onError: options?.onError,
   });
 };

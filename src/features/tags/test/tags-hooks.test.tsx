@@ -16,6 +16,7 @@ vi.mock("../api/get-tags.api");
 vi.mock("../api/create-tag.api");
 vi.mock("../api/update-tag.api");
 vi.mock("../api/delete-tag.api");
+
 function wrapper() {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
@@ -27,6 +28,7 @@ function wrapper() {
 
 describe("tag hooks and schema", () => {
   beforeEach(() => vi.clearAllMocks());
+
   it("loads a requested tags page", async () => {
     vi.mocked(getApi.getTagsApi).mockResolvedValue({
       data: { data: [], pagination: { totalPages: 1, totalCount: 0 } },
@@ -37,6 +39,7 @@ describe("tag hooks and schema", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(getApi.getTagsApi).toHaveBeenCalledWith(3, 20);
   });
+
   it("passes mutation payloads through", async () => {
     vi.mocked(createApi.createTagApi).mockResolvedValue(undefined as never);
     vi.mocked(updateApi.updateTagApi).mockResolvedValue(undefined as never);
@@ -69,6 +72,7 @@ describe("tag hooks and schema", () => {
     });
     expect(vi.mocked(deleteApi.deleteTagApi).mock.calls[0][0]).toBe("organic");
   });
+
   it("validates and trims tag names", () => {
     expect(tagFormSchema.parse({ name: "  Fresh  " }).name).toBe("Fresh");
     expect(tagFormSchema.safeParse({ name: "   " }).success).toBe(false);

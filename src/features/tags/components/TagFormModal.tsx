@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/shared/Typography";
 import type { Tag } from "@/features/tags/types/tags.types";
+import { tagFormSchema, type TagFormValues } from "../schemas/tags.schema";
+import { FormInput } from "@/components/ui/form-fields/FormInput";
 
 export function TagFormModal({
   isOpen,
@@ -15,29 +18,23 @@ export function TagFormModal({
   isOpen: boolean;
   onClose: () => void;
   activeTag: Tag | null;
-  onSubmit: (values: { name: string; description?: string }) => void;
+  onSubmit: (values: TagFormValues) => void;
   isSubmitting: boolean;
 }) {
-  const methods = useForm<{ name: string; description?: string }>({
+  const methods = useForm<TagFormValues>({
+    resolver: zodResolver(tagFormSchema),
     defaultValues: {
       name: "",
-      description: "",
     },
   });
 
   useEffect(() => {
-    if (activeTag) {
+    if (isOpen) {
       methods.reset({
-        name: activeTag.name || "",
-        description: "",
-      });
-    } else {
-      methods.reset({
-        name: "",
-        description: "",
+        name: activeTag?.name || "",
       });
     }
-  }, [activeTag, methods]);
+  }, [activeTag, isOpen, methods]);
 
   if (!isOpen) return null;
 
@@ -75,10 +72,10 @@ export function TagFormModal({
               onSubmit={methods.handleSubmit(onSubmit)}
               className="space-y-4"
             >
-              <input
-                {...methods.register("name")}
+              <FormInput
+                name="name"
+                label="Tag Name"
                 placeholder="Enter tag name"
-                className="w-full rounded-md border border-border-input px-3 py-2"
               />
             </form>
           </FormProvider>
