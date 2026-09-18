@@ -67,11 +67,11 @@ export default function DeleteCategoryDialog({
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
-            <DialogHeader className="space-y-1 text-center">
-              <DialogTitle className="text-xl font-bold text-sidebar-bg">
+            <DialogHeader className="space-y-1 text-center sm:text-center items-center w-full">
+              <DialogTitle className="text-xl font-bold text-sidebar-bg text-center w-full">
                 Category deleted
               </DialogTitle>
-              <DialogDescription className="text-sm text-text-secondary">
+              <DialogDescription className="text-sm text-text-secondary text-center">
                 &quot;{category.name}&quot; was deleted successfully.
               </DialogDescription>
             </DialogHeader>
@@ -97,11 +97,11 @@ export default function DeleteCategoryDialog({
               <TriangleAlert className="w-8 h-8" />
             </div>
 
-            <DialogHeader className="space-y-2 text-center">
-              <DialogTitle className="text-xl font-bold text-sidebar-bg">
+            <DialogHeader className="space-y-2 text-center sm:text-center items-center w-full">
+              <DialogTitle className="text-xl font-bold text-sidebar-bg text-center w-full">
                 Delete category
               </DialogTitle>
-              <DialogDescription className="text-sm text-text-secondary leading-relaxed max-w-xs mx-auto">
+              <DialogDescription className="text-sm text-text-secondary leading-relaxed max-w-xs mx-auto text-center">
                 Are you sure you want to delete &quot;{category.name}&quot;?
                 {productsCount > 0 && (
                   <span className="block mt-2 text-xs font-medium text-sidebar-bg/90">
@@ -120,10 +120,10 @@ export default function DeleteCategoryDialog({
                 size="default"
                 onClick={onClose}
                 disabled={isPending}
-                className="font-semibold cursor-pointer shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 font-semibold cursor-pointer shadow-2xs"
               >
-                <X className="w-4 h-4 mr-1.5" />
-                Cancel
+                <X className="w-4 h-4 shrink-0" />
+                <span className="leading-none">Cancel</span>
               </Button>
 
               <Button
@@ -132,12 +132,12 @@ export default function DeleteCategoryDialog({
                 size="default"
                 onClick={handleConfirmDelete}
                 disabled={isPending}
-                className="font-semibold cursor-pointer shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 font-semibold cursor-pointer shadow-2xs"
               >
-                <Trash2 className="w-4 h-4 mr-1.5" />
-                <Typography variant="body" className="font-semibold text-white">
+                <Trash2 className="w-4 h-4 shrink-0" />
+                <span className="leading-none">
                   {isPending ? "Deleting..." : "Delete category"}
-                </Typography>
+                </span>
               </Button>
             </div>
           </div>
