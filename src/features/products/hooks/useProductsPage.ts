@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { getProductsApi, type ProductFilters } from "../api/getProducts";
 import { getProductApi } from "../api/getProduct";
 import { createProductApi } from "../api/createProduct";
@@ -30,6 +31,17 @@ const extractTags = (tagsData: unknown): string[] => {
   if (Array.isArray(target?.data)) return target.data.map((t) => t.name);
   if (Array.isArray(target?.items)) return target.items.map((t) => t.name);
   return [];
+};
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (typeof error === "object" && error !== null) {
+    const details = error as {
+      message?: string;
+      response?: { data?: { message?: string } };
+    };
+    return details.response?.data?.message || details.message || fallback;
+  }
+  return fallback;
 };
 
 export function useProductsPage() {
@@ -97,7 +109,16 @@ export function useProductsPage() {
     mutationFn: createProductApi,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Product created successfully.");
       setIsSheetOpen(false);
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        getErrorMessage(
+          error,
+          "Failed to create product. It may already exist.",
+        ),
+      );
     },
   });
 
@@ -117,7 +138,16 @@ export function useProductsPage() {
         });
       }
       await queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Product updated successfully.");
       setIsSheetOpen(false);
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        getErrorMessage(
+          error,
+          "Failed to update product. It may already exist.",
+        ),
+      );
     },
   });
 
@@ -129,8 +159,12 @@ export function useProductsPage() {
         exact: true,
       });
       await queryClient.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Product deleted successfully.");
       setIsDeleteOpen(false);
       setActiveProduct(null);
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Failed to delete product."));
     },
   });
 

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { getProductApi } from "../api/getProduct";
 import { updateProductApi } from "../api/updateProduct";
 import { deleteProductApi } from "../api/deleteProduct";
@@ -28,6 +29,18 @@ const extractTags = (tagsData: unknown): string[] => {
   if (Array.isArray(target?.data)) return target.data.map((t) => t.name);
   if (Array.isArray(target?.items)) return target.items.map((t) => t.name);
   return [];
+};
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (error instanceof Error && error.message) return error.message;
+
+  if (typeof error === "object" && error !== null) {
+    const message = (error as { response?: { data?: { message?: string } } })
+      .response?.data?.message;
+    if (message) return message;
+  }
+
+  return fallback;
 };
 
 export function useProductDetails(slug: string) {
@@ -74,11 +87,20 @@ export function useProductDetails(slug: string) {
       );
       await queryClient.invalidateQueries({ queryKey: ["products"] });
 
+      toast.success("Product updated successfully.");
       setIsSheetOpen(false);
 
       if (newSlug !== slug) {
         navigate(`/products/${newSlug}`, { replace: true });
       }
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        getErrorMessage(
+          error,
+          "Failed to update product. It may already exist.",
+        ),
+      );
     },
   });
 
@@ -88,8 +110,12 @@ export function useProductDetails(slug: string) {
       queryClient.removeQueries({ queryKey: ["product", slug], exact: true });
       await queryClient.invalidateQueries({ queryKey: ["products"] });
 
+      toast.success("Product deleted successfully.");
       setIsDeleteOpen(false);
       navigate("/products", { replace: true });
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Failed to delete product."));
     },
   });
 
